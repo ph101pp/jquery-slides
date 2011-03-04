@@ -11,7 +11,7 @@
 			<section>1</section>
 			<section>2</section>
 			<section class="active">3</section>
-			<section>4</section>
+			<section class="minWidth">4</section>
 			<section>5</section>
 		</article>
 	</body>

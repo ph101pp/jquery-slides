@@ -1,16 +1,15 @@
 .gSSlide{
 	position:relative;
-	float:left;
-
-	height:100%;
-	background-color:#ee00ee;
-	font-size:3em; 
-	text-align:center;
-	
-	min-width:40px;
-	
+	overflow:hidden;
 }
+.gSHorizontal {
+	float:left;
+	height:100%;
 
+}
+.gSVertical{
+	width:100%;	
+}
 .gSWrapperTwo {
 	position:relative;
 	height:200%;
@@ -43,9 +42,19 @@ body {
 	padding:10;
 	margin:0;
 }
+.gSSlide{
+	background-color:#ee00ee;
+	font-size:3em; 
+	text-align:center;
+	
+	min-width:40px;
+}
 
 .active {
 	background-color:#eeCCee;
+}
+.minWidth{
+	/*min-width:100px;*/
 }
 
 
