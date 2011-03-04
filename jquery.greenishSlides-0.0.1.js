@@ -9,15 +9,15 @@ Authors:  Philipp C. Adrian
 
 $.fn.greenishSlides = function (settings){
 	return $(this).each(function (settings) {
-		$(this).greenishSlides.init($(this), settings);
+		$().greenishSlides.init($(this), settings);
 	});
 	
 };
 $.gS = $().greenishSlides;
 $.extend($.gS, {
 	defaults : {
-		stayOpen: true,
-		fillSpace: false,
+		stayOpen: false,
+		fillSpace: true,
 		animationSpeed: "slow",
 		easing: "swing",
 		hooks : {
@@ -37,16 +37,19 @@ $.extend($.gS, {
 	},
 		
 	init : function (context, settings) {
-		if(!$(context).is("ul")) return "has to be ul";
-
 		$.gS.settings = $.extend(this.defaults, typeof(options) == "object" ? options :{});
-		$.gS.settings.slideCount=$(context).find("li").length;
-		$(context).data("greenishSlides", $.gS.settings);
+		$.gS.settings.slideCount=$(context).children().length;
 
-		if($.gS.settings.fillSpace) $(context).children().last().addClass("last");
+//		Sets wrappers and additional classes
+		var slides=$(context).wrapInner("<div class=\"gSWrapperTwo\"/>").wrapInner("<div class=\"gSWrapperOne\"/>").children().children().children().addClass("gSSlide");
+	
+		console.log(slides);
+		
+
+
 		
 //		Define Activate Event
-		$(context).find("li").bind("mouseover", function (){
+		slides.bind("mouseover", function (){
 			$(this).parent().find(".active").removeClass("active");
 			$(this).addClass("active");
 
@@ -56,31 +59,31 @@ $.extend($.gS, {
 			}
 			if($.gS.checkHook(context, "preActivate")) $.gS.settings.hooks.preActivate($(this));
 			
-			$.gS.setSliders($(this).parent());
+			$.gS.setSlides($(this).parent().parent().parent());
 		
 		});		
 //		Define Deactivate Event
-		if(!$.gS.settings.stayOpen) $(context).find("li").bind("mouseout", function (){
+		if(!$.gS.settings.stayOpen) slides.bind("mouseout", function (){
 			$(this).parent().find(".active").removeClass("active").addClass("deactivated");
 			if($.gS.checkHook(context, "preDeactivate")) $.gS.settings.hooks.preDeactivate($(this));
-			$.gS.setSliders($(this).parent(), $(this));
+			$.gS.setSlides($(this).parent().parent().parent());
 		});
 		
 		$(window).resize(function () {
-			$.gS.setSliders(context,{animationSpeed:"fast"});
+			$.gS.setSlides(context);
 		});
 		
 //		First Initialisation		
-		$.gS.setSliders(context);
+		$.gS.setSlides(context);
 		
 		return true;
 
 	},
 	
 	getSettings: function (context, options) {
-		$.gS.settings = $(context).data("greenishSlides");
 		$.gS.settings.context=context;
 		$.gS.settings.mainWidth=$(context).width();
+		$.gS.settings.minWidth=$(context).find(".gSSlide").css("min-width").replace("px","");
 		$.gS.settings.outWidth=Math.ceil($.gS.settings.mainWidth/$.gS.settings.slideCount);
 		$.extend($.gS.settings, typeof(options) == "object" ? options :{});
 	},
@@ -89,16 +92,17 @@ $.extend($.gS, {
 		if($.gS.settings.hooks && typeof($.gS.settings.hooks[hook]) == "function") return true;
 		else return false;
 	},
-	
-	setSliders : function (context, options) {
+		
+	setSlides : function (context, options) {
 		$.gS.getSettings(context, options);
 
 //		If there is no active element
-		if($(context).find(".active").length <=0) $(context).find("li").each(function(){
+		if($(context).find(".active").length <=0) $(context).find(".gSSlide").each(function(){
 
 //			If space should be filled up or not.			
+		console.log($.gS.settings.fillSpace);
 			if($.gS.settings.fillSpace) var newWidth=$.gS.settings.outWidth;
-			else var newWidth=$(context).find("li").css("min-width").replace("px","");
+			else var newWidth=$.gS.settings.minWidth;
 
 			var newLeft=newWidth * ($(this).index());
 			
@@ -115,9 +119,9 @@ $.extend($.gS, {
 		});
 //		If there is an active element: loop through li's and find out the new position for each one.
 		else {
-			var activeWidth = $.gS.settings.mainWidth-(($.gS.settings.slideCount-1) * $(context).find("li").css("min-width").replace("px",""));
-			var activeIndex = $(context).find("li.active").index();
-			$(context).find("li").each(function(){
+			var activeWidth = $.gS.settings.mainWidth-(($.gS.settings.slideCount-1) * $.gS.settings.minWidth);
+			var activeIndex = $(context).find(".gSSlide.active").index();
+			$(context).find(".gSSlide").each(function(){
 //				If this is the active element 
 				if($(this).is(".active")) {
 					var newWidth = activeWidth;	

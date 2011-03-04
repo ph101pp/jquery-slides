@@ -1,35 +1,43 @@
 body {
+	position:absolute;
 	margin:0;
 	padding:0;
 	height:100%;
 	width:100%;
 }
-#greenishSlides{
-	height:100%;
-	width:100%;
+.greenishSlides{
+	position:relative;
+	height:50px;
+	width:50%;
 	padding:0;
 	margin:0;
-	list-style:none;
-	overflow:hidden;
 }
 
-li{
-	position:absolute;
+.gSSlide{
+	position:relative;
 	float:left;
 
 	height:100%;
 	background-color:#ee00ee;
-	font-size:3em;
+	font-size:3em; 
 	text-align:center;
 	
 	min-width:40px;
 	
 }
 
-li.last {
-	position:absolute;
-	right:0;
+.gSWrapperTwo {
+	position:relative;
+	height:200%;
+	width:200%;
 }
+.gSWrapperOne {
+	position:relative;
+	height:100%;
+	width:100%;
+	overflow:hidden;
+}
+
 .active {
 	background-color:#eeCCee;
 }

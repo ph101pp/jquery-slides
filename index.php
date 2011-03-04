@@ -7,12 +7,12 @@
 		<script src="JSscripts.php" type="text/javascript"></script>
  	</head>
 	<body>
-		<ul id="greenishSlider">
-			<li>1</li>
-			<li>2</li>
-			<li class="active">3</li>
-			<li>4</li>
-			<li>5</li>
-		</ul>
+		<article class="greenishSlides">
+			<section>1</section>
+			<section>2</section>
+			<section class="active">3</section>
+			<section>4</section>
+			<section>5</section>
+		</article>
 	</body>
 </html>
