@@ -81,31 +81,33 @@ $.extend($.gS, {
 		var slides=$(context).find(".gSSlide");
 		var slideCount=slides.length;
 		var activeIndex = slides.filter(".gSSlide.active").index();
-		var all=0;
+		var sum={minus:0,plus:0};
 		var values=[];
 		var mainSize = [];
 		mainSize["width"]=$(context).parent().width();
 		mainSize["height"]=$(context).parent().height();
 
 //		get new sizes for every slide but the active one.
-		for(var index=0; slides.eq(index).length > 0; index++) {
+		for(var index=0; index < slides.length; index++) {
 			if(index==activeIndex) continue;
-			
-//			If slides have to be spread (kwicks)
-			if($.gS.settings.fillSpace && activeIndex<0) values[index] = { "width" : Math.ceil(mainSize["width"]/slideCount)};
-			else values[index] = { "width" : slides.eq(index).css("min-width").replace("px","")};
-					
-			$.extend(values[index], {"height" : mainSize["height"]});
-			all+=parseFloat(values[index]["width"]);
+			values[index] = { "width" : slides.eq(index).css("min-width").replace("px",""),"height" : mainSize["height"]};					
+			index<activeIndex ? sum.minus+=parseFloat(values[index]["width"]) : sum.plus+=parseFloat(values[index]["width"]);
 		}
+//		If there is no active one
+		if( activeIndex<0) {
+//			If slides have to be spread (kwicks)
+			if($.gS.settings.fillSpace) for(var index=0; index < slides.length; index++) values[index] = { "width" :mainSize["width"]/slideCount,"height" : mainSize["height"]};
+		}
+//		If there is an active one
 //		handle the active one (on fillSpace).
-		values[activeIndex]= {"width": (mainSize["width"]-all), "height" : mainSize["height"]};
+		else values[activeIndex]= {"width": (mainSize["width"]-(sum.minus+sum.plus)), "height" : mainSize["height"]};
+
 		return values;
 	},
 //////////////////////////////////////////////////////////////////////////////////////////		
 	setSlides : function (context) {
-		var values=$.gS.getValues(context);
 		var slides=$(context).find(".gSSlide");
+		var values=$.gS.getValues(context);
 
 //		check if deactivation or activation and sets hooks.
 		if($(context).find(".active").length <=0)  var postAnimation = function () {
@@ -119,10 +121,9 @@ $.extend($.gS, {
 			}
 
 //		each slide gets animated			
-		for(var index=0; slides.eq(index).length > 0; index++) {
+		for(var index=0; index<slides.length; index++) {
 			slides.eq(index).stop().animate(values[index], $.gS.settings.animationSpeed, $.gS.settings.easing, postAnimation); 
 		}
-	
 	}
 //////////////////////////////////////////////////////////////////////////////////////////		
 });
