@@ -1,12 +1,15 @@
 /*! 
 
-Authors:  Philipp C. Adrian
-
+Author {
+	Philipp C. Adrian
+	www.philippadrian.com
+	@gre_nish
+}
 */
 
 
 (function($) {
-
+//////////////////////////////////////////////////////////////////////////////////////////		
 $.fn.greenishSlides = function (settings){
 	return $(this).each(function (settings) {
 		$().greenishSlides.init($(this), settings);
@@ -18,21 +21,22 @@ $.extend($.gS, {
 	defaults : {
 		stayOpen: false,
 		fillSpace: true,
+		positioningAbsolute: false,
 		animationSpeed: "600",
 		easing: "swing",
 		orientation:"horizontal",
 		hooks : {
 			preActivate: function (active) {
-				console.log("preActivate");
+//				console.log("preActivate");
 			},
 			postActivate: function (active) {
-				console.log("postActivate");
+//				console.log("postActivate");
 			},
 			preDeactivate: function (active) {
-				console.log("preDeactivate");
+//				console.log("preDeactivate");
 			},
 			postDeactivate: function (active) {
-				console.log("postDeactivate");
+//				console.log("postDeactivate");
 			}
 		}
 	},
@@ -42,11 +46,17 @@ $.extend($.gS, {
 		$.gS.settings = $.extend(this.defaults, typeof(options) == "object" ? options :{});
 
 //		Sets wrappers and additional classes
-		$(context).children().wrapAll("<div class=\"gSWrapperOne\"/>").wrapAll("<div class=\"gSWrapperTwo\"/>").wrap("<div class=\"gSSlideWrapper\"/>").addClass("gSSlide");
-		var slides=$(context).find(".gSSlideWrapper");
+		var slides=$(context).wrapInner("<div class=\"gSWrapperTwo\"/>").wrapInner("<div class=\"gSWrapperOne\"/>").find(".gSWrapperTwo").children().addClass("gSSlide");
 		
 		$.gS.settings.orientation == "horizontal" ? slides.addClass("gSHorizontal") : slides.addClass("gSVertical");
 		
+		$.gS.initSlides(slides);
+
+//		First Initialisation		
+		$.gS.setSlides(context);
+	},
+//////////////////////////////////////////////////////////////////////////////////////////		
+	initSlides : function (slides) {
 //		Define Activate Event
 		slides.bind("mouseover", function (){
 			$.gS.activate(this);
@@ -55,78 +65,86 @@ $.extend($.gS, {
 		if(!$.gS.settings.stayOpen) slides.bind("mouseout", function (){
 			$.gS.deactivate(this);
 		});
-		
-//		First Initialisation		
-		$.gS.setSlides(context);
 	},
 //////////////////////////////////////////////////////////////////////////////////////////		
 	activate : function (slide) {
 		$(slide).parent().find(".active").removeClass("active");
-		$(slide).children().addClass("active");
+		$(slide).addClass("active");
 
 		if($(slide).parent().find(".deactivated").length > 0) {
 			$(slide).parent().find(".deactivated").removeClass("deactivated");
 			$.gS.settings.hooks.postDeactivate($(slide));
 		}
 		$.gS.settings.hooks.preActivate($(slide));
-		$.gS.setSlides($(slide).parent().parent());
+		$.gS.setSlides($(slide).parent().parent().parent());
  	},
 //////////////////////////////////////////////////////////////////////////////////////////		
  	deactivate : function (slide) {
 		$(slide).parent().find(".active").removeClass("active").addClass("deactivated");
 		$.gS.settings.hooks.preDeactivate($(slide));
-		$.gS.setSlides($(slide).parent().parent());
+		$.gS.setSlides($(slide).parent().parent().parent());
  	}, 	
 //////////////////////////////////////////////////////////////////////////////////////////		
 	getValues : function (context) {
-		var slides=$(context).find(".gSSlideWrapper");
+		var maxWidth=false;
+		var slides=$(context).find(".gSSlide");
 		var slideCount=slides.length;
-		var activeIndex = slides.has(".gSSlide.active").index();
-		console.log(activeIndex);
+		var activeIndex = slides.filter(".gSSlide.active").index();
 		var sum={minus:0,plus:0};
 		var values=[];
 		var mainSize = [];
 		mainSize["width"]=$(context).width();
 		mainSize["height"]=$(context).height();
 
-//		get collapsed sizes for every slide.
+//		get minWidth for every slide.
 		for(var index=0; index < slides.length; index++) {
-			var slideContent=slides.eq(index).children();
-			var marginWidth=slideContent.outerWidth(true)-slideContent.innerWidth();
-			var marginHeight=slideContent.outerHeight(true)-slideContent.innerHeight();
-			console.log(marginHeight);
-			var minWidth=parseFloat(slideContent.css("min-width").replace("px","")) + parseFloat(marginWidth);
-			var minHeight=mainSize["height"]
-			
-			values[index] = { "width" : minWidth,"height" : minHeight};					
-			index<activeIndex ? sum.minus+=parseFloat(values[index]["width"]) : sum.plus+=parseFloat(values[index]["width"]);
+			values[index] = { "width" : parseFloat(slides.eq(index).css("min-width").replace("px","")),"height" : mainSize["height"]};					
+			index<activeIndex ? sum.minus+=values[index]["width"] : sum.plus+=values[index]["width"];
 		}
-		
-//		If there is no active one
-		if( activeIndex<0) {
-//			If slides have to be spread (kwicks)
-			if($.gS.settings.fillSpace) for(var index=0; index < slides.length; index++) values[index].width=mainSize["width"]/slideCount;
+
+//		If there is an max-width defined for the active element - set it to the new width.
+		if(parseFloat(slides.eq(activeIndex).css("max-width").replace("px","")) > 0) maxWidth=true;
+		if(maxWidth && activeIndex >= 0) values[activeIndex]["width"]=parseFloat(slides.eq(activeIndex).css("max-width").replace("px",""));
+
+//		If fillSpace is Set (kwicks)
+		if($.gS.settings.fillSpace) {
+//			if no max-width is set for the active element, it's filling all the space it can get. (everything else stays on min-width)
+			if(!maxWidth && activeIndex >= 0) values[activeIndex]["width"] = mainSize["width"]-(sum.minus+sum.plus)+values[activeIndex]["width"];
+//			figure out which size elements have that are not hitting any max/min limit.
+			else {
+				var fullSize=mainSize["width"];
+				var count=slideCount
+				var newSize=fullSize/count;
+				var skip=[];
+				
+				for(var index=0; index < slides.length; index++) 
+					if(!skip[index] && (values[index]["width"] > newSize || index == activeIndex)) {
+						skip[index]=true;
+						count--;
+						fullSize-=values[index]["width"];
+						newSize=fullSize/count;
+						index=-1;
+					}
+				for(var index=0; index < slides.length; index++) if(!skip[index]) values[index]["width"]=newSize;
+			}
 		}
-//		If there is an active one
-//		handle the active one (on fillSpace).
-		else values[activeIndex].width= mainSize["width"]-(sum.minus+sum.plus-values[activeIndex].width);
 
 		return values;
 	},
 //////////////////////////////////////////////////////////////////////////////////////////		
 	setSlides : function (context) {
-		var slides=$(context).find(".gSSlideWrapper");
+		var slides=$(context).find(".gSSlide");
 		var values=$.gS.getValues(context);
 
 //		check if deactivation or activation and sets hooks.
 		if($(context).find(".active").length <=0)  var postAnimation = function () {
-				if($(this).children().is(".deactivated")) {
+				if($(this).is(".deactivated")) {
 					$.gS.settings.hooks.postDeactivate($(this));
-					$(this).children().removeClass("deactivated");
+					$(this).removeClass("deactivated");
 				}
 			}
 		else var postAnimation = function () {
-				if($(this).children().is(".active")) $.gS.settings.hooks.postActivate($(this));
+				if($(this).is(".active")) $.gS.settings.hooks.postActivate($(this));
 			}
 
 //		each slide gets animated			
