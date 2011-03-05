@@ -82,6 +82,7 @@ $.extend($.gS, {
 		var slides=$(context).find(".gSSlideWrapper");
 		var slideCount=slides.length;
 		var activeIndex = slides.has(".gSSlide.active").index();
+		console.log(activeIndex);
 		var sum={minus:0,plus:0};
 		var values=[];
 		var mainSize = [];
@@ -90,7 +91,14 @@ $.extend($.gS, {
 
 //		get collapsed sizes for every slide.
 		for(var index=0; index < slides.length; index++) {
-			values[index] = { "width" : slides.eq(index).children().css("min-width").replace("px",""),"height" : mainSize["height"]};					
+			var slideContent=slides.eq(index).children();
+			var marginWidth=slideContent.outerWidth(true)-slideContent.innerWidth();
+			var marginHeight=slideContent.outerHeight(true)-slideContent.innerHeight();
+			console.log(marginHeight);
+			var minWidth=parseFloat(slideContent.css("min-width").replace("px","")) + parseFloat(marginWidth);
+			var minHeight=mainSize["height"]
+			
+			values[index] = { "width" : minWidth,"height" : minHeight};					
 			index<activeIndex ? sum.minus+=parseFloat(values[index]["width"]) : sum.plus+=parseFloat(values[index]["width"]);
 		}
 		

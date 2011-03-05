@@ -11,8 +11,8 @@
 			<section>1</section>
 			<section>2</section>
 			<section class="active">3</section>
-			<section class="minWidth">4</section>
-			<section>5</section>
+			<section class="fourth">4</section>
+			<section class="last">5</section>
 		</article>
 	</body>
 </html>

@@ -1,6 +1,6 @@
 .gSSlideWrapper{
 	position:relative;
-	overflow:hidden;
+	overflow:hidden;	
 }
 .gSHorizontal {
 	float:left;
@@ -44,9 +44,16 @@ section{
 	background-color:#ee00ee;
 	font-size:3em; 
 	text-align:center;
-	margin:0 10px;
 	min-width:40px;
 	height:100%;
+	margin-right:10px;
+}
+section.fourth {
+	margin:0;
+}
+section.last {
+	margin:0;
+	margin-left:10px;
 }
 
 .active {

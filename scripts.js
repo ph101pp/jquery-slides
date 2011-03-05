@@ -4,7 +4,7 @@
 		$(".greenishSlides").greenishSlides();
 		
 		$(window).resize(function () {
-			$.gS.setSlides($(".greenishSlides .gSWrapperTwo"));
+			$.gS.setSlides($(".greenishSlides"));
 		});
 		
 			
