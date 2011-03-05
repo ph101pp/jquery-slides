@@ -1,41 +1,12 @@
-.gSSlide{
-	position:absolute;
-/*	position:relative;*/
-}
-.gSHorizontal {
-/*	float:left;*/
-}
-.gSVertical{
-}
-.gSWrapperTwo {
-	position:relative;
-/*	height:200%;
-	width:200%;*/
-}
-.gSWrapperOne {
-	position:relative;
-	height:100%;
-	width:100%;
-	overflow:hidden;
-}
-
-
-
-/*///////////////////////////////////*/
-
-
 
 body {
-	position:absolute;
 	margin:0;
 	padding:0;
-	height:100%;
-	width:100%;
 }
 
 .greenishSlides{
 	position:absolute;
-	height:50%;
+	height:500px;
 	width:50%;
 	margin:0;
 }
@@ -45,6 +16,11 @@ section{
 	text-align:center;
 	height:100%;
 	min-width:40px;
+}
+section div{
+	position:absolute;
+	height:100%;
+	width:100%;
 }
 
 .active {
