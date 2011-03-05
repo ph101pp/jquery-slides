@@ -1,14 +1,11 @@
-.gSSlide{
+.gSSlideWrapper{
 	position:relative;
 	overflow:hidden;
 }
 .gSHorizontal {
 	float:left;
-	height:100%;
-
 }
 .gSVertical{
-	width:100%;	
 }
 .gSWrapperTwo {
 	position:relative;
@@ -35,6 +32,7 @@ body {
 	height:100%;
 	width:100%;
 }
+
 .greenishSlides{
 	position:relative;
 	height:50%;
@@ -42,12 +40,13 @@ body {
 	padding:10;
 	margin:0;
 }
-.gSSlide{
+section{
 	background-color:#ee00ee;
 	font-size:3em; 
 	text-align:center;
-	
+	margin:0 10px;
 	min-width:40px;
+	height:100%;
 }
 
 .active {

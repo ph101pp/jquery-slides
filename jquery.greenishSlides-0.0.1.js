@@ -42,7 +42,8 @@ $.extend($.gS, {
 		$.gS.settings = $.extend(this.defaults, typeof(options) == "object" ? options :{});
 
 //		Sets wrappers and additional classes
-		var slides=$(context).wrapInner("<div class=\"gSWrapperTwo\"/>").wrapInner("<div class=\"gSWrapperOne\"/>").find(".gSWrapperTwo").children().addClass("gSSlide");
+		$(context).children().wrapAll("<div class=\"gSWrapperOne\"/>").wrapAll("<div class=\"gSWrapperTwo\"/>").wrap("<div class=\"gSSlideWrapper\"/>").addClass("gSSlide");
+		var slides=$(context).find(".gSSlideWrapper");
 		
 		$.gS.settings.orientation == "horizontal" ? slides.addClass("gSHorizontal") : slides.addClass("gSVertical");
 		
@@ -56,68 +57,68 @@ $.extend($.gS, {
 		});
 		
 //		First Initialisation		
-		$.gS.setSlides(context.find(".gSWrapperTwo"));
+		$.gS.setSlides(context);
 	},
 //////////////////////////////////////////////////////////////////////////////////////////		
 	activate : function (slide) {
 		$(slide).parent().find(".active").removeClass("active");
-		$(slide).addClass("active");
+		$(slide).children().addClass("active");
 
 		if($(slide).parent().find(".deactivated").length > 0) {
 			$(slide).parent().find(".deactivated").removeClass("deactivated");
 			$.gS.settings.hooks.postDeactivate($(slide));
 		}
 		$.gS.settings.hooks.preActivate($(slide));
-		$.gS.setSlides($(slide).parent());
+		$.gS.setSlides($(slide).parent().parent());
  	},
 //////////////////////////////////////////////////////////////////////////////////////////		
  	deactivate : function (slide) {
 		$(slide).parent().find(".active").removeClass("active").addClass("deactivated");
 		$.gS.settings.hooks.preDeactivate($(slide));
-		$.gS.setSlides($(slide).parent());
+		$.gS.setSlides($(slide).parent().parent());
  	}, 	
 //////////////////////////////////////////////////////////////////////////////////////////		
 	getValues : function (context) {
-		var slides=$(context).find(".gSSlide");
+		var slides=$(context).find(".gSSlideWrapper");
 		var slideCount=slides.length;
-		var activeIndex = slides.filter(".gSSlide.active").index();
+		var activeIndex = slides.has(".gSSlide.active").index();
 		var sum={minus:0,plus:0};
 		var values=[];
 		var mainSize = [];
-		mainSize["width"]=$(context).parent().width();
-		mainSize["height"]=$(context).parent().height();
+		mainSize["width"]=$(context).width();
+		mainSize["height"]=$(context).height();
 
-//		get new sizes for every slide but the active one.
+//		get collapsed sizes for every slide.
 		for(var index=0; index < slides.length; index++) {
-			if(index==activeIndex) continue;
-			values[index] = { "width" : slides.eq(index).css("min-width").replace("px",""),"height" : mainSize["height"]};					
+			values[index] = { "width" : slides.eq(index).children().css("min-width").replace("px",""),"height" : mainSize["height"]};					
 			index<activeIndex ? sum.minus+=parseFloat(values[index]["width"]) : sum.plus+=parseFloat(values[index]["width"]);
 		}
+		
 //		If there is no active one
 		if( activeIndex<0) {
 //			If slides have to be spread (kwicks)
-			if($.gS.settings.fillSpace) for(var index=0; index < slides.length; index++) values[index] = { "width" :mainSize["width"]/slideCount,"height" : mainSize["height"]};
+			if($.gS.settings.fillSpace) for(var index=0; index < slides.length; index++) values[index].width=mainSize["width"]/slideCount;
 		}
 //		If there is an active one
 //		handle the active one (on fillSpace).
-		else values[activeIndex]= {"width": (mainSize["width"]-(sum.minus+sum.plus)), "height" : mainSize["height"]};
+		else values[activeIndex].width= mainSize["width"]-(sum.minus+sum.plus-values[activeIndex].width);
 
 		return values;
 	},
 //////////////////////////////////////////////////////////////////////////////////////////		
 	setSlides : function (context) {
-		var slides=$(context).find(".gSSlide");
+		var slides=$(context).find(".gSSlideWrapper");
 		var values=$.gS.getValues(context);
 
 //		check if deactivation or activation and sets hooks.
 		if($(context).find(".active").length <=0)  var postAnimation = function () {
-				if($(this).is(".deactivated")) {
+				if($(this).children().is(".deactivated")) {
 					$.gS.settings.hooks.postDeactivate($(this));
-					$(this).removeClass("deactivated");
+					$(this).children().removeClass("deactivated");
 				}
 			}
 		else var postAnimation = function () {
-				if($(this).is(".active")) $.gS.settings.hooks.postActivate($(this));
+				if($(this).children().is(".active")) $.gS.settings.hooks.postActivate($(this));
 			}
 
 //		each slide gets animated			
