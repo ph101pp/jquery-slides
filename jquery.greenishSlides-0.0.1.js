@@ -19,9 +19,9 @@ $.gS = $().greenishSlides;
 $.extend($.gS, {
 //////////////////////////////////////////////////////////////////////////////////////////		
 	defaults : {
-		stayOpen: false,
+		stayOpen: true,
 		fillSpace: true,
-		positioningAbsolute: false,
+		positioningAbsolute: true,
 		animationSpeed: "600",
 		easing: "swing",
 		orientation:"horizontal",
@@ -46,8 +46,11 @@ $.extend($.gS, {
 		$.gS.settings = $.extend(this.defaults, typeof(options) == "object" ? options :{});
 
 //		Sets wrappers and additional classes
-		var slides=$(context).wrapInner("<div class=\"gSWrapperTwo\"/>").wrapInner("<div class=\"gSWrapperOne\"/>").find(".gSWrapperTwo").children().addClass("gSSlide");
-		
+		$(context).wrapInner("<div class=\"gSWrapperTwo\"/>").wrapInner("<div class=\"gSWrapperOne\"/>");
+		var slides = $(context).find(".gSWrapperTwo").children().addClass("gSSlide");
+/*		
+		var slides = $(context).children().addClass("gSSlide");
+*/		
 		$.gS.settings.orientation == "horizontal" ? slides.addClass("gSHorizontal") : slides.addClass("gSVertical");
 		
 		$.gS.initSlides(slides);
@@ -86,11 +89,11 @@ $.extend($.gS, {
  	}, 	
 //////////////////////////////////////////////////////////////////////////////////////////		
 	getValues : function (context) {
-		var maxWidth=false;
+		var maxSize=false;
 		var slides=$(context).find(".gSSlide");
 		var slideCount=slides.length;
 		var activeIndex = slides.filter(".gSSlide.active").index();
-		var sum={minus:0,plus:0};
+		var sum={minus:0,plus:0,all:0};
 		var values=[];
 		var mainSize = [];
 		mainSize["width"]=$(context).width();
@@ -99,17 +102,17 @@ $.extend($.gS, {
 //		get minWidth for every slide.
 		for(var index=0; index < slides.length; index++) {
 			values[index] = { "width" : parseFloat(slides.eq(index).css("min-width").replace("px","")),"height" : mainSize["height"]};					
-			index<activeIndex ? sum.minus+=values[index]["width"] : sum.plus+=values[index]["width"];
+			sum.all+=values[index]["width"];
 		}
 
 //		If there is an max-width defined for the active element - set it to the new width.
-		if(parseFloat(slides.eq(activeIndex).css("max-width").replace("px","")) > 0) maxWidth=true;
-		if(maxWidth && activeIndex >= 0) values[activeIndex]["width"]=parseFloat(slides.eq(activeIndex).css("max-width").replace("px",""));
+		if(parseFloat(slides.eq(activeIndex).css("max-width").replace("px","")) > 0) maxSize=true;
+		if(maxSize && activeIndex >= 0) values[activeIndex]["width"]=parseFloat(slides.eq(activeIndex).css("max-width").replace("px",""));
 
 //		If fillSpace is Set (kwicks)
 		if($.gS.settings.fillSpace) {
 //			if no max-width is set for the active element, it's filling all the space it can get. (everything else stays on min-width)
-			if(!maxWidth && activeIndex >= 0) values[activeIndex]["width"] = mainSize["width"]-(sum.minus+sum.plus)+values[activeIndex]["width"];
+			if(!maxSize && activeIndex >= 0) values[activeIndex]["width"] = mainSize["width"]-sum.all+values[activeIndex]["width"];
 //			figure out which size elements have that are not hitting any max/min limit.
 			else {
 				var fullSize=mainSize["width"];
@@ -128,7 +131,35 @@ $.extend($.gS, {
 				for(var index=0; index < slides.length; index++) if(!skip[index]) values[index]["width"]=newSize;
 			}
 		}
-
+		
+		if($.gS.settings.positioningAbsolute) {
+			for(var index=0; index <= activeIndex; index++) {
+				if(values[(index-1)]) {
+					values[index]["left"]=sum.minus+=values[(index-1)]["width"];
+					slides.eq(index).css("right","");
+				}
+				else {
+					values[index]["left"]=0;
+					slides.eq(index).css("right","");
+				}
+			}
+			for(var index=slides.length-1; index > activeIndex; index--) {
+				if(values[(index+1)]) {
+					values[index]["right"]=sum.plus+=values[(index+1)]["width"];
+					slides.eq(index).css("left","");
+				}
+				else {
+					values[index]["right"]=0;
+					slides.eq(index).css("left","");
+				}
+			
+			}
+			
+//			$.extend(values[activeIndex], {"z-index":-1, "margin-left":sum.minus, "margin-right":sum.plus, "left":0});
+			
+		
+		
+		}
 		return values;
 	},
 //////////////////////////////////////////////////////////////////////////////////////////		

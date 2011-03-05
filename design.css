@@ -1,15 +1,16 @@
 .gSSlide{
-	position:relative;
+	position:absolute;
+/*	position:relative;*/
 }
 .gSHorizontal {
-	float:left;
+/*	float:left;*/
 }
 .gSVertical{
 }
 .gSWrapperTwo {
 	position:relative;
-	height:200%;
-	width:200%;
+/*	height:200%;
+	width:200%;*/
 }
 .gSWrapperOne {
 	position:relative;
