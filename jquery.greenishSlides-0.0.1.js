@@ -21,8 +21,8 @@ $.extend($.gS, {
 	defaults : {
 		stayOpen: true,
 		fillSpace: true,
-		positioningAbsolute: false,
-		animationSpeed: "600",
+		positioningAbsolute: true,
+		animationSpeed: "slow",
 		easing: "swing",
 		orientation:"horizontal",
 		hooks : {
@@ -142,12 +142,12 @@ $.extend($.gS, {
 				if(values[(i-1)]) {
 					values[i]["left"]=sum.minus;
 					
-					if(parseFloat(slide.css("right").replace("px","")) > 0) slide.css("left", mainSize["width"]-parseFloat(slide.css("right").replace("px",""))-slide.width());
-					else slide.css("left", sum.minus);
+					if(parseFloat(slide.css("right").replace("px","")) >= 0) slide.css("left", mainSize["width"]-parseFloat(slide.css("right").replace("px",""))-slide.width());
+					else if(parseFloat(slide.css("left").replace("px","")) <= 0) slide.css("left", sum.minus);
 				}
 				else values[i]["left"]=0;
 				sum.minus+=values[i]["width"];
-				slide.css({"right":"","z-index":"1","margin":0});
+				slide.css({"right":"","z-index":"1","margin-left":0, "margin-right":0});
 			}
 			for(var i=slides.length-1; i > activeIndex; i--) {
 				console.log("after");
@@ -155,12 +155,12 @@ $.extend($.gS, {
 				if(values[(i+1)]) {
 					values[i]["right"]=sum.plus;
 
-					if(parseFloat(slide.css("left").replace("px","")) > 0) slide.css("right", mainSize["width"]-parseFloat(slide.css("left").replace("px",""))-slide.width());
-					else slide.css("right", sum.plus);
+					if(parseFloat(slide.css("left").replace("px","")) >= 0) slide.css("right", mainSize["width"]-parseFloat(slide.css("left").replace("px",""))-slide.width());
+					else if(parseFloat(slide.css("right").replace("px","")) <= 0)  slide.css("right", sum.plus);
 				}
 				else values[i]["right"]=0;
 				sum.plus+=values[i]["width"];
-				slide.css({"left":"","z-index":"1","margin":0});
+				slide.css({"left":"","z-index":"1","margin-left":0, "margin-right":0});
 			}
 			
 			if(parseFloat(slides.eq(activeIndex).css("right").replace("px","")) >= 0) $.extend(values[activeIndex], {"z-index":-1, "margin-left":sum.minus, "margin-right":sum.plus, "right":"0px", "left":"auto"});
