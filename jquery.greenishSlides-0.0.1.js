@@ -19,10 +19,10 @@ $.gS = $().greenishSlides;
 $.extend($.gS, {
 //////////////////////////////////////////////////////////////////////////////////////////		
 	defaults : {
-		stayOpen: true,
+		stayOpen: false,
 		fillSpace: true,
-		positioningAbsolute: true,
-		animationSpeed: "slow",
+		positioningAbsolute: false,
+		animationSpeed: "600",
 		easing: "swing",
 		orientation:"horizontal",
 		hooks : {
@@ -97,18 +97,17 @@ $.extend($.gS, {
 //////////////////////////////////////////////////////////////////////////////////////////		
 	getValues : function (context) {
 		var slides=$(context).find(".gSSlide");
-		var slideCount=slides.length;
 		var activeIndex = slides.filter(".gSSlide.active").index();
-		var sum={minus:0,plus:0,all:0};
-		var values = mainSize = [];
-		mainSize["width"]=$(context).width();
-		mainSize["height"]=$(context).height();
+		var t={minus:0, plus:0, all:0, "contextWidth":$(context).width(), "contextHeight":$(context).height()};
+		var values = [];
 
 //		get minWidth for every slide.
-		for(var i=0; i < slides.length; i++) {
-			values[i] = { "width" : parseFloat(slides.eq(i).css("min-width").replace("px","")),"height" : "50%"};					
-			sum.all+=values[i]["width"];
-		}
+		for(var i=0; i < slides.length; i++) if(i != activeIndex) {
+				var slide=slides.eq(i);
+				values[i] = { "width" : parseFloat(slide.css("min-width").replace("px","")),"height" : "50%"};					
+				t.all+=values[i]["width"]+slide.outerWidth(true)-slide.innerWidth();
+			}
+			else values[activeIndex]={"height" : "50%"};
 
 //		If there is an max-width defined for the active element - set it to the new width.
 		if(activeIndex >= 0) var maxSize = parseFloat(slides.eq(activeIndex).css("max-width").replace("px",""));
@@ -117,11 +116,14 @@ $.extend($.gS, {
 //		If fillSpace is Set (kwicks)
 		if($.gS.settings.fillSpace) {
 //			if no max-width is set for the active element, it's filling all the space it can get. (everything else stays on min-width)
-			if(activeIndex >= 0 && !(maxSize>0)) values[activeIndex]["width"] = mainSize["width"]-sum.all+values[activeIndex]["width"];
-//			figure out which size elements have, that are not hitting any max/min limit.
+			if(activeIndex >= 0 && !(maxSize>0)) {
+				slide=slides.eq(activeIndex);
+				values[activeIndex]["width"] = t["contextWidth"]-t.all-(slide.outerWidth(true)-slide.innerWidth());
+			}
 			else {
-				var fullSize=mainSize["width"];
-				var count=slideCount
+//				Calculates which size elements have, that are not hitting any max/min limit.
+				var fullSize=t["contextWidth"];
+				var count=slides.length
 				var newSize=fullSize/count;
 				var skip=[];
 				
@@ -133,43 +135,50 @@ $.extend($.gS, {
 						newSize=fullSize/count;
 						i=-1;
 					}
-				for(var i=0; i < slides.length; i++) if(!skip[i]) values[i]["width"]=newSize;
+//				Sets calculated value and takes margins into the equation.
+				for(var i=0; i < slides.length; i++) {
+					if(!skip[i]) values[i]["width"]=newSize;
+					var slide=slides.eq(i);
+					values[i]["width"]-= slide.outerWidth(true)-slide.innerWidth();
+				}
 			}
 		}
 		if($.gS.settings.positioningAbsolute) {
 			for(var i=0; i < activeIndex; i++) {
 				var slide=slides.eq(i);
 				if(values[(i-1)]) {
-					values[i]["left"]=sum.minus;
+					values[i]["left"]=t.minus;
 					
-					if(parseFloat(slide.css("right").replace("px","")) >= 0) slide.css("left", mainSize["width"]-parseFloat(slide.css("right").replace("px",""))-slide.width());
-					else if(parseFloat(slide.css("left").replace("px","")) <= 0) slide.css("left", sum.minus);
+					if(parseFloat(slide.css("right").replace("px","")) >= 0) slide.css("left", t["contextWidth"]-parseFloat(slide.css("right").replace("px",""))-slide.width());
+					else if(parseFloat(slide.css("left").replace("px","")) <= 0) slide.css("left", t.minus);
 				}
 				else values[i]["left"]=0;
-				sum.minus+=values[i]["width"];
+				t.minus+=values[i]["width"];
 				slide.css({"right":"","z-index":"1","margin-left":0, "margin-right":0});
 			}
 			for(var i=slides.length-1; i > activeIndex; i--) {
 				console.log("after");
 				var slide=slides.eq(i);
 				if(values[(i+1)]) {
-					values[i]["right"]=sum.plus;
+					values[i]["right"]=t.plus;
 
-					if(parseFloat(slide.css("left").replace("px","")) >= 0) slide.css("right", mainSize["width"]-parseFloat(slide.css("left").replace("px",""))-slide.width());
-					else if(parseFloat(slide.css("right").replace("px","")) <= 0)  slide.css("right", sum.plus);
+					if(parseFloat(slide.css("left").replace("px","")) >= 0) slide.css("right", t["contextWidth"]-parseFloat(slide.css("left").replace("px",""))-slide.width());
+					else if(parseFloat(slide.css("right").replace("px","")) <= 0)  slide.css("right", t.plus);
 				}
 				else values[i]["right"]=0;
-				sum.plus+=values[i]["width"];
+				t.plus+=values[i]["width"];
 				slide.css({"left":"","z-index":"1","margin-left":0, "margin-right":0});
 			}
 			
-			if(parseFloat(slides.eq(activeIndex).css("right").replace("px","")) >= 0) $.extend(values[activeIndex], {"z-index":-1, "margin-left":sum.minus, "margin-right":sum.plus, "right":"0px", "left":"auto"});
-			else $.extend(values[activeIndex], {"z-index":-1,"margin-left":sum.minus, "margin-right":sum.plus, "left":"0px", "right":"auto"})
+			if(parseFloat(slides.eq(activeIndex).css("right").replace("px","")) >= 0) $.extend(values[activeIndex], {"z-index":-1, "margin-left":t.minus, "margin-right":t.plus, "right":"0px", "left":"auto"});
+			else $.extend(values[activeIndex], {"z-index":-1,"margin-left":t.minus, "margin-right":t.plus, "left":"0px", "right":"auto"})
 		}
 		else {
+
+			
 //			Sets Sizes relative for better resizing.. if there is an active slide only that one is set relative.		
-			if(activeIndex>=0) values[activeIndex]["width"]=(values[activeIndex]["width"]*50/mainSize["width"])+"%";
-			else for(var i=0; i < slides.length; i++) values[i]["width"]=(values[i]["width"]*50/mainSize["width"])+"%";
+			if(activeIndex>=0) values[activeIndex]["width"]=(values[activeIndex]["width"]*50/t["contextWidth"])+"%";
+			else for(var i=0; i < slides.length; i++) values[i]["width"]=(values[i]["width"]*50/t["contextWidth"])+"%";
 		}
 		
 		console.log(values);
@@ -199,10 +208,21 @@ $.extend($.gS, {
 	css :{
 		relative : {	
 			gSSlide : {
-				position:"relative"
+				position:"relative",
+				padding:0
 			},
 			gSHorizontal : {
-				"float":"left"		
+				"float":"left",
+				marginTop:0,
+				marginBottom:0,
+				borderTop:0,
+				borderBottom:0
+			},
+			gSVertical : {
+				marginLeft:0,
+				marginRight:0,
+				borderLeft:0,
+				borderRight:0
 			},
 			gSWrapperOne : {
 				position:"relative",
