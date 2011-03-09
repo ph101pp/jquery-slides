@@ -132,14 +132,14 @@ $.extend($.gS, {
 						skip[i]=true;
 						count--;
 						fullSize-=values[i]["width"];
-						newSize=fullSize/count;
+						newSize=Math.ceil(fullSize/count);
 						i=-1;
 					}
 //				Sets calculated value and takes margins into the equation.
 				for(var i=0; i < slides.length; i++) {
 					if(!skip[i]) values[i]["width"]=newSize;
 					var slide=slides.eq(i);
-					values[i]["width"]-= slide.outerWidth(true)-slide.innerWidth();
+					values[i]["width"]-=slide.outerWidth(true)-slide.innerWidth();
 				}
 			}
 		}
@@ -177,8 +177,8 @@ $.extend($.gS, {
 
 			
 //			Sets Sizes relative for better resizing.. if there is an active slide only that one is set relative.		
-			if(activeIndex>=0) values[activeIndex]["width"]=(values[activeIndex]["width"]*50/t["contextWidth"])+"%";
-			else for(var i=0; i < slides.length; i++) values[i]["width"]=(values[i]["width"]*50/t["contextWidth"])+"%";
+			if(activeIndex>=0) values[activeIndex]["width"]=Math.round(values[activeIndex]["width"]*50/t["contextWidth"])+"%";
+			else for(var i=0; i < slides.length; i++) values[i]["width"]=Math.round(values[i]["width"]*50/t["contextWidth"])+"%"; //51% to reduce jittering and ensure fill up.
 		}
 		
 		console.log(values);
