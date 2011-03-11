@@ -14,10 +14,10 @@
 				$(document).ready(function() { 
  					$(".greenishSlides").greenishSlides();
 					
-					$(window).resize(function () {
+/*					$(window).resize(function () {
 						$.gS.setSlides($(".greenishSlides"));
 					});
-				});
+*/				});
 			})(jQuery);
 		</script>		
 	</head>
