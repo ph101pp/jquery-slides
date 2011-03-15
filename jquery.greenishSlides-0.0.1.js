@@ -137,49 +137,65 @@ $.extend($.gS, {
 				}
 			}
 		}
-		if($.gS.settings.positioningAbsolute) {
-			for(var i=0; i < slides.length; i++) {
-					if(i==0 || (i<=activeIndex && !(i == activeIndex && isNaN(parseFloat(t.slides[i].css("left").replace("px","")))))){
-						if(true && i==activeIndex) {
-							var width=t.minus+t["contextWidth"]-t.minus-values[i]["width"]+t.slides[i].width();
-							$.gS.positioning(context,  t.slides[i], "left", true);
-							t.slides[i].children().css({"margin-left":t.minus, "margin-right":t["contextWidth"]-t.minus-values[i]["width"] })
-							t.slides[i].css({"width":width});
-							t.minus+=values[i]["width"];
-							values[i]["width"]="100%";	
-						}
-						else{					
-							values[i]["left"]=t.minus;
-							$.gS.positioning(context,  t.slides[i], "left");
-							t.minus+=values[i]["width"];
-						}
-					}
-					else {
-						if(true && i==activeIndex) {
-							var width=t.minus+t["contextWidth"]-t.minus-values[i]["width"]+t.slides[i].width();
-							$.gS.positioning(context,  t.slides[i], "left", true);
-							t.slides[i].children().css({"margin-left":t.minus, "margin-right":t["contextWidth"]-t.minus-values[i]["width"] })
-							t.slides[i].css({"width":width});
-							t.minus+=values[i]["width"];
-							values[i]["width"]="100%";	
-						}
-						else{					
-							t.minus+=values[i]["width"];
-							values[i]["right"]=t["contextWidth"]-t.minus;
-							$.gS.positioning(context, t.slides[i], "right");
-						}
-					}
+		for(var i=0; i < slides.length; i++) {
+			if(false && i==ai) {
+				
+				
 			}
+			else if(t.minus<t["cW"]-t.minus-v[i].css["width"]){
+				v[i].css["left"]=t.minus;
+				v[i].obj=t.slides[i];
+				$.gS.alignObj(context,  t.slides[i], "left");
+			}
+			else {
+				v[i].css["right"]=t["cW"]-t.minus-v[i].css["width"];
+				v[i].obj=t.slides[i];
+				$.gS.alignObj(context, t.slides[i], "right");
+			}
+			t.minus+=v[i].css["width"];
 		}
-		else {	
-//			Sets Sizes relative for better resizing.. if there is an active slide only that one is set relative.		
-			if(activeIndex>=0) values[activeIndex]["width"]=(values[activeIndex]["width"]*100/t["contextWidth"])+"%";
-			else for(var i=0; i < slides.length; i++) values[i]["width"]=(values[i]["width"]*100/t["contextWidth"])+"%"; //51% to reduce jittering and ensure fill up.
-		}
-		console.log(values);
-		return values;
+			
+		console.log(v);
+		return v;
 	},
-//////////////////////////////////////////////////////////////////////////////////////////		
+////////////////////////////////////////////////////////////////////////////////
+	alignObj : function (context, obj, bind, active) {
+		var t={css:{zIndex:1}, icss:{marginLeft:0,marginRight:0}, "bind":bind , iO:obj.children(), cW:context.innerWidth(), cH:context.innerHeight(), oW:obj.children().outerWidth(), oH:obj.children().outerHeight()};
+		t.bind == "left"? t.from="right": t.from = "left";
+		
+		
+		if(!active && parseFloat(t.iO.css("margin-"+t.bind).replace("px","")) > 0) {
+			t.css[bind]=parseFloat(t.iO.css("margin-"+t.bind).replace("px",""));
+			t.css["width"]=t["oW"];
+		}
+		else {
+			t.p = obj.offset();
+			if(!active) t.bind=="left"? t.css[bind]=t.p.left:t.css[bind]=t["cW"]-t.p.left-t["oW"];
+			else {
+				t.bind=0;
+				t.css.zIndex=0;
+				t.css.width="100%";
+				t.icss["margin-left"]=t.p["left"];
+				t.icss["margin-right"] = t["cW"]-t.p.left-t["oW"];
+			}
+		}		
+		t.css[t.from]="auto";
+		t.iO.css(t.icss);
+		obj.css(t.css);
+	},
+
+	align : function (context, obj, bind) {
+		if(bind == "left") var from="right";
+		else var from = "left";
+		var width= obj.outerWidth(true);
+		var mainWidth=context.innerWidth();
+		var css={};
+		css[bind]=mainWidth-parseFloat(obj.css(from).replace("px",""))-width;
+		css[from]="auto";-
+		obj.css(css);
+	},
+////////////////////////////////////////////////////////////////////////////////
+
 	positioning : function (context, obj, bind, active) {
 		if(bind == "left") var from="right";
 		else var from = "left";
