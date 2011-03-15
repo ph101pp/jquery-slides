@@ -9,7 +9,7 @@ Author {
 
 
 (function($) {
-//////////////////////////////////////////////////////////////////////////////////////////		
+////////////////////////////////////////////////////////////////////////////////
 $.fn.greenishSlides = function (settings){
 	return $(this).each(function (settings) {
 		$().greenishSlides.init($(this), settings);
@@ -17,12 +17,12 @@ $.fn.greenishSlides = function (settings){
 };
 $.gS = $().greenishSlides;
 $.extend($.gS, {
-//////////////////////////////////////////////////////////////////////////////////////////		
+////////////////////////////////////////////////////////////////////////////////
 	defaults : {
 		stayOpen: true,
 		fillSpace: true,
 		positioningAbsolute: true,
-		animationSpeed: 5000,
+		animationSpeed: "slow",
 		easing: "swing",
 		orientation:"horizontal",
 		hooks : {
@@ -40,32 +40,21 @@ $.extend($.gS, {
 			}
 		}
 	},
-//////////////////////////////////////////////////////////////////////////////////////////		
+////////////////////////////////////////////////////////////////////////////////
 	init : function (context, options) {
-		var css;
 //		Extends defaults into settings.
 		$.gS.settings = $.extend(this.defaults, typeof(options) == "object" ? options :{});
 
 //		Sets wrappers and additional classes
-		$(context).wrapInner("<div class=\"gSWrapperTwo\"/>").wrapInner("<div class=\"gSWrapperOne\"/>");
-		var slides = $(context).find(".gSWrapperTwo").children().addClass("gSSlide");
-
-		$.gS.settings.orientation == "horizontal" ? slides.addClass("gSHorizontal") : slides.addClass("gSVertical");
-		$.gS.settings.positioningAbsolute ? css = $.gS.css["absolute"] : css = $.gS.css["relative"];
-
-//		Set CSS
-		if(typeof(css.gSWrapperOne) == "object") $(context).find(".gSWrapperOne").css(css.gSWrapperOne);
-		if(typeof(css.gSWrapperTwo) == "object") $(context).find(".gSWrapperTwo").css(css.gSWrapperTwo);
-		if(typeof(css.gSSlide) == "object") $(context).find(".gSSlide").css(css.gSSlide);
-		if(typeof(css.gSHorizontal) == "object") $(context).find(".gSHorizontal").css(css.gSHorizontal);
-		if(typeof(css.gSVertical) == "object") $(context).find(".gSVertical").css(css.gSVertical);
+		var slides = $(context).children().addClass("gSSlide").css($.gS.css.gSSlide);
+		$.gS.settings.orientation == "horizontal" ? slides.addClass("gSHorizontal").css($.gS.css.gSHorizontal) : slides.addClass("gSVertical").css($.gS.css.gSVertical);
 
 		$.gS.initSlides(slides);
 
 //		First Initialisation		
 		$.gS.setSlides(context);
 	},
-//////////////////////////////////////////////////////////////////////////////////////////		
+////////////////////////////////////////////////////////////////////////////////
 	initSlides : function (slides) {
 //		Define Activate Event
 		slides.bind("mouseover", function (){
@@ -76,8 +65,9 @@ $.extend($.gS, {
 			$.gS.deactivate(this);
 		});
 	},
-//////////////////////////////////////////////////////////////////////////////////////////		
+////////////////////////////////////////////////////////////////////////////////
 	activate : function (slide) {
+		if($(slide).hasClass(".active")) return;
 		$(slide).parent().find(".active").removeClass("active");
 		$(slide).addClass("active");
 
@@ -86,63 +76,64 @@ $.extend($.gS, {
 			$.gS.settings.hooks.postDeactivate($(slide));
 		}
 		$.gS.settings.hooks.preActivate($(slide));
-		$.gS.setSlides($(slide).parent().parent().parent());
+		$.gS.setSlides($(slide).parent());
  	},
-//////////////////////////////////////////////////////////////////////////////////////////		
+////////////////////////////////////////////////////////////////////////////////
  	deactivate : function (slide) {
-		$(slide).parent().find(".active").removeClass("active").addClass("deactivated");
+		if(!$(slide).hasClass(".active")) return;
+		$(slide).removeClass("active").addClass("deactivated");
 		$.gS.settings.hooks.preDeactivate($(slide));
-		$.gS.setSlides($(slide).parent().parent().parent());
+		$.gS.setSlides($(slide).parent());
  	}, 	
-//////////////////////////////////////////////////////////////////////////////////////////		
+////////////////////////////////////////////////////////////////////////////////
 	getValues : function (context) {
-		var slides=$(context).find(".gSSlide");
-		var activeIndex = slides.filter(".gSSlide.active").index();
-		var t={minus:0, plus:0, all:0, contextWidth:$(context).width(), contextHeight:$(context).height(), slides:{}};
-		var values = [];
+		var slides=$(context).children();
+		var ai = slides.filter(".gSSlide.active").index();
+		var t={minus:0, plus:0, c:0, cW:$(context).width(), cH:$(context).height(), slides:{}};
+		var v = [];
 
 //		get minWidth for every slide.
-		for(var i=0; i < slides.length; i++) if(i != activeIndex) {
+		for(var i=0; i < slides.length; i++) if(i != ai) {
 				var slide=t.slides[i]=slides.eq(i);
-				values[i] = { "width" : parseFloat(slide.css("min-width").replace("px",""))};
-				$.gS.settings.positioningAbsolute? t.slides[i].css({"height" : "100%"}) : t.slides[i].css({"height" : "50%"});
-				t.all+=values[i]["width"]+slide.outerWidth(true)-slide.innerWidth();
+				v[i] = {css:{ "width" : parseFloat(slide.css("min-width").replace("px",""))}};
+				t.slides[i].css({"height" : "100%"});
+				t.c+=v[i].css["width"]+slide.outerWidth(true)-slide.innerWidth();
 			}
 			else {
 				t.slides[i]=slides.eq(i);
-				values[i]={};
-				$.gS.settings.positioningAbsolute? t.slides[i].css({"height" : "100%"}) : t.slides[i].css({"height" : "50%"});
+				v[i]={css:{}};
+				t.slides[i].css({"height" : "100%"});
 			}
 
 //		If there is an max-width defined for the active element - set it to the new width.
-		if(activeIndex >= 0) var maxSize = parseFloat(slides.eq(activeIndex).css("max-width").replace("px",""));
-		if(activeIndex >= 0 && maxSize>0) values[activeIndex]["width"]=maxSize;
+		if(ai >= 0) var maxSize = parseFloat(t.slides[ai].css("max-width").replace("px",""));
+		if(ai >= 0 && maxSize>0) v[ai].css["width"]=maxSize;
 
 //		If fillSpace is Set (kwicks)
 		if($.gS.settings.fillSpace) {
 //			if no max-width is set for the active element, it's filling all the space it can get. (everything else stays on min-width)
-			if(true && activeIndex >= 0 && !(maxSize>0)) {
-				values[activeIndex]["width"] = t["contextWidth"]-t.all-(t.slides[activeIndex].outerWidth(true)-t.slides[activeIndex].innerWidth());
+			if(true && ai >= 0 && !(maxSize>0)) {
+				v[ai].css["width"] = t["cW"]-t.c-(t.slides[ai].outerWidth(true)-t.slides[ai].innerWidth());
 			}
 			else {
 //				Calculates which size elements have, that are not hitting any max/min limit.
-				var fullSize=t["contextWidth"];
+				var fullSize=t["cW"];
 				var count=slides.length
 				var newSize=Math.ceil(fullSize/count);
 				var skip=[];
 				
 				for(var i=0; i < slides.length; i++) 
-					if(!skip[i] && (values[i]["width"] > newSize || (true && i == activeIndex))) {
+					if(!skip[i] && (v[i].css["width"] > newSize || (true && i == ai))) {
 						skip[i]=true;
 						count--;
-						fullSize-=values[i]["width"];
+						fullSize-=v[i].css["width"];
 						newSize=Math.ceil(fullSize/count);
 						i=-1;
 					}
 //				Sets calculated value and takes margins into the equation.
 				for(var i=0; i < slides.length; i++) {
-					if(!skip[i]) values[i]["width"]=newSize;
-					values[i]["width"]-=t.slides[i].outerWidth(true)-t.slides[i].innerWidth();
+					if(!skip[i]) v[i].css["width"]=newSize;
+					v[i].css["width"]-=t.slides[i].outerWidth(true)-t.slides[i].innerWidth();
 				}
 			}
 		}
@@ -195,7 +186,7 @@ $.extend($.gS, {
 		var css={};
 		var icss={};
 		var inner = obj.children();
-		var t={"contextWidth":context.innerWidth(), "contextHeight":context.innerHeight(), "objWidth":inner.outerWidth(), "objHeight":inner.outerHeight()};
+		var t={"cW":context.innerWidth(), "cH":context.innerHeight(), "objWidth":inner.outerWidth(), "objHeight":inner.outerHeight()};
 
 		console.log(bind);
 		if(active) {
@@ -203,7 +194,7 @@ $.extend($.gS, {
 			css[bind]=0;
 			css["z-index"]=0;
 			icss["margin-left"]=pos["left"];
-			icss["margin-right"] = t["contextWidth"]-pos["left"]-t["objWidth"];
+			icss["margin-right"] = t["cW"]-pos["left"]-t["objWidth"];
 			css["width"]=icss["margin-left"]+icss["margin-right"]+parseFloat(obj.css("width").replace("px",""));
 		}
 		else {
@@ -214,7 +205,7 @@ $.extend($.gS, {
 				css[bind] = inner.css("margin-"+bind);
 				css["width"]=t["objWidth"];
 			}
-			else  css[bind]=css[bind]=t["contextWidth"]-parseFloat(obj.css(from).replace("px",""))-t["objWidth"];
+			else  css[bind]=css[bind]=t["cW"]-parseFloat(obj.css(from).replace("px",""))-t["objWidth"];
 			css["z-index"]=1;
 			icss["margin-left"]=0;
 			icss["margin-right"]=0;
@@ -223,10 +214,10 @@ $.extend($.gS, {
 		inner.css(icss);
 		obj.css(css);
 	},
-//////////////////////////////////////////////////////////////////////////////////////////		
+////////////////////////////////////////////////////////////////////////////////
 	setSlides : function (context) {
 		var slides=$(context).find(".gSSlide");
-		var values=$.gS.getValues(context);
+		var v=$.gS.getValues(context);
 
 //		check if deactivation or activation and sets hooks.
 		if($(context).find(".active").length <=0)  var postAnimation = function () {
@@ -240,56 +231,16 @@ $.extend($.gS, {
 			}
 
 //		each slide gets animated			
-		for(var i=0; i<slides.length; i++) slides.eq(i).stop().animate(values[i], $.gS.settings.animationSpeed, $.gS.settings.easing, postAnimation); 
+		for(var i=0; i<slides.length; i++) 
+			v[i].obj.stop().animate(v[i].css, $.gS.settings.animationSpeed, $.gS.settings.easing, postAnimation); 
 	},
-//////////////////////////////////////////////////////////////////////////////////////////		
+////////////////////////////////////////////////////////////////////////////////
 	css :{
-		relative : {	
-			gSSlide : {
-				position:"relative",
-				padding:0
-			},
-			gSHorizontal : {
-				"float":"left",
-				marginTop:0,
-				marginBottom:0,
-				borderTop:0,
-				borderBottom:0
-			},
-			gSVertical : {
-				marginLeft:0,
-				marginRight:0,
-				borderLeft:0,
-				borderRight:0
-			},
-			gSWrapperOne : {
-				position:"relative",
-				height:"100%",
-				width:"100%",
-				overflow:"hidden"
-			},
-			gSWrapperTwo : {
-				position:"relative",
-				height:"200%",
-				width:"200%"
-			}
+		gSSlide : {
+			position:"absolute"
 		},
-		absolute: {
-			gSSlide : {
-				position:"absolute"
-			},
-			gSWrapperOne : {
-				position:"relative",
-				height:"100%",
-				width:"100%",
-				overflow:"hidden"
-			},
-			gSWrapperTwo : {
-				position:"relative",
-				height:"100%",
-				width:"100%"
-			}
-		}
+		gSHorizontal:{},
+		gSVertical:{}
 	}
 });
 })(jQuery);
