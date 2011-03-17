@@ -26,7 +26,7 @@
 			<section class="one"><div>1</div></section>
 			<section class="two"><div>2</div></section>
 			<section class="three active"><div>3</div></section>
-			<section class="four"><div>4</div></section>
+			<section class="four minWidth"><div>4</div></section>
 			<section class="five"><div>5</div></section>
 		</article>
 	</body>

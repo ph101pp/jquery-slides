@@ -19,7 +19,7 @@ $.gS = $().greenishSlides;
 $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	defaults : {
-		stayOpen: true,
+		stayOpen: false,
 		fillSpace: true,
 		positioningAbsolute: true,
 		animationSpeed: "slow",
@@ -68,11 +68,11 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	activate : function (slide) {
 		if($(slide).hasClass(".active")) return;
-		$(slide).parent().find(".active").removeClass("active");
+		$(slide).siblings().removeClass("active");
 		$(slide).addClass("active");
 
 		if($(slide).parent().find(".deactivated").length > 0) {
-			$(slide).parent().find(".deactivated").removeClass("deactivated");
+			$(slide).siblings().removeClass("deactivated");
 			$.gS.settings.hooks.postDeactivate($(slide));
 		}
 		$.gS.settings.hooks.preActivate($(slide));
@@ -138,25 +138,26 @@ $.extend($.gS, {
 			}
 		}
 		for(var i=0; i < slides.length; i++) {
+			t.minus+=v[i].css["width"];
 			if(true && i==ai) {
-				if(t.minus<t["cW"]-t.minus-t.slides[i].css("width")) $.gS.alignObj(context,  t.slides[i], "left", true);
+				if(t.minus-t.slides[i].css("width")<t["cW"]-t.minus) $.gS.alignObj(context,  t.slides[i], "left", true);
 				else  $.gS.alignObj(context,  t.slides[i], "right", true);
 				
-				v[i].css["margin-left"]=t.minus;
-				v[i].css["margin-right"]=t["cW"]-t.minus-v[i].css["width"];
+				v[i].css["margin-left"]=t.minus-v[i].css["width"];
+				v[i].css["margin-right"]=t["cW"]-t.minus;
+				v[i].css["width"]="auto";
 				v[i].obj=t.slides[i].children();
 			}
-			else if(t.minus<t["cW"]-t.minus-v[i].css["width"]){
-				v[i].css["left"]=t.minus;
+			else if(t.minus-v[i].css["width"]<t["cW"]-t.minus){
+				v[i].css["left"]=t.minus-v[i].css["width"];
 				v[i].obj=t.slides[i];
 				$.gS.alignObj(context,  t.slides[i], "left");
 			}
 			else {
-				v[i].css["right"]=t["cW"]-t.minus-v[i].css["width"];
+				v[i].css["right"]=t["cW"]-t.minus;
 				v[i].obj=t.slides[i];
 				$.gS.alignObj(context, t.slides[i], "right");
 			}
-			t.minus+=v[i].css["width"];
 		}
 			
 		console.log(v);
@@ -217,7 +218,7 @@ $.extend($.gS, {
 		 if(($.gS.settings.test++)<=0) for(var i=0; i<slides.length; i++) v[i].obj.stop().animate(v[i].css, $.gS.settings.animationSpeed, $.gS.settings.easing, postAnimation); 
 	},
 	
-	stopAni : function () {
+	stop : function () {
 		var slides=$(".gSSlide");
 		for(var i=0; i<slides.length; i++) $(slides[i]).stop().children().stop(); 
 
@@ -225,7 +226,9 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	css :{
 		gSSlide : {
-			position:"absolute"
+			position:"absolute",
+			marginTop:0,
+			marginBottom:"-100%"
 		},
 		gSHorizontal:{},
 		gSVertical:{}
