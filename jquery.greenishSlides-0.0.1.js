@@ -89,7 +89,7 @@ $.extend($.gS, {
 	getValues : function (context) {
 		var slides=$(context).children();
 		var ai = slides.filter(".gSSlide.active").index();
-		var t={minus:0, plus:0, c:0, cW:$(context).width(), cH:$(context).height(), slides:{}};
+		var t={minus:0, c:0, cW:$(context).width(), cH:$(context).height(), slides:{}};
 		var v = [];
 
 //		get minWidth for every slide.
@@ -103,16 +103,16 @@ $.extend($.gS, {
 				t.slides[i]=slides.eq(i);
 				v[i]={css:{}};
 				t.slides[i].css({"height" : "100%"});
+				
+//				If there is an max-width defined for the active element - set it to the new width.
+				t.max = parseFloat(t.slides[ai].css("max-width").replace("px",""));
+				if(t.max > 0) v[ai].css["width"]=t.max;
 			}
-
-//		If there is an max-width defined for the active element - set it to the new width.
-		if(ai >= 0) var maxSize = parseFloat(t.slides[ai].css("max-width").replace("px",""));
-		if(ai >= 0 && maxSize>0) v[ai].css["width"]=maxSize;
 
 //		If fillSpace is Set (kwicks)
 		if($.gS.settings.fillSpace) {
 //			if no max-width is set for the active element, it's filling all the space it can get. (everything else stays on min-width)
-			if(true && ai >= 0 && !(maxSize>0)) {
+			if(true && ai >= 0 && !(t.max>0)) {
 				v[ai].css["width"] = t["cW"]-t.c-(t.slides[ai].outerWidth(true)-t.slides[ai].innerWidth());
 			}
 			else {
@@ -138,9 +138,13 @@ $.extend($.gS, {
 			}
 		}
 		for(var i=0; i < slides.length; i++) {
-			if(false && i==ai) {
+			if(true && i==ai) {
+				if(t.minus<t["cW"]-t.minus-t.slides[i].css("width")) $.gS.alignObj(context,  t.slides[i], "left", true);
+				else  $.gS.alignObj(context,  t.slides[i], "right", true);
 				
-				
+				v[i].css["margin-left"]=t.minus;
+				v[i].css["margin-right"]=t["cW"]-t.minus-v[i].css["width"];
+				v[i].obj=t.slides[i].children();
 			}
 			else if(t.minus<t["cW"]-t.minus-v[i].css["width"]){
 				v[i].css["left"]=t.minus;
@@ -160,80 +164,43 @@ $.extend($.gS, {
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	alignObj : function (context, obj, bind, active) {
-		var t={css:{zIndex:1}, icss:{marginLeft:0,marginRight:0}, "bind":bind , iO:obj.children(), cW:context.innerWidth(), cH:context.innerHeight(), oW:obj.children().outerWidth(), oH:obj.children().outerHeight()};
+		var t={css:{zIndex:1, position:"absolute", top:0}, icss:{"margin-left":0,"margin-right":0, "width":"auto"}, "bind":bind , iO:obj.children(), cW:context.innerWidth(), cH:context.innerHeight(), oW:obj.children().outerWidth(), oH:obj.children().outerHeight()};
 		t.bind == "left"? t.from="right": t.from = "left";
 		
 		
-		if(!active && parseFloat(t.iO.css("margin-"+t.bind).replace("px","")) > 0) {
-			t.css[bind]=parseFloat(t.iO.css("margin-"+t.bind).replace("px",""));
-			t.css["width"]=t["oW"];
-		}
+		if(parseFloat(t.iO.css("margin-"+t.bind).replace("px","")) > 0 || parseFloat(t.iO.css("margin-"+t.from).replace("px","")) > 0) {
+			if(!active) {
+				t.css[t.bind]=parseFloat(t.iO.css("margin-"+t.bind).replace("px",""));
+				t.css["width"]=t["oW"];
+				t.css.position="absolute";
+			}
+			else {
+				t.icss["margin-left"]=t.iO.css("margin-left");
+				t.icss["margin-right"]=t.iO.css("margin-right");
+				t.css[bind]=0;
+				t.css.zIndex=0;
+			}
+		}	
 		else {
 			t.p = obj.offset();
 			if(!active) t.bind=="left"? t.css[bind]=t.p.left:t.css[bind]=t["cW"]-t.p.left-t["oW"];
 			else {
-				t.bind=0;
+				t.css[bind]=0;
 				t.css.zIndex=0;
 				t.css.width="100%";
-				t.icss["margin-left"]=t.p["left"];
+				t.icss["margin-left"]=t.p.left;
 				t.icss["margin-right"] = t["cW"]-t.p.left-t["oW"];
 			}
 		}		
 		t.css[t.from]="auto";
-		t.iO.css(t.icss);
-		obj.css(t.css);
-	},
-
-	align : function (context, obj, bind) {
-		if(bind == "left") var from="right";
-		else var from = "left";
-		var width= obj.outerWidth(true);
-		var mainWidth=context.innerWidth();
-		var css={};
-		css[bind]=mainWidth-parseFloat(obj.css(from).replace("px",""))-width;
-		css[from]="auto";-
-		obj.css(css);
-	},
-////////////////////////////////////////////////////////////////////////////////
-
-	positioning : function (context, obj, bind, active) {
-		if(bind == "left") var from="right";
-		else var from = "left";
-		var css={};
-		var icss={};
-		var inner = obj.children();
-		var t={"cW":context.innerWidth(), "cH":context.innerHeight(), "objWidth":inner.outerWidth(), "objHeight":inner.outerHeight()};
-
-		console.log(bind);
-		if(active) {
-			var pos= obj.offset();
-			css[bind]=0;
-			css["z-index"]=0;
-			icss["margin-left"]=pos["left"];
-			icss["margin-right"] = t["cW"]-pos["left"]-t["objWidth"];
-			css["width"]=icss["margin-left"]+icss["margin-right"]+parseFloat(obj.css("width").replace("px",""));
-		}
-		else {
-				console.log(inner.css("width"));
-
-			if(parseFloat(inner.css("margin-"+bind).replace("px","")) > 0 || parseFloat(inner.css("margin-"+from).replace("px","")) > 0) {
-				console.log("hallo");
-				css[bind] = inner.css("margin-"+bind);
-				css["width"]=t["objWidth"];
-			}
-			else  css[bind]=css[bind]=t["cW"]-parseFloat(obj.css(from).replace("px",""))-t["objWidth"];
-			css["z-index"]=1;
-			icss["margin-left"]=0;
-			icss["margin-right"]=0;
-		}
-		css[from]="auto";
-		inner.css(icss);
-		obj.css(css);
+		t.iO.stop().css(t.icss);
+		obj.stop().css(t.css);
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	setSlides : function (context) {
 		var slides=$(context).find(".gSSlide");
 		var v=$.gS.getValues(context);
+		$.gS.settings.test=0;
 
 //		check if deactivation or activation and sets hooks.
 		if($(context).find(".active").length <=0)  var postAnimation = function () {
@@ -247,9 +214,14 @@ $.extend($.gS, {
 			}
 
 //		each slide gets animated			
-		for(var i=0; i<slides.length; i++) 
-			v[i].obj.stop().animate(v[i].css, $.gS.settings.animationSpeed, $.gS.settings.easing, postAnimation); 
+		 if(($.gS.settings.test++)<=0) for(var i=0; i<slides.length; i++) v[i].obj.stop().animate(v[i].css, $.gS.settings.animationSpeed, $.gS.settings.easing, postAnimation); 
 	},
+	
+	stopAni : function () {
+		var slides=$(".gSSlide");
+		for(var i=0; i<slides.length; i++) $(slides[i]).stop().children().stop(); 
+
+	},	
 ////////////////////////////////////////////////////////////////////////////////
 	css :{
 		gSSlide : {
