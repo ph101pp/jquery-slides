@@ -67,7 +67,7 @@ $.extend($.gS, {
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	activate : function (slide) {
-		if($(slide).hasClass(".active")) return;
+		if($(slide).hasClass("active")) return;
 		$(slide).siblings().removeClass("active");
 		$(slide).addClass("active");
 
@@ -80,7 +80,7 @@ $.extend($.gS, {
  	},
 ////////////////////////////////////////////////////////////////////////////////
  	deactivate : function (slide) {
-		if(!$(slide).hasClass(".active")) return;
+		if(!$(slide).hasClass("active")) return;
 		$(slide).removeClass("active").addClass("deactivated");
 		$.gS.settings.hooks.preDeactivate($(slide));
 		$.gS.setSlides($(slide).parent());
@@ -146,7 +146,7 @@ $.extend($.gS, {
 				v[i].css["margin-left"]=t.minus-v[i].css["width"];
 				v[i].css["margin-right"]=t["cW"]-t.minus;
 				v[i].css["width"]="auto";
-				v[i].obj=t.slides[i].children();
+				v[i].obj=t.slides[i];
 			}
 			else if(t.minus-v[i].css["width"]<t["cW"]-t.minus){
 				v[i].css["left"]=t.minus-v[i].css["width"];
@@ -165,35 +165,41 @@ $.extend($.gS, {
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	alignObj : function (context, obj, bind, active) {
-		var t={css:{zIndex:1, position:"absolute", top:0}, icss:{"margin-left":0,"margin-right":0, "width":"auto"}, "bind":bind , iO:obj.children(), cW:context.innerWidth(), cH:context.innerHeight(), oW:obj.children().outerWidth(), oH:obj.children().outerHeight()};
+		var t={css:{zIndex:1, position:"absolute", top:0,"margin-left":0,"margin-right":0}, icss:{"margin-left":0,"margin-right":0, "width":"auto"}, "bind":bind , iO:obj.children(), cW:context.innerWidth(), cH:context.innerHeight(), oW:obj.outerWidth(), oH:obj.outerHeight()};
 		t.bind == "left"? t.from="right": t.from = "left";
 		
 		
-		if(parseFloat(t.iO.css("margin-"+t.bind).replace("px","")) > 0 || parseFloat(t.iO.css("margin-"+t.from).replace("px","")) > 0) {
+		if(parseFloat(obj.css("margin-"+t.bind).replace("px","")) > 0 || parseFloat(obj.css("margin-"+t.from).replace("px","")) > 0) {
 			if(!active) {
-				t.css[t.bind]=parseFloat(t.iO.css("margin-"+t.bind).replace("px",""));
+				t.css[t.bind]=parseFloat(obj.css("margin-"+t.bind).replace("px",""));
 				t.css["width"]=t["oW"];
 			}
 			else {
-				t.icss["margin-left"]=t.iO.css("margin-left");
-				t.icss["margin-right"]=t.iO.css("margin-right");
+				t.css["margin-left"]=obj.css("margin-left");
+				t.css["margin-right"]=obj.css("margin-right");
 				t.css[bind]=0;
 				t.css.zIndex=0;
+				t.css.width="auto";
+				t.css.position="static";
 			}
 		}	
 		else {
 			t.p = obj.offset();
-			if(!active) t.bind=="left"? t.css[bind]=t.p.left:t.css[bind]=t["cW"]-t.p.left-t["oW"];
+			if(!active) {
+				t.bind=="left"? t.css[bind]=t.p.left:t.css[bind]=t["cW"]-t.p.left-t["oW"];
+				t.css["width"]=t["oW"];
+
+			}
 			else {
 				t.css[bind]=0;
 				t.css.zIndex=0;
-				t.css.width="100%";
-				t.icss["margin-left"]=t.p.left;
-				t.icss["margin-right"] = t["cW"]-t.p.left-t["oW"];
+				t.css.width="auto";
+				t.css["margin-left"]=t.p.left;
+				t.css["margin-right"] = t["cW"]-t.p.left-t["oW"];
+				t.css.position="static";
 			}
 		}		
 		t.css[t.from]="auto";
-		t.iO.stop().css(t.icss);
 		obj.stop().css(t.css);
 	},
 ////////////////////////////////////////////////////////////////////////////////
