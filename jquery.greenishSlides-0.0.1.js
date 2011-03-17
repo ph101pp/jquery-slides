@@ -173,7 +173,6 @@ $.extend($.gS, {
 			if(!active) {
 				t.css[t.bind]=parseFloat(t.iO.css("margin-"+t.bind).replace("px",""));
 				t.css["width"]=t["oW"];
-				t.css.position="absolute";
 			}
 			else {
 				t.icss["margin-left"]=t.iO.css("margin-left");
