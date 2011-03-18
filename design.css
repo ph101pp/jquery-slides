@@ -6,8 +6,8 @@ body {
 
 .greenishSlides{
 	position:absolute;
-	height:50%;
-	width:50%;
+	height:100%;
+	width:100%;
 	margin:0;
 	background-color:#00eeee;
 }

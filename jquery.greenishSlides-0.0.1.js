@@ -91,13 +91,12 @@ $.extend($.gS, {
 		var ai = slides.filter(".gSSlide.active").index();
 		var t={minus:0, c:0, cW:$(context).width(), cH:$(context).height(), slides:{}};
 		var v = [];
-
 //		get minWidth for every slide.
 		for(var i=0; i < slides.length; i++) if(i != ai) {
 				var slide=t.slides[i]=slides.eq(i);
 				v[i] = {css:{ "width" : parseFloat(slide.css("min-width").replace("px",""))}};
 				t.slides[i].css({"height" : "100%"});
-				t.c+=v[i].css["width"]+slide.outerWidth(true)-slide.innerWidth();
+				t.c+=v[i].css["width"];
 			}
 			else {
 				t.slides[i]=slides.eq(i);
@@ -113,7 +112,7 @@ $.extend($.gS, {
 		if($.gS.settings.fillSpace) {
 //			if no max-width is set for the active element, it's filling all the space it can get. (everything else stays on min-width)
 			if(true && ai >= 0 && !(t.max>0)) {
-				v[ai].css["width"] = t["cW"]-t.c-(t.slides[ai].outerWidth(true)-t.slides[ai].innerWidth());
+				v[ai].css["width"] = t["cW"]-t.c;
 			}
 			else {
 //				Calculates which size elements have, that are not hitting any max/min limit.
@@ -143,6 +142,7 @@ $.extend($.gS, {
 				if(t.minus-t.slides[i].css("width")<t["cW"]-t.minus) $.gS.alignObj(context,  t.slides[i], "left", true);
 				else  $.gS.alignObj(context,  t.slides[i], "right", true);
 				
+				
 				v[i].css["margin-left"]=t.minus-v[i].css["width"];
 				v[i].css["margin-right"]=t["cW"]-t.minus;
 				v[i].css["width"]="auto";
@@ -165,8 +165,13 @@ $.extend($.gS, {
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	alignObj : function (context, obj, bind, active) {
-		var t={css:{zIndex:1, position:"absolute", top:0,"margin-left":0,"margin-right":0}, icss:{"margin-left":0,"margin-right":0, "width":"auto"}, "bind":bind , iO:obj.children(), cW:context.innerWidth(), cH:context.innerHeight(), oW:obj.outerWidth(), oH:obj.outerHeight()};
+		var t={css:{	zIndex:1, 
+						position:"absolute", 
+						top:0,
+						"margin-left":0,
+						"margin-right":0}, "bind":bind , iO:obj.children(), cW:context.innerWidth(), cH:context.innerHeight(), oW:obj.outerWidth(), oH:obj.outerHeight()};
 		t.bind == "left"? t.from="right": t.from = "left";
+		
 		
 		
 		if(parseFloat(obj.css("margin-"+t.bind).replace("px","")) > 0 || parseFloat(obj.css("margin-"+t.from).replace("px","")) > 0) {
@@ -177,7 +182,7 @@ $.extend($.gS, {
 			else {
 				t.css["margin-left"]=obj.css("margin-left");
 				t.css["margin-right"]=obj.css("margin-right");
-				t.css[bind]=0;
+				t.css[bind]="0px";
 				t.css.zIndex=0;
 				t.css.width="auto";
 				t.css.position="static";
@@ -186,12 +191,11 @@ $.extend($.gS, {
 		else {
 			t.p = obj.offset();
 			if(!active) {
-				t.bind=="left"? t.css[bind]=t.p.left:t.css[bind]=t["cW"]-t.p.left-t["oW"];
+				t.bind=="left" ? t.css[bind]=t.p.left:t.css[bind]=t["cW"]-t.p.left-t["oW"];
 				t.css["width"]=t["oW"];
-
 			}
 			else {
-				t.css[bind]=0;
+				t.css[bind]="0px";
 				t.css.zIndex=0;
 				t.css.width="auto";
 				t.css["margin-left"]=t.p.left;
@@ -200,6 +204,8 @@ $.extend($.gS, {
 			}
 		}		
 		t.css[t.from]="auto";
+		console.log(obj.index());
+		console.log(t.css);
 		obj.stop().css(t.css);
 	},
 ////////////////////////////////////////////////////////////////////////////////
