@@ -14,20 +14,20 @@
 				$(document).ready(function() { 
  					$(".greenishSlides").greenishSlides();
 					
-/*					$(window).resize(function () {
+					$(window).resize(function () {
 						$.gS.setSlides($(".greenishSlides"));
 					});
-*/				});
+				});
 			})(jQuery);
 		</script>		
 	</head>
 	<body>
 		<article class="greenishSlides">
-			<section class="one"><div>1</div></section>
-			<section class="two"><div>2</div></section>
-			<section class="three active"><div>3</div></section>
-			<section class="four"><div>4</div></section>
-			<section class="five"><div>5</div></section>
+			<section class="one">1</section>
+			<section class="two">2</section>
+			<section class="three active">3</section>
+			<section class="four minWidth">4</section>
+			<section class="five">5</section>
 		</article>
 	</body>
 </html>

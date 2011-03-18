@@ -21,7 +21,6 @@ $.extend($.gS, {
 	defaults : {
 		stayOpen: false,
 		fillSpace: true,
-		positioningAbsolute: true,
 		animationSpeed: "slow",
 		easing: "swing",
 		orientation:"horizontal",
@@ -89,31 +88,28 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	getValues : function (context) {
 		var slides=$(context).children();
-		var ai = slides.filter(".gSSlide.active").index();
-		var t={minus:0, c:0, cW:$(context).width(), cH:$(context).height(), slides:{}};
-		var v = [];
+		var t={ai:slides.filter(".gSSlide.active").index(), minus:0, c:0, cW:$(context).width(), cH:$(context).height(), slides:{}};
+		var css = [];
 //		get minWidth for every slide.
-		for(var i=0; i < slides.length; i++) if(i != ai) {
-				var slide=t.slides[i]=slides.eq(i);
-				v[i] = {css:{ "width" : parseFloat(slide.css("min-width").replace("px",""))}};
-				t.slides[i].css({"height" : "100%"});
-				t.c+=v[i].css["width"];
+		for(var i=0; i < slides.length; i++) if(i != t.ai) {
+				t.slides[i]=slides.eq(i);
+				css[i] = { "width" : parseFloat(t.slides[i].css("min-width").replace("px",""))};
+				t.c+=css[i]["width"];
 			}
 			else {
 				t.slides[i]=slides.eq(i);
-				v[i]={css:{}};
-				t.slides[i].css({"height" : "100%"});
+				css[i]={};
 				
 //				If there is an max-width defined for the active element - set it to the new width.
-				t.max = parseFloat(t.slides[ai].css("max-width").replace("px",""));
-				if(t.max > 0) v[ai].css["width"]=t.max;
+				t.max = parseFloat(t.slides[t.ai].css("max-width").replace("px",""));
+				if(t.max > 0) css[t.ai]["width"]=t.max;
 			}
 
 //		If fillSpace is Set (kwicks)
 		if($.gS.settings.fillSpace) {
 //			if no max-width is set for the active element, it's filling all the space it can get. (everything else stays on min-width)
-			if(true && ai >= 0 && !(t.max>0)) {
-				v[ai].css["width"] = t["cW"]-t.c;
+			if(true && t.ai >= 0 && !(t.max>0)) {
+				css[t.ai]["width"] = t["cW"]-t.c;
 			}
 			else {
 //				Calculates which size elements have, that are not hitting any max/min limit.
@@ -123,86 +119,57 @@ $.extend($.gS, {
 				var skip=[];
 				
 				for(var i=0; i < slides.length; i++) 
-					if(!skip[i] && (v[i].css["width"] > newSize || (true && i == ai))) {
+					if(!skip[i] && (css[i]["width"] > newSize || (true && i == t.ai))) {
 						skip[i]=true;
 						count--;
-						fullSize-=v[i].css["width"];
+						fullSize-=css[i]["width"];
 						newSize=Math.ceil(fullSize/count);
 						i=-1;
 					}
 //				Sets calculated value and takes margins into the equation.
 				for(var i=0; i < slides.length; i++) {
-					if(!skip[i]) v[i].css["width"]=newSize;
+					if(!skip[i]) css[i]["width"]=newSize;
 				}
 			}
 		}
 		for(var i=0; i < slides.length; i++) {
-			t.minus+=v[i].css["width"];
-			v[i].obj=t.slides[i];
-			if(true && i==ai) {
-				if(t.minus-t.slides[i].css("width")<t["cW"]-t.minus) $.gS.alignObj(context,  t.slides[i], "left", true);
-				else  $.gS.alignObj(context,  t.slides[i], "right", true);
+			t.minus+=css[i]["width"];
+			if(true && i==t.ai) {
+				if(t.minus-t.slides[i].css("width")<t["cW"]-t.minus) $.gS.position(context,  t.slides[i], "left", true);
+				else  $.gS.position(context,  t.slides[i], "right", true);
 				
-				v[i].css["margin-left"]=t.minus-v[i].css["width"];
-				v[i].css["margin-right"]=t["cW"]-t.minus;
-				v[i].css["width"]="auto";
+				css[i]["margin-left"]=t.minus-css[i]["width"];
+				css[i]["margin-right"]=t["cW"]-t.minus;
+				css[i]["width"]="auto";
 			}
-			else if(t.minus-v[i].css["width"]<t["cW"]-t.minus){
-				$.gS.alignObj(context,  t.slides[i], "left");
-				v[i].css["left"]=t.minus-v[i].css["width"];
+			else if(t.minus-css[i]["width"]<t["cW"]-t.minus){
+				$.gS.position(context,  t.slides[i], "left");
+				css[i]["left"]=t.minus-css[i]["width"];
 			}
 			else {
-				$.gS.alignObj(context, t.slides[i], "right");
-				v[i].css["right"]=t["cW"]-t.minus;
+				$.gS.position(context, t.slides[i], "right");
+				css[i]["right"]=t["cW"]-t.minus;
 			}
 		}
 			
-		console.log(v);
-		return v;
+		return css;
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	alignObj : function (context, obj, bind, active) {
-		var t={css:{	zIndex:1, 
-						position:"absolute", 
-						top:0,
-						"margin-left":0,
-						"margin-right":0}, "bind":bind , iO:obj.children(), cW:context.innerWidth(), cH:context.innerHeight(), oW:obj.outerWidth(), oH:obj.outerHeight()};
+	position : function (context, obj, bind, active) {
+		var t={css:{zIndex:1, position:"absolute", top:0, "margin-left":0, "margin-right":0, "width":obj.outerWidth()}, p : obj.offset(), "bind":bind, cW:context.innerWidth(), cH:context.innerHeight(), oW:obj.outerWidth(), oH:obj.outerHeight()};
 		t.bind == "left"? t.from="right": t.from = "left";
 		
-		
-		
-		if(parseFloat(obj.css("margin-"+t.bind).replace("px","")) > 0 || parseFloat(obj.css("margin-"+t.from).replace("px","")) > 0) {
-			if(!active) {
-				t.css[t.bind]=parseFloat(obj.css("margin-"+t.bind).replace("px",""));
-				t.css["width"]=t["oW"];
-			}
-			else {
-				t.css["margin-left"]=obj.css("margin-left");
-				t.css["margin-right"]=obj.css("margin-right");
-				t.css[bind]="0px";
-				t.css.zIndex=0;
-				t.css.width="auto";
-				t.css.position="static";
-			}
+		if(active) {
+			t.css={zIndex:0, width: "auto", "margin-left":t.p.left, "margin-right":t["cW"]-t.p.left-t["oW"], position:"static"};
+			t.css[bind]=0;
+		}
+		else if(parseFloat(obj.css("margin-"+t.bind).replace("px","")) > 0 || parseFloat(obj.css("margin-"+t.from).replace("px","")) > 0) {
+			t.css[t.bind]=parseFloat(obj.css("margin-"+t.bind).replace("px",""));
 		}	
 		else {
-			t.p = obj.offset();
-			if(!active) {
-				t.bind=="left" ? t.css[bind]=t.p.left:t.css[bind]=t["cW"]-t.p.left-t["oW"];
-				t.css["width"]=t["oW"];
-			}
-			else {
-				t.css[bind]="0px";
-				t.css.zIndex=0;
-				t.css.width="auto";
-				t.css["margin-left"]=t.p.left;
-				t.css["margin-right"] = t["cW"]-t.p.left-t["oW"];
-				t.css.position="static";
-			}
+			t.bind=="left" ? t.css[bind]=t.p.left:t.css[bind]=t["cW"]-t.p.left-t["oW"];
 		}		
 		t.css[t.from]="auto";
-		console.log(obj.index());
-		console.log(t.css);
 		obj.stop().css(t.css);
 	},
 ////////////////////////////////////////////////////////////////////////////////
@@ -223,9 +190,9 @@ $.extend($.gS, {
 			}
 
 //		each slide gets animated			
-		 if(($.gS.settings.test++)<=0) for(var i=0; i<slides.length; i++) v[i].obj.stop().animate(v[i].css, $.gS.settings.animationSpeed, $.gS.settings.easing, postAnimation); 
+		if(($.gS.settings.test++)<=0) for(var i=0; i<slides.length; i++) $(slides[i]).stop().animate(v[i], $.gS.settings.animationSpeed, $.gS.settings.easing, postAnimation); 
 	},
-	
+////////////////////////////////////////////////////////////////////////////////
 	stop : function () {
 		var slides=$(".gSSlide");
 		for(var i=0; i<slides.length; i++) $(slides[i]).stop().children().stop(); 
@@ -236,7 +203,9 @@ $.extend($.gS, {
 		gSSlide : {
 			position:"absolute",
 			marginTop:0,
-			marginBottom:"-100%"
+			marginBottom:"-100%",
+			height:"100%",
+			display:"block"
 		},
 		gSHorizontal:{},
 		gSVertical:{}
