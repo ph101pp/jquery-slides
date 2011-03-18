@@ -18,13 +18,13 @@ section{
 	min-width:40px;
 	background-color:#ee00ee;
 }
-.active {
-	background-color:#eeCCee;
-}
-.minWidth{
+section.minWidth{
 	min-width:200px;
 	max-width:400px;
 	background-color:#ee55ee;
+}
+.active {
+	background-color:#eeCCee !important;
 }
 
 

@@ -21,7 +21,7 @@ $.extend($.gS, {
 	defaults : {
 		stayOpen: false,
 		fillSpace: true,
-		animationSpeed: "slow",
+		animationSpeed: 400,
 		easing: "swing",
 		orientation:"horizontal",
 		hooks : {
@@ -108,7 +108,7 @@ $.extend($.gS, {
 //		If fillSpace is Set (kwicks)
 		if($.gS.settings.fillSpace) {
 //			if no max-width is set for the active element, it's filling all the space it can get. (everything else stays on min-width)
-			if(true && t.ai >= 0 && !(t.max>0)) {
+			if(true && t.ai >= 0 && (!(t.max>0) || t.max>t["cW"]-t.c)) {
 				css[t.ai]["width"] = t["cW"]-t.c;
 			}
 			else {
@@ -142,7 +142,7 @@ $.extend($.gS, {
 				css[i]["margin-right"]=t["cW"]-t.minus;
 				css[i]["width"]="auto";
 			}
-			else if(t.minus-css[i]["width"]<t["cW"]-t.minus){
+			else if(t.minus-css[i]["width"]<t["cW"]-t.minus || t.ai<0){
 				$.gS.position(context,  t.slides[i], "left");
 				css[i]["left"]=t.minus-css[i]["width"];
 			}
@@ -156,27 +156,25 @@ $.extend($.gS, {
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	position : function (context, obj, bind, active) {
-		var t={css:{zIndex:1, position:"absolute", top:0, "margin-left":0, "margin-right":0, "width":obj.outerWidth()}, p : obj.offset(), "bind":bind, cW:context.innerWidth(), cH:context.innerHeight(), oW:obj.outerWidth(), oH:obj.outerHeight()};
-		t.bind == "left"? t.from="right": t.from = "left";
+		var t={p : obj.offset(), "bind":bind, "from": bind=="left"?"right":"left", cW:context.innerWidth(), cH:context.innerHeight(), oW:obj.outerWidth(), oH:obj.outerHeight()};
 		
 		if(active) {
 			t.css={zIndex:0, width: "auto", "margin-left":t.p.left, "margin-right":t["cW"]-t.p.left-t["oW"], position:"static"};
 			t.css[bind]=0;
 		}
-		else if(parseFloat(obj.css("margin-"+t.bind).replace("px","")) > 0 || parseFloat(obj.css("margin-"+t.from).replace("px","")) > 0) {
-			t.css[t.bind]=parseFloat(obj.css("margin-"+t.bind).replace("px",""));
-		}	
 		else {
-			t.bind=="left" ? t.css[bind]=t.p.left:t.css[bind]=t["cW"]-t.p.left-t["oW"];
-		}		
+			t.css={zIndex:1, position:"absolute", top:0, "margin-left":0, "margin-right":0, "width":obj.outerWidth()};
+			if(parseFloat(obj.css("margin-"+t.bind).replace("px","")) > 0 || parseFloat(obj.css("margin-"+t.from).replace("px","")) > 0)
+				t.css[t.bind]=parseFloat(obj.css("margin-"+t.bind).replace("px",""));
+			else t.bind=="left" ? t.css[bind]=t.p.left:t.css[bind]=t["cW"]-t.p.left-t["oW"];
+		}
 		t.css[t.from]="auto";
 		obj.stop().css(t.css);
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	setSlides : function (context) {
 		var slides=$(context).find(".gSSlide");
-		var v=$.gS.getValues(context);
-		$.gS.settings.test=0;
+		var css=$.gS.getValues(context);
 
 //		check if deactivation or activation and sets hooks.
 		if($(context).find(".active").length <=0)  var postAnimation = function () {
@@ -190,7 +188,7 @@ $.extend($.gS, {
 			}
 
 //		each slide gets animated			
-		if(($.gS.settings.test++)<=0) for(var i=0; i<slides.length; i++) $(slides[i]).stop().animate(v[i], $.gS.settings.animationSpeed, $.gS.settings.easing, postAnimation); 
+		for(var i=0; i<slides.length; i++) $(slides[i]).stop().animate(css[i], $.gS.settings.animationSpeed, $.gS.settings.easing, postAnimation); 
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	stop : function () {
@@ -202,13 +200,17 @@ $.extend($.gS, {
 	css :{
 		gSSlide : {
 			position:"absolute",
-			marginTop:0,
-			marginBottom:"-100%",
-			height:"100%",
-			display:"block"
+			margin:0,
+			display:"block",
 		},
-		gSHorizontal:{},
-		gSVertical:{}
+		gSHorizontal:{
+			marginBottom:"-100%",
+			height:"100%"
+		},
+		gSVertical:{
+			marginRight:"-100%",
+			width:"100%"
+		}
 	}
 });
 })(jQuery);
