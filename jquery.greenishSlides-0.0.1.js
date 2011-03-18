@@ -27,6 +27,7 @@ $.extend($.gS, {
 		orientation:"horizontal",
 		hooks : {
 			preActivate: function (active) {
+				return true;
 //				console.log("preActivate");
 			},
 			postActivate: function (active) {
@@ -46,7 +47,7 @@ $.extend($.gS, {
 		$.gS.settings = $.extend(this.defaults, typeof(options) == "object" ? options :{});
 
 //		Sets wrappers and additional classes
-		var slides = $(context).children().addClass("gSSlide").css($.gS.css.gSSlide);
+		var slides = $(context).css({overflow:"hidden"}).children().addClass("gSSlide").css($.gS.css.gSSlide);
 		$.gS.settings.orientation == "horizontal" ? slides.addClass("gSHorizontal").css($.gS.css.gSHorizontal) : slides.addClass("gSVertical").css($.gS.css.gSVertical);
 
 		$.gS.initSlides(slides);
@@ -75,7 +76,7 @@ $.extend($.gS, {
 			$(slide).siblings().removeClass("deactivated");
 			$.gS.settings.hooks.postDeactivate($(slide));
 		}
-		$.gS.settings.hooks.preActivate($(slide));
+		if(!$.gS.settings.hooks.preActivate($(slide))) return;
 		$.gS.setSlides($(slide).parent());
  	},
 ////////////////////////////////////////////////////////////////////////////////
@@ -132,31 +133,27 @@ $.extend($.gS, {
 //				Sets calculated value and takes margins into the equation.
 				for(var i=0; i < slides.length; i++) {
 					if(!skip[i]) v[i].css["width"]=newSize;
-					v[i].css["width"]-=t.slides[i].outerWidth(true)-t.slides[i].innerWidth();
 				}
 			}
 		}
 		for(var i=0; i < slides.length; i++) {
 			t.minus+=v[i].css["width"];
+			v[i].obj=t.slides[i];
 			if(true && i==ai) {
 				if(t.minus-t.slides[i].css("width")<t["cW"]-t.minus) $.gS.alignObj(context,  t.slides[i], "left", true);
 				else  $.gS.alignObj(context,  t.slides[i], "right", true);
 				
-				
 				v[i].css["margin-left"]=t.minus-v[i].css["width"];
 				v[i].css["margin-right"]=t["cW"]-t.minus;
 				v[i].css["width"]="auto";
-				v[i].obj=t.slides[i];
 			}
 			else if(t.minus-v[i].css["width"]<t["cW"]-t.minus){
-				v[i].css["left"]=t.minus-v[i].css["width"];
-				v[i].obj=t.slides[i];
 				$.gS.alignObj(context,  t.slides[i], "left");
+				v[i].css["left"]=t.minus-v[i].css["width"];
 			}
 			else {
-				v[i].css["right"]=t["cW"]-t.minus;
-				v[i].obj=t.slides[i];
 				$.gS.alignObj(context, t.slides[i], "right");
+				v[i].css["right"]=t["cW"]-t.minus;
 			}
 		}
 			
