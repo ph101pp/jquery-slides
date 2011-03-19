@@ -12,7 +12,7 @@ Author {
 ////////////////////////////////////////////////////////////////////////////////
 $.fn.greenishSlides = function (settings){
 	return $(this).each(function (settings) {
-		$().greenishSlides.init($(this), settings);
+		$.gS.init($(this), settings);
 	});
 };
 $.gS = $().greenishSlides;
@@ -24,6 +24,7 @@ $.extend($.gS, {
 		animationSpeed: 400,
 		easing: "swing",
 		orientation:"horizontal",
+		circle : true,
 		hooks : {
 			preActivate: function (active) {
 				return true;
@@ -33,6 +34,7 @@ $.extend($.gS, {
 //				console.log("postActivate");
 			},
 			preDeactivate: function (active) {
+				return true;
 //				console.log("preDeactivate");
 			},
 			postDeactivate: function (active) {
@@ -68,6 +70,7 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	activate : function (slide) {
 		if($(slide).hasClass("active")) return;
+		if(!$.gS.settings.hooks.preActivate($(slide))) return;
 		$(slide).siblings().removeClass("active");
 		$(slide).addClass("active");
 
@@ -75,16 +78,35 @@ $.extend($.gS, {
 			$(slide).siblings().removeClass("deactivated");
 			$.gS.settings.hooks.postDeactivate($(slide));
 		}
-		if(!$.gS.settings.hooks.preActivate($(slide))) return;
 		$.gS.setSlides($(slide).parent());
  	},
 ////////////////////////////////////////////////////////////////////////////////
  	deactivate : function (slide) {
 		if(!$(slide).hasClass("active")) return;
+		if(!$.gS.settings.hooks.preDeactivate($(slide))) return;
 		$(slide).removeClass("active").addClass("deactivated");
-		$.gS.settings.hooks.preDeactivate($(slide));
 		$.gS.setSlides($(slide).parent());
  	}, 	
+////////////////////////////////////////////////////////////////////////////////
+	prev : function (context, activeSlide) {
+		$.gS.step(context, -1, activeSlide);
+	},
+////////////////////////////////////////////////////////////////////////////////
+	next : function (context, activeSlide) {
+		$.gS.step(context, 1, activeSlide);
+	},
+////////////////////////////////////////////////////////////////////////////////
+	step : function (context, number, activeSlide) {
+		var slides=$(context).children();
+		if(slides.filter($(activeSlide)).length <= 0) activeSlide=slides.filter(".gSSlide.active");
+		if(slides.filter(activeSlide).length <= 0) return;
+		var next = $(activeSlide).index()+(parseFloat(number)%slides.length);
+		
+		if($.gS.settings.circle) next >= slides.length ? next = next-slides.length : next < 0 ? next = slides.length+next :true;		
+		else next >= slides.length ? next = slides.length-1 : next < 0 ? next = 0 :true;		
+				
+		$.gS.activate(slides.eq(next));
+	},
 ////////////////////////////////////////////////////////////////////////////////
 	getValues : function (context) {
 		var slides=$(context).children();
@@ -164,9 +186,8 @@ $.extend($.gS, {
 		}
 		else {
 			t.css={zIndex:1, position:"absolute", top:0, "margin-left":0, "margin-right":0, "width":obj.outerWidth()};
-			if(parseFloat(obj.css("margin-"+t.bind).replace("px","")) > 0 || parseFloat(obj.css("margin-"+t.from).replace("px","")) > 0)
-				t.css[t.bind]=parseFloat(obj.css("margin-"+t.bind).replace("px",""));
-			else t.bind=="left" ? t.css[bind]=t.p.left:t.css[bind]=t["cW"]-t.p.left-t["oW"];
+			if(parseFloat(obj.css("margin-"+t.bind).replace("px","")) > 0 || parseFloat(obj.css("margin-"+t.from).replace("px","")) > 0) t.css[t.bind]=parseFloat(obj.css("margin-"+t.bind).replace("px",""));
+			else t.bind=="left" ? t.css[bind]=t.p.left : t.css[bind]=t["cW"]-t.p.left-t["oW"];
 		}
 		t.css[t.from]="auto";
 		obj.stop().css(t.css);
