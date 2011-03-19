@@ -3,6 +3,7 @@
 Author {
 	Philipp C. Adrian
 	www.philippadrian.com
+	www.greenish.ch
 	@gre_nish
 }
 */
@@ -96,11 +97,11 @@ $.extend($.gS, {
 		$.gS.step(context, 1, activeSlide);
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	step : function (context, number, activeSlide) {
+	step : function (context, number, fromSlide) {
 		var slides=$(context).children();
-		if(slides.filter($(activeSlide)).length <= 0) activeSlide=slides.filter(".gSSlide.active");
-		if(slides.filter(activeSlide).length <= 0) return;
-		var next = $(activeSlide).index()+(parseFloat(number)%slides.length);
+		if(slides.filter($(fromSlide)).length <= 0) fromSlide=slides.filter(".gSSlide.active");
+		if(slides.filter(fromSlide).length <= 0) return;
+		var next = $(fromSlide).index()+(parseFloat(number)%slides.length);
 		
 		if($.gS.settings.circle) next >= slides.length ? next = next-slides.length : next < 0 ? next = slides.length+next :true;		
 		else next >= slides.length ? next = slides.length-1 : next < 0 ? next = 0 :true;		
@@ -148,28 +149,26 @@ $.extend($.gS, {
 						newSize=Math.ceil(fullSize/count);
 						i=-1;
 					}
-//				Sets calculated value and takes margins into the equation.
-				for(var i=0; i < slides.length; i++) {
-					if(!skip[i]) css[i]["width"]=newSize;
-				}
+//				Sets calculated value.
+				for(var i=0; i < slides.length; i++) if(!skip[i]) css[i]["width"]=newSize;
 			}
 		}
 		for(var i=0; i < slides.length; i++) {
 			t.minus+=css[i]["width"];
 			if(true && i==t.ai) {
-				if(t.minus-t.slides[i].css("width")<t["cW"]-t.minus) $.gS.position(context,  t.slides[i], "left", true);
-				else  $.gS.position(context,  t.slides[i], "right", true);
+				if(t.minus-t.slides[i].css("width")<t["cW"]-t.minus) $.gS.positioning(context,  t.slides[i], "left", true);
+				else  $.gS.positioning(context,  t.slides[i], "right", true);
 				
 				css[i]["margin-left"]=t.minus-css[i]["width"];
 				css[i]["margin-right"]=t["cW"]-t.minus;
 				css[i]["width"]="auto";
 			}
 			else if(t.minus-css[i]["width"]<t["cW"]-t.minus || t.ai<0){
-				$.gS.position(context,  t.slides[i], "left");
+				$.gS.positioning(context,  t.slides[i], "left");
 				css[i]["left"]=t.minus-css[i]["width"];
 			}
 			else {
-				$.gS.position(context, t.slides[i], "right");
+				$.gS.positioning(context, t.slides[i], "right");
 				css[i]["right"]=t["cW"]-t.minus;
 			}
 		}
@@ -177,7 +176,7 @@ $.extend($.gS, {
 		return css;
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	position : function (context, obj, bind, active) {
+	positioning : function (context, obj, bind, active) {
 		var t={p : obj.offset(), "bind":bind, "from": bind=="left"?"right":"left", cW:context.innerWidth(), cH:context.innerHeight(), oW:obj.outerWidth(), oH:obj.outerHeight()};
 		
 		if(active) {
@@ -207,7 +206,6 @@ $.extend($.gS, {
 		else var postAnimation = function () {
 				if($(this).is(".active")) $.gS.settings.hooks.postActivate($(this));
 			}
-
 //		each slide gets animated			
 		for(var i=0; i<slides.length; i++) $(slides[i]).stop().animate(css[i], $.gS.settings.animationSpeed, $.gS.settings.easing, postAnimation); 
 	},
@@ -215,7 +213,6 @@ $.extend($.gS, {
 	stop : function () {
 		var slides=$(".gSSlide");
 		for(var i=0; i<slides.length; i++) $(slides[i]).stop().children().stop(); 
-
 	},	
 ////////////////////////////////////////////////////////////////////////////////
 	css :{
