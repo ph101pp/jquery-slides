@@ -24,7 +24,7 @@ $.extend($.gS, {
 		fillSpace: true,
 		animationSpeed: 400,
 		easing: "swing",
-		orientation:"horizontal",
+		orientation:"vertical",
 		circle : true,
 		hooks : {
 			preActivate: function (active) {
@@ -187,14 +187,14 @@ $.extend($.gS, {
 		if(active) {
 			t.css={zIndex:0, position:"static"};
 			t.css[$.gS.WoH]="auto";
-			t.css["margin-"+$.gS.LoT]=t.p.left;
-			t.css["margin-"+$.gS.RoB]=t.cS-t.p.left-t.oS;
+			t.css["margin-"+$.gS.LoT]=t.p[$.gS.LoT];
+			t.css["margin-"+$.gS.RoB]=t.cS-t.p[$.gS.LoT]-t.oS;
 			t.css[bind]=0;
 		}
 		else {
 			t.css={zIndex:1, position:"absolute"};
 			if(parseFloat(obj.css("margin-"+t.bind).replace("px","")) > 0 || parseFloat(obj.css("margin-"+t.from).replace("px","")) > 0) t.css[t.bind]=parseFloat(obj.css("margin-"+t.bind).replace("px",""));
-			else t.bind==$.gS.LoT ? t.css[bind]=t.p.left : t.css[bind]=t.cS-t.p.left-t.oS;
+			else t.bind==$.gS.LoT ? t.css[bind]=t.p[$.gS.LoT] : t.css[bind]=t.cS-t.p[$.gS.LoT]-t.oS;
 			t.css[$.gS.ToL]=t.css["margin-"+$.gS.LoT]=t.css["margin-"+$.gS.RoB]=0;
 			t.css[$.gS.WoH]=t.oS;
 		}
