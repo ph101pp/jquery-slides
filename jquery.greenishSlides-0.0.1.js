@@ -29,6 +29,7 @@ $.extend($.gS, {
 		handle:  "img",
 		activateEvent: "mouseover",
 		deactivateEvent: "mouseout",
+		keyEvents:false,
 		hooks : {
 			preActivate: function (active) {
 				return true;
@@ -67,6 +68,11 @@ $.extend($.gS, {
 			$.gS.LoT="top";
 			$.gS.RoB="bottom";
 		}
+		
+		if($.gS.settings.keyEvents) $(document).bind("keydown", function(event) {
+			if(event.which == 39 || event.which == 40) $.gS.next(context);
+			else if(event.which == 37 || event.which == 38) $.gS.prev(context);
+		});
 		
 		if($.gS.settings.handle) $.gS.initSlides($(context).find($.gS.settings.handle));
 		else $.gS.initSlides(slides);
@@ -126,7 +132,7 @@ $.extend($.gS, {
 		$.gS.activate(slides.eq(next));
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	getValues : function (context) {
+	getCSS : function (context) {
 		var slides=$(context).children();
 		var t={css:{}, slides:{}, ai:slides.filter(".gSSlide.active").index(), cS:$(context)[$.gS.WoH]()};
 //		get minWidth for every slide.
@@ -167,7 +173,8 @@ $.extend($.gS, {
 		for(var i=t.c=0; i < slides.length; i++) {
 			t.c+=t.css[i][$.gS.WoH];
 			if(true && i==t.ai && $.gS.settings.orientation == "horizontal") {
-				if(t.c-t.css[i][$.gS.WoH]<t.cS-(t.c-t.css[i][$.gS.WoH]+t.slides[i][$.gS.WoH]())) $.gS.positioning(context,  t.slides[i], $.gS.LoT, true);
+				if(t.c-t.css[i][$.gS.WoH]<t.cS-(t.c-t.css[i][$.gS.WoH]+t.slides[i][$.gS.WoH]())) 
+					$.gS.positioning(context,  t.slides[i], $.gS.LoT, true);
 				else  $.gS.positioning(context,  t.slides[i], $.gS.RoB, true);
 				
 				t.css[i]["margin-"+$.gS.LoT]=t.c-t.css[i][$.gS.WoH];
@@ -198,7 +205,8 @@ $.extend($.gS, {
 		}
 		else {
 			t.css={zIndex:1, position:"absolute"};
-			if(parseFloat(obj.css("margin-"+t.bind).replace("px","")) > 0 || parseFloat(obj.css("margin-"+t.from).replace("px","")) > 0) t.css[t.bind]=parseFloat(obj.css("margin-"+t.bind).replace("px",""));
+			if(parseFloat(obj.css("margin-"+t.bind).replace("px","")) > 0 || parseFloat(obj.css("margin-"+t.from).replace("px","")) > 0) 
+				t.css[t.bind]=parseFloat(obj.css("margin-"+t.bind).replace("px",""));
 			else t.bind==$.gS.LoT ? t.css[bind]=t.p[$.gS.LoT] : t.css[bind]=t.cS-t.p[$.gS.LoT]-t.oS;
 			t.css[$.gS.ToL]=t.css["margin-"+$.gS.LoT]=t.css["margin-"+$.gS.RoB]=0;
 			t.css[$.gS.WoH]=t.oS;
@@ -209,7 +217,7 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	setSlides : function (context) {
 		var slides=$(context).find(".gSSlide");
-		var css=$.gS.getValues(context);
+		var css=$.gS.getCSS(context);
 
 //		check if deactivation or activation and sets hooks.
 		if($(context).find(".active").length <=0)  var postAnimation = function () {
