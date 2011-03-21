@@ -24,8 +24,11 @@ $.extend($.gS, {
 		fillSpace: true,
 		animationSpeed: 400,
 		easing: "swing",
-		orientation:"vertical",
+		orientation:"horizontal",
 		circle : true,
+		handle:  "img",
+		activateEvent: "mouseover",
+		deactivateEvent: "mouseout",
 		hooks : {
 			preActivate: function (active) {
 				return true;
@@ -64,7 +67,9 @@ $.extend($.gS, {
 			$.gS.LoT="top";
 			$.gS.RoB="bottom";
 		}
-		$.gS.initSlides(slides);
+		
+		if($.gS.settings.handle) $.gS.initSlides($(context).find($.gS.settings.handle));
+		else $.gS.initSlides(slides);
 
 //		First Initialisation		
 		$.gS.setSlides(context);
@@ -72,12 +77,12 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	initSlides : function (slides) {
 //		Define Activate Event
-		slides.bind("mouseover", function (){
-			$.gS.activate(this);
+		$(slides).bind($.gS.settings.activateEvent, function (){
+			$.gS.activate($(".gSSlide").has($(this)));
 		});		
 //		Define Deactivate Event
-		if(!$.gS.settings.stayOpen) slides.bind("mouseout", function (){
-			$.gS.deactivate(this);
+		if(!$.gS.settings.stayOpen) $(slides).bind($.gS.settings.deactivateEvent, function (){
+			$.gS.deactivate($(".gSSlide").has($(this)));
 		});
 	},
 ////////////////////////////////////////////////////////////////////////////////
@@ -123,7 +128,7 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	getValues : function (context) {
 		var slides=$(context).children();
-		var t={css:{}, slides:{}, ai:slides.filter(".gSSlide.active").index(), cS:$(context)["width"]()};
+		var t={css:{}, slides:{}, ai:slides.filter(".gSSlide.active").index(), cS:$(context)[$.gS.WoH]()};
 //		get minWidth for every slide.
 		for(var i=t.c=0; i < slides.length; i++) {
 			t.css[i] = {};
@@ -161,15 +166,15 @@ $.extend($.gS, {
 			}
 		for(var i=t.c=0; i < slides.length; i++) {
 			t.c+=t.css[i][$.gS.WoH];
-			if(true && i==t.ai) {
-				if(t.c-t.slides[i].css($.gS.WoH)<t.cS-t.c) $.gS.positioning(context,  t.slides[i], $.gS.LoT, true);
+			if(true && i==t.ai && $.gS.settings.orientation == "horizontal") {
+				if(t.c-t.css[i][$.gS.WoH]<t.cS-(t.c-t.css[i][$.gS.WoH]+t.slides[i][$.gS.WoH]())) $.gS.positioning(context,  t.slides[i], $.gS.LoT, true);
 				else  $.gS.positioning(context,  t.slides[i], $.gS.RoB, true);
 				
 				t.css[i]["margin-"+$.gS.LoT]=t.c-t.css[i][$.gS.WoH];
 				t.css[i]["margin-"+$.gS.RoB]=t.cS-t.c;
 				t.css[i][$.gS.WoH]="auto";
 			}
-			else if(t.c-t.css[i][$.gS.WoH]<t.cS-t.c || t.ai<0){
+			else if((i<t.ai) || t.ai<0 || (t.c-t.css[i][$.gS.WoH]<t.cS-(t.c-t.css[i][$.gS.WoH]+t.slides[i][$.gS.WoH]()) && t.ai==i) ){
 				$.gS.positioning(context,  t.slides[i], $.gS.LoT);
 				t.css[i][$.gS.LoT]=t.c-t.css[i][$.gS.WoH];
 			}
@@ -185,7 +190,7 @@ $.extend($.gS, {
 		var t={p : obj.offset(), "bind":bind, "from": bind==$.gS.LoT?$.gS.RoB:$.gS.LoT, cS:$(context)["inner"+$.gS.WoH.charAt(0).toUpperCase() + $.gS.WoH.slice(1)](), oS:obj["outer"+$.gS.WoH.charAt(0).toUpperCase() + $.gS.WoH.slice(1)]()};
 		
 		if(active) {
-			t.css={zIndex:0, position:"static"};
+			t.css={zIndex:0, position:"relative"};
 			t.css[$.gS.WoH]="auto";
 			t.css["margin-"+$.gS.LoT]=t.p[$.gS.LoT];
 			t.css["margin-"+$.gS.RoB]=t.cS-t.p[$.gS.LoT]-t.oS;
@@ -233,6 +238,7 @@ $.extend($.gS, {
 			position:"absolute",
 			margin:0,
 			display:"block",
+			overflow:"hidden"
 		},
 		gSHorizontal:{
 			marginBottom:"-100%",

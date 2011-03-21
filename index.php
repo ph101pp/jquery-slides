@@ -23,11 +23,11 @@
 	</head>
 	<body>
 		<article class="greenishSlides">
-			<section class="one">1</section>
-			<section class="two">2</section>
-			<section class="three active">3</section>
-			<section class="four minWidth">4</section>
-			<section class="five">5</section>
+			<section class="one"><img src="http://placehold.it/500x300"></section>
+			<section class="two"><img src="http://placekitten.com/200/300"></section>
+			<section class="three active"><img src="http://placehold.it/500x300"></section>
+			<section class="four minWidth"><img src="http://placekitten.com/200/300"></section>
+			<section class="five"><img src="http://placehold.it/500x300"></section>
 		</article>
 	</body>
 </html>

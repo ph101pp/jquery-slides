@@ -6,21 +6,21 @@ body {
 
 .greenishSlides{
 	position:absolute;
-	height:500px;
-	width:500px;
+	height:100%;
+	width:100%;
 	margin:0;
 	background-color:#00eeee;
 }
 section{
 	font-size:3em; 
 	text-align:center;
-	height:100%;
-	min-height:40px;
+	width:100%;
+	min-width:40px;
 	background-color:#ee00ee;
 }
 section.minWidth{
-	min-height:200px;
-	max-height:400px;
+	min-width:200px;
+	max-width:400px;
 	background-color:#ee55ee;
 }
 .active {
