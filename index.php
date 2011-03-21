@@ -13,7 +13,28 @@
 		<script type="text/javascript">
 			(function($) {
 				$(document).ready(function() { 
- 					$(".greenishSlides").greenishSlides();
+ 					$(".greenishSlides").greenishSlides({	
+ 						stayOpen:true,
+ 						keyEvent:true,
+				 		activateEvent: "click",
+						hooks: {
+ 							preActivate: function (slide, css) {
+								var context=slide.parent();
+								var ai=context.find(".active").index();
+								var width=40;
+								for(var i=1; i<=6; i++) {
+									width/=2;
+									if(ai-i >=0) context.children().eq(ai-i).css({"min-width":width});
+									context.children().eq(ai+i).css({"min-width":width});
+								}
+ 								
+ 								
+ 								
+ 								
+ 								return true;
+ 							},
+ 						},	
+ 					});
 					
 					$(window).resize(function () {
 						$.gS.setSlides($(".greenishSlides"));
@@ -27,7 +48,7 @@
 			<section class="one"><img src="http://placehold.it/500x300"></section>
 			<section class="two"><img src="http://placekitten.com/200/300"></section>
 			<section class="three active"><img src="http://placehold.it/500x300"></section>
-			<section class="four minWidth"><img src="http://placekitten.com/200/300"></section>
+			<section class="four"><img src="http://placekitten.com/200/300"></section>
 			<section class="five"><img src="http://placehold.it/500x300"></section>
 		</article>
 	</body>

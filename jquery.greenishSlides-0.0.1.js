@@ -12,7 +12,7 @@ Author {
 (function($) {
 ////////////////////////////////////////////////////////////////////////////////
 $.fn.greenishSlides = function (settings){
-	return $(this).each(function (settings) {
+	return $(this).each(function () {
 		$.gS.init($(this), settings);
 	});
 };
@@ -25,11 +25,11 @@ $.extend($.gS, {
 		animationSpeed: 400,
 		easing: "swing",
 		orientation:"horizontal",
-		circle : true,
-		handle:  "img",
+		circle : false,
+		handle:  false,
 		activateEvent: "mouseover",
 		deactivateEvent: "mouseout",
-		keyEvents:false,
+		keyEvents:true,
 		swipeEvents:true,
 		swipeThreshold: {
 				x: 30,
@@ -49,13 +49,19 @@ $.extend($.gS, {
 			},
 			postDeactivate: function (active) {
 //				console.log("postDeactivate");
+			},
+			preActivateAnimation : function (active, css) {
+				return css;
+			},
+			preDeactivateAnimation : function (active, css) {
+				return css;
 			}
 		}
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	init : function (context, options) {
 //		Extends defaults into settings.
-		$.gS.settings = $.extend(this.defaults, typeof(options) == "object" ? options :{});
+		$.gS.settings = $.extend(true,this.defaults, typeof(options) == "object" ? options :{});
 
 //		Sets wrappers and additional classes
 		var slides = $(context).css($.gS.css.context).children().addClass("gSSlide").css($.gS.css.gSSlide);
@@ -98,10 +104,10 @@ $.extend($.gS, {
 	initSlides : function (slides) {
 //		Define Activate Event
 		var eventFunc = function (event){
-			$.gS.activate($(".gSSlide").has($(this)));
+			$.gS.settings.handle ? $.gS.activate($(".gSSlide").has($(this))) : $.gS.activate($(this));
 //			Define Deactivate Event
 			if(!$.gS.settings.stayOpen) $(this).bind($.gS.settings.deactivateEvent, function (event){
-				$.gS.deactivate($(".gSSlide").has($(this)));
+				$.gS.settings.handle ? $.gS.deactivate($(".gSSlide").has($(this))) : $.gS.deactivate($(this));
 				$(this).unbind(event);
 				$(this).bind($.gS.settings.activateEvent, eventFunc);
 			});
@@ -235,17 +241,23 @@ $.extend($.gS, {
 	setSlides : function (context) {
 		var slides=$(context).find(".gSSlide");
 		var css=$.gS.getCSS(context);
-
+		var active = $(context).find(".active");
 //		check if deactivation or activation and sets hooks.
-		if($(context).find(".active").length <=0)  var postAnimation = function () {
+		if(active.length <=0) {
+			css=$.gS.settings.hooks.preDeactivateAnimation($(context).find(".deactivated"),css);	
+			var postAnimation = function () {
 				if($(this).is(".deactivated")) {
 					$.gS.settings.hooks.postDeactivate($(this));
 					$(this).removeClass("deactivated");
 				}
 			}
-		else var postAnimation = function () {
+		}
+		else { 
+			css=$.gS.settings.hooks.preActivateAnimation(active, css);
+			var postAnimation = function () {
 				if($(this).is(".active")) $.gS.settings.hooks.postActivate($(this));
 			}
+		}
 //		each slide gets animated			
 		for(var i=0; i<slides.length; i++) $(slides[i]).stop().animate(css[i], $.gS.settings.animationSpeed, $.gS.settings.easing, postAnimation); 
 	},
