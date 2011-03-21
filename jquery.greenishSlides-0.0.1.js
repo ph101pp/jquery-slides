@@ -30,6 +30,11 @@ $.extend($.gS, {
 		activateEvent: "mouseover",
 		deactivateEvent: "mouseout",
 		keyEvents:false,
+		swipeEvents:true,
+		swipeThreshold: {
+				x: 30,
+				y: 10
+			},
 		hooks : {
 			preActivate: function (active) {
 				return true;
@@ -68,10 +73,19 @@ $.extend($.gS, {
 			$.gS.LoT="top";
 			$.gS.RoB="bottom";
 		}
-		
+//		Keyboard and Swipe events.		
 		if($.gS.settings.keyEvents) $(document).bind("keydown", function(event) {
 			if(event.which == 39 || event.which == 40) $.gS.next(context);
 			else if(event.which == 37 || event.which == 38) $.gS.prev(context);
+		});
+		
+		if($.gS.settings.swipeEvents && typeof($().swipe)=="function") $(context).swipe({
+			threshold: {
+				x: $.gS.settings.swipeThreshold.x,
+				y: $.gS.settings.swipeThreshold.y
+			},
+			swipeLeft: $.gS.next(context),
+			swipeRight: $.gS.prev(context)
 		});
 		
 		if($.gS.settings.handle) $.gS.initSlides($(context).find($.gS.settings.handle));
