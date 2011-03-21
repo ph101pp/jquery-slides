@@ -20,7 +20,7 @@ $.gS = $().greenishSlides;
 $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	defaults : {
-		stayOpen: false,
+		stayOpen: true,
 		fillSpace: true,
 		animationSpeed: 400,
 		easing: "swing",
@@ -97,13 +97,16 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	initSlides : function (slides) {
 //		Define Activate Event
-		$(slides).bind($.gS.settings.activateEvent, function (){
+		var eventFunc = function (event){
 			$.gS.activate($(".gSSlide").has($(this)));
-		});		
-//		Define Deactivate Event
-		if(!$.gS.settings.stayOpen) $(slides).bind($.gS.settings.deactivateEvent, function (){
-			$.gS.deactivate($(".gSSlide").has($(this)));
-		});
+//			Define Deactivate Event
+			if(!$.gS.settings.stayOpen) $(this).bind($.gS.settings.deactivateEvent, function (event){
+				$.gS.deactivate($(".gSSlide").has($(this)));
+				$(this).unbind(event);
+				$(this).bind($.gS.settings.activateEvent, eventFunc);
+			});
+		};
+		$(slides).bind($.gS.settings.activateEvent, eventFunc);		
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	activate : function (slide) {
