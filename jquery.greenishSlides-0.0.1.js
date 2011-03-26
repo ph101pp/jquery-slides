@@ -104,7 +104,10 @@ $.extend($.gS, {
 ////	Define hover
 		if($.gS.defaults.hover.mouseover!=$.gS.settings.hover.mouseover || $.gS.defaults.hover.mouseout!=$.gS.settings.hover.mouseout)
 			$($.gS.settings.handle).live("mouseover mouseout", function(event) {
-				event.type == "mouseover" ? $.proxy($.gS.settings.hover.mouseover, $(this))(): $.proxy($.gS.settings.hover.mouseout, $(this))();
+				var context=$(this);
+				if($.gS.defaults.handle!=$.gS.settings.handle) context=$(".gSSlide").has($(this));
+
+				event.type == "mouseover" ? $.proxy($.gS.settings.hover.mouseover, context)(): $.proxy($.gS.settings.hover.mouseout, context)();
 			});
 			//$.gS.settings.hover.mouseover).live("mouseout", $.gS.settings.hover.mouseout);
 
