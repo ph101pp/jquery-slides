@@ -19,16 +19,16 @@
  						keyEvent:true,
 				 		activateEvent: "click",
 						hooks: {
- 							preActivate: function (slide, css) {
+ 							preActivate: function (slide) {
  								var colors=["#EEEEEE","#DDDDDD","#CCCCCC","#BBBBBB","#AAAAAA","#999999","#888888","#777777","#666666","#555555","#444444","#333333","#222222","#111111"];
-								var context=slide.parent();
-									context.children().stop().animate({"width":"0px"},"slow").css({"min-width":"0px", backgroundColor:"#000000"});
+								var context=slide.parent().children().stop().animate({"width":"0px"},"slow").css({"min-width":"0px", backgroundColor:"#000000"}).end();
 								var ai=slide.css({"backgroundColor":"#ffffff"}).index();
 								var width=40;
 									
 
 								for(var i=1; i<=20; i++) {
-									width/=1.2;
+									width*=0.8;
+									if(width<1) width=0;
 									if(ai-i >=0) context.children().eq(ai-i).stop().animate({"width":width},"slow").css({"min-width":width, backgroundColor:colors[i]});
 									
 									if(ai+i <= context.children().length) context.children().eq(ai+i).stop().animate({"width":width},"slow").css({"min-width":width, backgroundColor:colors[i]});
