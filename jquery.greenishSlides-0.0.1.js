@@ -63,15 +63,19 @@ $.extend($.gS, {
 				return css;
 			}
 		},
-		limits: {
-			0: {
-				min:40,
-				max:80
+		limits : {
+			min:0,
+			"ddf 0": {
+				selector:"",
+				min:200,
+				max:200
 			}
+		
 		}
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	init : function (context, options) {
+////	Extends defaults into settings.
 		$.gS.setOptions(options);
 
 ////	Sets css and classes
@@ -101,8 +105,8 @@ $.extend($.gS, {
 				x: $.gS.settings.swipeThreshold.x,
 				y: $.gS.settings.swipeThreshold.y
 			},
-			swipeLeft: $.gS.next(context),
-			swipeRight: $.gS.prev(context)
+			swipeLeft: function(){$.gS.next(context)},
+			swipeRight: function(){$.gS.prev(context)}
 		});
 ////	/Keyboard and Swipe events.
 
@@ -137,7 +141,8 @@ $.extend($.gS, {
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	activate : function (slide) {
-		if($.gS.defaults.handle!=$.gS.settings.handle && !slide.hasClass("gSSlide")) slide=$(".gSSlide").has($(slide));
+		console.log("active");
+		if($.gS.defaults.handle!=$.gS.settings.handle && !$(slide).hasClass("gSSlide")) slide=$(".gSSlide").has($(slide));
 		if($(slide).hasClass("active")) return;
 		if(!$.proxy($.gS.settings.hooks.preActivate, $(slide))()) return;
 		$(slide).siblings().removeClass("active");
@@ -188,16 +193,19 @@ $.extend($.gS, {
 			t.slides[i]=slides.eq(i);
 			if(i == t.ai) {
 //				If there is an max-width defined for the active element - set it to the new width.
-				t.max = parseFloat(t.slides[t.ai].css("max-"+$.gS.WoH).replace("px",""));
-				if($.gS.settings.limits[i] && (!(t.max > 0) || t.max>$.gS.settings.limits[i].max)) t.max=$.gS.settings.limits[i].max;
+				if($.gS.settings.limits[i] && $.gS.settings.limits[i].max) t.max=$.gS.settings.limits[i].max;
+				else if($.gS.settings.limits.max) t.max=$.gS.settings.limits.max;
+				else t.max=0;
 				if(t.max > 0) t.css[t.ai][$.gS.WoH]=t.max;
 			}
-			else {	
-				t.css[i][$.gS.WoH]=parseFloat(t.slides[i].css("min-"+$.gS.WoH).replace("px",""));
-				if($.gS.settings.limits[i] && t.css[i][$.gS.WoH]<$.gS.settings.limits[i].min) t.css[i][$.gS.WoH]=$.gS.settings.limits[i].min;
-				c+=t.css[i][$.gS.WoH]
+			else {
+				if($.gS.settings.limits[i] && $.gS.settings.limits[i].min) t.min=$.gS.settings.limits[i].min;
+				else if($.gS.settings.limits.min) t.min=$.gS.settings.limits.min;
+				else t.min=0;
+				c+=t.css[i][$.gS.WoH]=t.min;
 			}
 		}
+				console.log($.gS.settings);
 //		if no max-width is set for the active element, it's filling all the space it can get. (everything else stays on min-width)
 		if(true && t.ai >= 0 && (!(t.max>0) || t.max>t.cS-c)) {
 			t.css[t.ai][$.gS.WoH] = t.cS-c;
@@ -265,7 +273,8 @@ $.extend($.gS, {
 		obj.removeClass(t.from).addClass(t.bind).stop().css(t.css);
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	setSlides : function (context) {
+	setSlides : function (context, speed) {
+		if(!speed) speed=$.gS.settings.transitionSpeed;
 		var slides=$(context).find(".gSSlide");
 		var css=$.gS.getCSS(context);
 		var active = $(context).find(".active");
@@ -286,7 +295,7 @@ $.extend($.gS, {
 			}
 		}
 //		each slide gets animated			
-		for(var i=0; i<slides.length; i++) $(slides[i]).stop().animate(css[i], $.gS.settings.transitionSpeed, $.gS.settings.easing, postAnimation); 
+		for(var i=0; i<slides.length; i++) $(slides[i]).stop().animate(css[i], speed, $.gS.settings.easing, postAnimation); 
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	stop : function () {
