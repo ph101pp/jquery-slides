@@ -16,16 +16,18 @@
 				$(document).ready(function() { 
  					$(".greenishSlides").greenishSlides({	
  						stayOpen:true,
- 						keyEvents:false,
+ 						keyEvents:true,
 				 		activateEvent: "click",
 				 		handle: "img",
 				 		hover: {
 				 			mouseover:function () {
-								$(this).stop().animate({"width":40},"slow").css({zndex:10,"min-width":40});
-								$.gS.setSlides($(this).parent());
+				 			
+				 				var limits= {}
+				 				limits[$(this).index()] = {min:200};
+								$.gS.setOptions({limits:limits});
+								$.gS.setSlides($(this).parent(),200);
 							},
 				 			mouseout:function () {
-								$(this).css({"min-width":0, zIndex:0});
 								$.gS.activate($(this).parent().find(".active").removeClass("active").find("img"));
 				 			}
 				 		},
@@ -33,21 +35,28 @@
  							preActivate: function () {
  								var slide= $(this);
  								var colors=["#EEEEEE","#DDDDDD","#CCCCCC","#BBBBBB","#AAAAAA","#999999","#888888","#777777","#666666","#555555","#444444","#333333","#222222","#111111"];
-								var context=slide.parent().children().stop().animate({"width":"0px"},"slow").css({"min-width":"0px", backgroundColor:"#000000"}).end();
 								var ai=slide.css({"backgroundColor":"#ffffff"}).index();
 								var width=40;
+								var limits = {};
 									
 
 								for(var i=1; i<=20; i++) {
-									width*=0.8;
-									if(width<1) width=0;
-									if(ai-i >=0) context.children().eq(ai-i).stop().animate({"width":width},"slow").css({"min-width":width, backgroundColor:colors[i]});
+									width=Math.ceil(width*0.7);
+									if(width<=1) width=0;
+									limits[ai+i]=limits[ai-i]={};
 									
-									if(ai+i <= context.children().length) context.children().eq(ai+i).stop().animate({"width":width},"slow").css({"min-width":width, backgroundColor:colors[i]});
+									if(ai-i >=0) {
+										limits[ai-i].min=width;
+										slide.siblings().eq(ai-i).css({backgroundColor:colors[i]});
+									}
+									if(ai+i < slide.siblings().length) {
+										limits[ai+i].min=width;
+										slide.siblings().eq(ai+i).css({backgroundColor:colors[i]});
+									}								
 								}
  								
  								
- 								
+ 								$.gS.setOptions({limits:limits});
  								
  								return true;
  							},
@@ -63,14 +72,14 @@
 	</head>
 	<body>
 		<article class="greenishSlides">
-			<section class="one"><img src="http://placehold.it/500x300"></section>
+			<section class="one minWidth"><img src="http://placehold.it/500x300"></section>
 			<section class="two"><img src="http://placekitten.com/200/300"></section>
 			<section class="three active"><img src="http://placehold.it/500x300"></section>
 			<section class="four"><img src="http://placekitten.com/200/300"></section>
 			<section class="two"><img src="http://placekitten.com/200/300"></section>
 			<section class="three active"><img src="http://placehold.it/500x300"></section>
 			<section class="four"><img src="http://placekitten.com/200/300"></section>
-			<section class="two"><img src="http://placekitten.com/200/300"></section>
+			<section class="two "><img src="http://placekitten.com/200/300"></section>
 			<section class="three active"><img src="http://placehold.it/500x300"></section>
 			<section class="four"><img src="http://placekitten.com/200/300"></section>
 			<section class="two"><img src="http://placekitten.com/200/300"></section>

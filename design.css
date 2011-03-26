@@ -14,12 +14,9 @@ body {
 section{
 	font-size:3em; 
 	text-align:center;
-	min-width:20px;
 	background-color:#ee00ee;
 }
 section.minWidth{
-	min-width:200px;
-	max-width:400px;
 	background-color:#ee55ee;
 }
 .active {
