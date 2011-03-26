@@ -62,12 +62,17 @@ $.extend($.gS, {
 			preDeactivateAnimation : function (css) {
 				return css;
 			}
+		},
+		limits: {
+			0: {
+				min:40,
+				max:80
+			}
 		}
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	init : function (context, options) {
-////	Extends defaults into settings.
-		$.gS.settings = $.extend(true,{},this.defaults, typeof(options) == "object" ? options :{});
+		$.gS.setOptions(options);
 
 ////	Sets css and classes
 		var slides = $(context).css($.gS.css.context).children().addClass("gSSlide").css($.gS.css.gSSlide);
@@ -126,8 +131,13 @@ $.extend($.gS, {
 		$.gS.setSlides(context);
 	},
 ////////////////////////////////////////////////////////////////////////////////
+	setOptions : function (options) {
+////	Extends defaults into settings.
+		$.gS.settings = $.extend(true,{},this.defaults, typeof( $.gS.settings) == "object" ?  $.gS.settings :{}, typeof(options) == "object" ? options :{});
+	},
+////////////////////////////////////////////////////////////////////////////////
 	activate : function (slide) {
-		if($.gS.defaults.handle!=$.gS.settings.handle) slide=$(".gSSlide").has($(slide));
+		if($.gS.defaults.handle!=$.gS.settings.handle && !slide.hasClass("gSSlide")) slide=$(".gSSlide").has($(slide));
 		if($(slide).hasClass("active")) return;
 		if(!$.proxy($.gS.settings.hooks.preActivate, $(slide))()) return;
 		$(slide).siblings().removeClass("active");
@@ -179,34 +189,37 @@ $.extend($.gS, {
 			if(i == t.ai) {
 //				If there is an max-width defined for the active element - set it to the new width.
 				t.max = parseFloat(t.slides[t.ai].css("max-"+$.gS.WoH).replace("px",""));
+				if($.gS.settings.limits[i] && (!(t.max > 0) || t.max>$.gS.settings.limits[i].max)) t.max=$.gS.settings.limits[i].max;
 				if(t.max > 0) t.css[t.ai][$.gS.WoH]=t.max;
 			}
-			else c+=t.css[i][$.gS.WoH]=parseFloat(t.slides[i].css("min-"+$.gS.WoH).replace("px",""));
+			else {	
+				t.css[i][$.gS.WoH]=parseFloat(t.slides[i].css("min-"+$.gS.WoH).replace("px",""));
+				if($.gS.settings.limits[i] && t.css[i][$.gS.WoH]<$.gS.settings.limits[i].min) t.css[i][$.gS.WoH]=$.gS.settings.limits[i].min;
+				c+=t.css[i][$.gS.WoH]
+			}
 		}
-//		If fillSpace is Set (kwicks)
-		if(true || $.gS.settings.fillSpace)
-//			if no max-width is set for the active element, it's filling all the space it can get. (everything else stays on min-width)
-			if(true && t.ai >= 0 && (!(t.max>0) || t.max>t.cS-c)) {
-				t.css[t.ai][$.gS.WoH] = t.cS-c;
-			}
-			else {
+//		if no max-width is set for the active element, it's filling all the space it can get. (everything else stays on min-width)
+		if(true && t.ai >= 0 && (!(t.max>0) || t.max>t.cS-c)) {
+			t.css[t.ai][$.gS.WoH] = t.cS-c;
+		}
+		else {
 //				Calculates which size elements have, that are not hitting any max/min limit.
-				var fullSize=t.cS;
-				var count=slides.length
-				var newSize=Math.ceil(fullSize/count);
-				var skip=[];
-				
-				for(var i=0; i < slides.length; i++) 
-					if(!skip[i] && (t.css[i][$.gS.WoH] > newSize || (true && i == t.ai))) {
-						skip[i]=true;
-						count--;
-						fullSize-=t.css[i][$.gS.WoH];
-						newSize=Math.ceil(fullSize/count);
-						i=-1;
-					}
+			var fullSize=t.cS;
+			var count=slides.length
+			var newSize=Math.ceil(fullSize/count);
+			var skip=[];
+			
+			for(var i=0; i < slides.length; i++) 
+				if(!skip[i] && (t.css[i][$.gS.WoH] > newSize || (true && i == t.ai))) {
+					skip[i]=true;
+					count--;
+					fullSize-=t.css[i][$.gS.WoH];
+					newSize=Math.ceil(fullSize/count);
+					i=-1;
+				}
 //				Sets calculated value.
-				for(var i=0; i < slides.length; i++) if(!skip[i]) t.css[i][$.gS.WoH]=newSize;
-			}
+			for(var i=0; i < slides.length; i++) if(!skip[i]) t.css[i][$.gS.WoH]=newSize;
+		}
 		for(var i=c=0; i < slides.length; i++) {
 			c+=t.css[i][$.gS.WoH];
 			if(true && i==t.ai && $.gS.settings.orientation == "horizontal") {
