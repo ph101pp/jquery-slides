@@ -41,23 +41,30 @@
 									
 
 								for(var i=1; i<=20; i++) {
-									width=Math.ceil(width*0.7);
-									if(width<=1) width=0;
+									width=width*0.8;
+									if(width<=width%0.8) width=0;
+									
+									width=Math.ceil(width);
 									limits[ai+i]=limits[ai-i]={};
 									
 									if(ai-i >=0) {
 										limits[ai-i].min=width;
-										slide.siblings().eq(ai-i).css({backgroundColor:colors[i]});
+										if(colors[i]) slide.siblings().eq(ai-i).css({backgroundColor:colors[i]});
+										else slide.siblings().eq(ai-i).css({backgroundColor:"#000000"});
 									}
+ 								console.log(ai+i);
+ 								console.log(slide.siblings().length);
 									if(ai+i < slide.siblings().length) {
 										limits[ai+i].min=width;
-										slide.siblings().eq(ai+i).css({backgroundColor:colors[i]});
+										if(colors[i]) slide.siblings().eq(ai+i).css({backgroundColor:colors[i]});
+										else slide.siblings().eq(ai+i).css({backgroundColor:"#000000"});
 									}								
 								}
  								
  								
  								$.gS.setOptions({limits:limits});
- 								
+ 								console.log(limits);
+ 								console.log("limit");
  								return true;
  							},
  						},	

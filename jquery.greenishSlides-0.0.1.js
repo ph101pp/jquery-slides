@@ -205,7 +205,7 @@ $.extend($.gS, {
 				c+=t.css[i][$.gS.WoH]=t.min;
 			}
 		}
-				console.log($.gS.settings);
+				console.log(t.css);
 //		if no max-width is set for the active element, it's filling all the space it can get. (everything else stays on min-width)
 		if(true && t.ai >= 0 && (!(t.max>0) || t.max>t.cS-c)) {
 			t.css[t.ai][$.gS.WoH] = t.cS-c;
