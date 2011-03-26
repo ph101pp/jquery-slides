@@ -9,17 +9,27 @@
 <!--		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
 		<script type="text/javascript" src="http://jmar777.googlecode.com/svn/trunk/js/jquery.easing.1.3.js"></script>-->
 		<script type="text/javascript" src="jquery.greenishSlides-0.0.1.js"></script>
-		<script type="text/javascript" src="jquery-ui-1.8.11.custom.min.js"></script>
+		<script type="text/javascript" src="jquery-ui-1.8.11.custom.min.j"></script>
 		<script type="text/javascript" src="jquery.jswipe-0.1.2.js"></script>
 		<script type="text/javascript">
 			(function($) {
 				$(document).ready(function() { 
  					$(".greenishSlides").greenishSlides({	
  						stayOpen:true,
- 						keyEvent:true,
+ 						keyEvents:false,
 				 		activateEvent: "click",
+				 		handle: "img",
+				 		hover: {
+				 			mouseover:function () {
+				 				console.log("hallo");
+							},
+				 			mouseout:function () {
+				 				console.log("tschau");
+				 			}
+				 		},
 						hooks: {
- 							preActivate: function (slide) {
+ 							preActivate: function () {
+ 								var slide= $(this);
  								var colors=["#EEEEEE","#DDDDDD","#CCCCCC","#BBBBBB","#AAAAAA","#999999","#888888","#777777","#666666","#555555","#444444","#333333","#222222","#111111"];
 								var context=slide.parent().children().stop().animate({"width":"0px"},"slow").css({"min-width":"0px", backgroundColor:"#000000"}).end();
 								var ai=slide.css({"backgroundColor":"#ffffff"}).index();

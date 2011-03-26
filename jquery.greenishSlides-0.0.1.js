@@ -27,37 +27,39 @@ $.extend($.gS, {
 		orientation:"horizontal",
 		circle : false,
 		handle:".gSSlide",
-		event: {
-			click:function (){
-				$.gS.activate(this);
-			}
+		events: {
+			activate:"click",
+			deactivate:"click"
 		},
-		activateEvent:"click",
-		deactivateEvent:"click",
+		hover: {
+			mouseover:function () {},
+			mouseout:function () {}
+		},
+		keyEvents:true,
 		swipeEvents:true,
 		swipeThreshold: {
 				x: 30,
 				y: 10
 			},
 		hooks : {
-			preActivate: function (active) {
+			preActivate: function () {
 				return true;
-//				console.log("preActivate");
+				console.log("preActivate");
 			},
-			postActivate: function (active) {
+			postActivate: function () {
 //				console.log("postActivate");
 			},
-			preDeactivate: function (active) {
+			preDeactivate: function () {
 				return true;
 //				console.log("preDeactivate");
 			},
-			postDeactivate: function (active) {
+			postDeactivate: function () {
 //				console.log("postDeactivate");
 			},
-			preActivateAnimation : function (active, css) {
+			preActivateAnimation : function (css) {
 				return css;
 			},
-			preDeactivateAnimation : function (active, css) {
+			preDeactivateAnimation : function (css) {
 				return css;
 			}
 		}
@@ -65,7 +67,7 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	init : function (context, options) {
 ////	Extends defaults into settings.
-		$.gS.settings = $.extend(true,this.defaults, typeof(options) == "object" ? options :{});
+		$.gS.settings = $.extend(true,{},this.defaults, typeof(options) == "object" ? options :{});
 
 ////	Sets css and classes
 		var slides = $(context).css($.gS.css.context).children().addClass("gSSlide").css($.gS.css.gSSlide);
@@ -99,35 +101,47 @@ $.extend($.gS, {
 		});
 ////	/Keyboard and Swipe events.
 
+////	Define hover
+		if($.gS.defaults.hover.mouseover!=$.gS.settings.hover.mouseover || $.gS.defaults.hover.mouseout!=$.gS.settings.hover.mouseout)
+			$($.gS.settings.handle).live("mouseover mouseout", function(event) {
+				event.type == "mouseover" ? $.proxy($.gS.settings.hover.mouseover, $(this))(): $.proxy($.gS.settings.hover.mouseout, $(this))();
+			});
+			//$.gS.settings.hover.mouseover).live("mouseout", $.gS.settings.hover.mouseout);
+
 ////	Define Activate Event
 		$($.gS.settings.handle).live($.gS.settings.activateEvent, function (event){
-				$.gS.defaults.handle!=$.gS.settings.handle ? $.gS.activate($(".gSSlide").has($(this))) : $.gS.activate($(this));
+				$.gS.activate($(this));
 		});
 ////	Define Deactivate Event
 		if(!$.gS.settings.stayOpen) $($.gS.settings.handle).live($.gS.settings.deactivateEvent, function (event){
-				$.gS.defaults.handle!=$.gS.settings.handle ? $.gS.deactivate($(".gSSlide").has($(this))) : $.gS.deactivate($(this));
+				$.gS.deactivate($(this));
 		});
+		
 
-////		First Initialisation		
+////	First Initialisation		
+		if(!$.proxy($.gS.settings.hooks.preActivate, $(context).find(".active")	)()) return;
 		$.gS.setSlides(context);
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	activate : function (slide) {
+		if($.gS.defaults.handle!=$.gS.settings.handle) slide=$(".gSSlide").has($(slide));
 		if($(slide).hasClass("active")) return;
-		if(!$.gS.settings.hooks.preActivate($(slide))) return;
+		if(!$.proxy($.gS.settings.hooks.preActivate, $(slide))()) return;
 		$(slide).siblings().removeClass("active");
 		$(slide).addClass("active");
 
 		if($(slide).parent().find(".deactivated").length > 0) {
 			$(slide).siblings().removeClass("deactivated");
-			$.gS.settings.hooks.postDeactivate($(slide));
+			$.proxy($.gS.settings.hooks.postDeactivate, $(slide))();
+
 		}
 		$.gS.setSlides($(slide).parent());
  	},
 ////////////////////////////////////////////////////////////////////////////////
  	deactivate : function (slide) {
+		if($.gS.defaults.handle!=$.gS.settings.handle) slide=$(".gSSlide").has($(slide));
 		if(!$(slide).hasClass("active")) return;
-		if(!$.gS.settings.hooks.preDeactivate($(slide))) return;
+		if(!$.proxy($.gS.settings.hooks.preDeactivate, $(slide))()) return;
 		$(slide).removeClass("active").addClass("deactivated");
 		$.gS.setSlides($(slide).parent());
  	}, 	
@@ -156,7 +170,7 @@ $.extend($.gS, {
 		var slides=$(context).children();
 		var t={css:{}, slides:{}, ai:slides.filter(".gSSlide.active").index(), cS:$(context)[$.gS.WoH]()};
 //		get minWidth for every slide.
-		for(var i=t.c=0; i < slides.length; i++) {
+		for(var i=c=0; i < slides.length; i++) {
 			t.css[i] = {};
 			t.slides[i]=slides.eq(i);
 			if(i == t.ai) {
@@ -164,13 +178,13 @@ $.extend($.gS, {
 				t.max = parseFloat(t.slides[t.ai].css("max-"+$.gS.WoH).replace("px",""));
 				if(t.max > 0) t.css[t.ai][$.gS.WoH]=t.max;
 			}
-			else t.c+=t.css[i][$.gS.WoH]=parseFloat(t.slides[i].css("min-"+$.gS.WoH).replace("px",""));
+			else c+=t.css[i][$.gS.WoH]=parseFloat(t.slides[i].css("min-"+$.gS.WoH).replace("px",""));
 		}
 //		If fillSpace is Set (kwicks)
 		if(true || $.gS.settings.fillSpace)
 //			if no max-width is set for the active element, it's filling all the space it can get. (everything else stays on min-width)
-			if(true && t.ai >= 0 && (!(t.max>0) || t.max>t.cS-t.c)) {
-				t.css[t.ai][$.gS.WoH] = t.cS-t.c;
+			if(true && t.ai >= 0 && (!(t.max>0) || t.max>t.cS-c)) {
+				t.css[t.ai][$.gS.WoH] = t.cS-c;
 			}
 			else {
 //				Calculates which size elements have, that are not hitting any max/min limit.
@@ -190,24 +204,24 @@ $.extend($.gS, {
 //				Sets calculated value.
 				for(var i=0; i < slides.length; i++) if(!skip[i]) t.css[i][$.gS.WoH]=newSize;
 			}
-		for(var i=t.c=0; i < slides.length; i++) {
-			t.c+=t.css[i][$.gS.WoH];
+		for(var i=c=0; i < slides.length; i++) {
+			c+=t.css[i][$.gS.WoH];
 			if(true && i==t.ai && $.gS.settings.orientation == "horizontal") {
-				if(t.c-t.css[i][$.gS.WoH]<t.cS-(t.c-t.css[i][$.gS.WoH]+t.slides[i][$.gS.WoH]())) 
-					$.gS.positioning(context,  t.slides[i], $.gS.LoT, true);
-				else  $.gS.positioning(context,  t.slides[i], $.gS.RoB, true);
+				c-t.css[i][$.gS.WoH]<t.cS-(c-t.css[i][$.gS.WoH]+t.slides[i][$.gS.WoH]()) ?
+					$.gS.positioning(context,  t.slides[i], $.gS.LoT, true):
+					$.gS.positioning(context,  t.slides[i], $.gS.RoB, true);
 				
-				t.css[i]["margin-"+$.gS.LoT]=t.c-t.css[i][$.gS.WoH];
-				t.css[i]["margin-"+$.gS.RoB]=t.cS-t.c;
+				t.css[i]["margin-"+$.gS.LoT]=c-t.css[i][$.gS.WoH];
+				t.css[i]["margin-"+$.gS.RoB]=t.cS-c;
 				t.css[i][$.gS.WoH]="auto";
 			}
-			else if((i<t.ai) || t.ai<0 || (t.c-t.css[i][$.gS.WoH]<t.cS-(t.c-t.css[i][$.gS.WoH]+t.slides[i][$.gS.WoH]()) && t.ai==i) ){
+			else if((i<t.ai) || t.ai<0 || (c-t.css[i][$.gS.WoH]<t.cS-(c-t.css[i][$.gS.WoH]+t.slides[i][$.gS.WoH]()) && t.ai==i) ){
 				$.gS.positioning(context,  t.slides[i], $.gS.LoT);
-				t.css[i][$.gS.LoT]=t.c-t.css[i][$.gS.WoH];
+				t.css[i][$.gS.LoT]=c-t.css[i][$.gS.WoH];
 			}
 			else {
 				$.gS.positioning(context, t.slides[i], $.gS.RoB);
-				t.css[i][$.gS.RoB]=t.cS-t.c;
+				t.css[i][$.gS.RoB]=t.cS-c;
 			}
 		}
 		return t.css;
@@ -232,7 +246,7 @@ $.extend($.gS, {
 			t.css[$.gS.WoH]=t.oS;
 		}
 		t.css[t.from]="auto";
-		obj.stop().css(t.css);
+		obj.removeClass(t.from).addClass(t.bind).stop().css(t.css);
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	setSlides : function (context) {
@@ -241,18 +255,18 @@ $.extend($.gS, {
 		var active = $(context).find(".active");
 //		check if deactivation or activation and sets hooks.
 		if(active.length <=0) {
-			css=$.gS.settings.hooks.preDeactivateAnimation($(context).find(".deactivated"),css);	
+			css=$.proxy($.gS.settings.hooks.preDeactivateAnimation, $(active))(css);	
 			var postAnimation = function () {
 				if($(this).is(".deactivated")) {
-					$.gS.settings.hooks.postDeactivate($(this));
+					$.proxy($.gS.settings.hooks.postDeactivate, $(this))();
 					$(this).removeClass("deactivated");
 				}
 			}
 		}
 		else { 
-			css=$.gS.settings.hooks.preActivateAnimation(active, css);
+			css=$.proxy($.gS.settings.hooks.preActivateAnimation, $(active))(css);
 			var postAnimation = function () {
-				if($(this).is(".active")) $.gS.settings.hooks.postActivate($(this));
+				if($(this).is(".active")) $.proxy($.gS.settings.hooks.postActivate, $(this))();
 			}
 		}
 //		each slide gets animated			
