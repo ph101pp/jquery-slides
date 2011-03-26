@@ -21,10 +21,12 @@
 				 		handle: "img",
 				 		hover: {
 				 			mouseover:function () {
-				 				console.log("hallo");
+								$(this).stop().animate({"width":40},"slow").css({zndex:10,"min-width":40});
+								$.gS.setSlides($(this).parent());
 							},
 				 			mouseout:function () {
-				 				console.log("tschau");
+								$(this).css({"min-width":0, zIndex:0});
+								$.gS.activate($(this).parent().find(".active").removeClass("active").find("img"));
 				 			}
 				 		},
 						hooks: {
