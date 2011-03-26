@@ -22,14 +22,18 @@ $.extend($.gS, {
 	defaults : {
 		stayOpen: true,
 		fillSpace: true,
-		animationSpeed: 400,
+		transitionSpeed: 400,
 		easing: "swing",
 		orientation:"horizontal",
 		circle : false,
-		handle:  false,
-		activateEvent: "mouseover",
-		deactivateEvent: "mouseout",
-		keyEvents:true,
+		handle:".gSSlide",
+		event: {
+			click:function (){
+				$.gS.activate(this);
+			}
+		},
+		activateEvent:"click",
+		deactivateEvent:"click",
 		swipeEvents:true,
 		swipeThreshold: {
 				x: 30,
@@ -60,10 +64,10 @@ $.extend($.gS, {
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	init : function (context, options) {
-//		Extends defaults into settings.
+////	Extends defaults into settings.
 		$.gS.settings = $.extend(true,this.defaults, typeof(options) == "object" ? options :{});
 
-//		Sets wrappers and additional classes
+////	Sets css and classes
 		var slides = $(context).css($.gS.css.context).children().addClass("gSSlide").css($.gS.css.gSSlide);
 		if($.gS.settings.orientation == "horizontal") {
 			slides.addClass("gSHorizontal").css($.gS.css.gSHorizontal);
@@ -79,7 +83,7 @@ $.extend($.gS, {
 			$.gS.LoT="top";
 			$.gS.RoB="bottom";
 		}
-//		Keyboard and Swipe events.		
+////	Keyboard and Swipe events.		
 		if($.gS.settings.keyEvents) $(document).bind("keydown", function(event) {
 			if(event.which == 39 || event.which == 40) $.gS.next(context);
 			else if(event.which == 37 || event.which == 38) $.gS.prev(context);
@@ -93,26 +97,19 @@ $.extend($.gS, {
 			swipeLeft: $.gS.next(context),
 			swipeRight: $.gS.prev(context)
 		});
-		
-		if($.gS.settings.handle) $.gS.initSlides($(context).find($.gS.settings.handle));
-		else $.gS.initSlides(slides);
+////	/Keyboard and Swipe events.
 
-//		First Initialisation		
+////	Define Activate Event
+		$($.gS.settings.handle).live($.gS.settings.activateEvent, function (event){
+				$.gS.defaults.handle!=$.gS.settings.handle ? $.gS.activate($(".gSSlide").has($(this))) : $.gS.activate($(this));
+		});
+////	Define Deactivate Event
+		if(!$.gS.settings.stayOpen) $($.gS.settings.handle).live($.gS.settings.deactivateEvent, function (event){
+				$.gS.defaults.handle!=$.gS.settings.handle ? $.gS.deactivate($(".gSSlide").has($(this))) : $.gS.deactivate($(this));
+		});
+
+////		First Initialisation		
 		$.gS.setSlides(context);
-	},
-////////////////////////////////////////////////////////////////////////////////
-	initSlides : function (slides) {
-//		Define Activate Event
-		var eventFunc = function (event){
-			$.gS.settings.handle ? $.gS.activate($(".gSSlide").has($(this))) : $.gS.activate($(this));
-//			Define Deactivate Event
-			if(!$.gS.settings.stayOpen) $(this).bind($.gS.settings.deactivateEvent, function (event){
-				$.gS.settings.handle ? $.gS.deactivate($(".gSSlide").has($(this))) : $.gS.deactivate($(this));
-				$(this).unbind(event);
-				$(this).bind($.gS.settings.activateEvent, eventFunc);
-			});
-		};
-		$(slides).bind($.gS.settings.activateEvent, eventFunc);		
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	activate : function (slide) {
@@ -259,7 +256,7 @@ $.extend($.gS, {
 			}
 		}
 //		each slide gets animated			
-		for(var i=0; i<slides.length; i++) $(slides[i]).stop().animate(css[i], $.gS.settings.animationSpeed, $.gS.settings.easing, postAnimation); 
+		for(var i=0; i<slides.length; i++) $(slides[i]).stop().animate(css[i], $.gS.settings.transitionSpeed, $.gS.settings.easing, postAnimation); 
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	stop : function () {
