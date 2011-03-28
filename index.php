@@ -9,7 +9,7 @@
 <!--		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
 		<script type="text/javascript" src="http://jmar777.googlecode.com/svn/trunk/js/jquery.easing.1.3.js"></script>-->
 		<script type="text/javascript" src="jquery.greenishSlides-0.0.1.js"></script>
-		<script type="text/javascript" src="jquery-ui-1.8.11.custom.min.j"></script>
+		<script type="text/javascript" src="jquery-ui-1.8.11.custom.min.js"></script>
 		<script type="text/javascript" src="jquery.jswipe-0.1.2.js"></script>
 		<script type="text/javascript">
 			(function($) {
@@ -17,54 +17,48 @@
  					$(".greenishSlides").greenishSlides({	
  						stayOpen:true,
  						keyEvents:true,
-				 		activateEvent: "click",
-				 		handle: "img",
+ 						circle:false,
 				 		hover: {
 				 			mouseover:function () {
-				 			
+				 				if($(this).hasClass("active")) return;
 				 				var limits= {}
-				 				limits[$(this).index()] = {min:200};
+				 				limits[$(this).index()] = {min:40};
 								$.gS.setOptions({limits:limits});
 								$.gS.setSlides($(this).parent(),200);
 							},
 				 			mouseout:function () {
-								$.gS.activate($(this).parent().find(".active").removeClass("active").find("img"));
+				 				if($(this).hasClass("active")) return;
+								$.gS.activate($(this).parent().find(".active").removeClass("active"));
 				 			}
 				 		},
 						hooks: {
- 							preActivate: function () {
+ 							prdeActivate: function () {
  								var slide= $(this);
- 								var colors=["#EEEEEE","#DDDDDD","#CCCCCC","#BBBBBB","#AAAAAA","#999999","#888888","#777777","#666666","#555555","#444444","#333333","#222222","#111111"];
-								var ai=slide.css({"backgroundColor":"#ffffff"}).index();
-								var width=40;
+								var ai=slide.index();
+								var width=(40/0.7)+1;
 								var limits = {};
-									
 
-								for(var i=1; i<=20; i++) {
-									width=width*0.8;
-									if(width<=width%0.8) width=0;
-									
+								for(var i=0; i<=slide.siblings().length; i++) {
+									width=width*0.7-1;
+									if(width<1) width=0;
 									width=Math.ceil(width);
-									limits[ai+i]=limits[ai-i]={};
-									
-									if(ai-i >=0) {
-										limits[ai-i].min=width;
-										if(colors[i]) slide.siblings().eq(ai-i).css({backgroundColor:colors[i]});
-										else slide.siblings().eq(ai-i).css({backgroundColor:"#000000"});
-									}
- 								console.log(ai+i);
- 								console.log(slide.siblings().length);
-									if(ai+i < slide.siblings().length) {
-										limits[ai+i].min=width;
-										if(colors[i]) slide.siblings().eq(ai+i).css({backgroundColor:colors[i]});
-										else slide.siblings().eq(ai+i).css({backgroundColor:"#000000"});
-									}								
+									if((ai-i) >=0) limits[ai-i]={min:width};
+									if((ai+i) <= slide.siblings().length)limits[ai+i]={min:width};
 								}
- 								
- 								
+ 					 			slide.parent().children().queue("gSpre", function (next) {
+								
+									if($(this).hasClass("active")) var color="#FFFFFF";
+									else {
+										var colors=["#EEEEEE","#DDDDDD","#CCCCCC","#BBBBBB","#AAAAAA","#999999","#888888","#777777","#666666","#555555","#444444","#333333","#222222","#111111"];
+										var i=$(this).parent().find(".active").index();
+										i<$(this).index() ? i=$(this).index()-i :i-=$(this).index();
+										var color=colors[i] || "#444444";
+									}							
+									$(this).animate({backgroundColor:color},{queue:false});
+			
+									next();									 
+								});
  								$.gS.setOptions({limits:limits});
- 								console.log(limits);
- 								console.log("limit");
  								return true;
  							},
  						},	
