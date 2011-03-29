@@ -64,7 +64,7 @@ $.extend($.gS, {
 			}
 		},
 		limits : {
-			"ddf 0": {
+			sdaf: {
 				selector:"",
 				min:200,
 				max:200
@@ -127,11 +127,9 @@ $.extend($.gS, {
 		if(!$.gS.settings.stayOpen) $($.gS.settings.handle).live($.gS.settings.events.deactivate, function (event){
 				$.gS.deactivate($(this));
 		});
-		
-
-////	First Initialisation		
-		if(!$.proxy($.gS.settings.hooks.preActivate, $(context).find(".active")	)()) return;
-		$.gS.setSlides(context);
+////	First Initialisation	
+		if($(context).find(".active")) $.gS.activate($(context).find(".active").eq(0).removeClass("active"));
+		else $.gS.setSlides(context);
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	setOptions : function (options) {
@@ -233,7 +231,6 @@ $.extend($.gS, {
 				
 				t.css[i]["margin-"+$.gS.LoT]=c-t.css[i][$.gS.WoH];
 				t.css[i]["margin-"+$.gS.RoB]=t.cS-c;
-				t.css[i][$.gS.WoH]="auto";
 			}
 			else if((i<t.ai) || t.ai<0 || (c-t.css[i][$.gS.WoH]<t.cS-(c-t.css[i][$.gS.WoH]+t.slides[i][$.gS.WoH]()) && t.ai==i) ){
 				$.gS.positioning(context,  t.slides[i], $.gS.LoT);
@@ -273,6 +270,8 @@ $.extend($.gS, {
 		speed=speed || $.gS.settings.transitionSpeed;
 		var slides=$(context).find(".gSSlide");
 		var css=$.gS.getCSS(context);
+		
+
 		var active = $(context).find(".active");
 //		check if deactivation or activation and sets hooks.
 		if(active.length <=0) {
@@ -287,11 +286,14 @@ $.extend($.gS, {
 		else { 
 			css=$.proxy($.gS.settings.hooks.preActivateAnimation, $(active))(css);
 			var postAnimation = function () {
-				if($(this).is(".active")) $.proxy($.gS.settings.hooks.postActivate, $(this))();
+				if($(this).is(".active")) {
+					$.proxy($.gS.settings.hooks.postActivate, $(this))();
+					$(this).css({width:"auto"});	
+				}
 			}
 		}
 //		each slide gets animated			
-		for(var i=0; i<=slides.length; i++) $(slides[i]).stop().dequeue("gSpre").animate(css[i], speed, $.gS.settings.easing, postAnimation).dequeue("gSpost"); 
+		for(var i=0; i<=slides.length; i++) $(slides[i]).stop().dequeue("gSpre").animate(css[i], { duration:speed, easing:$.gS.settings.easing, complete:postAnimation}).dequeue("gSpost"); 
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	css :{

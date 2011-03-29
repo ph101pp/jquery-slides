@@ -11,15 +11,15 @@ body {
 	margin:0;
 	background-color:#bbbbbb;
 }
-section{
+.greenishSlides div{
 	font-size:3em; 
 	text-align:center;
 	background-color:#ee00ee;
 }
-section.minWidth{
+.minWidth{
 	background-color:#ee55ee;
 }
-.active {
+.greenishSlides .active {
 	background-color:#eeCCee;
 }
 
