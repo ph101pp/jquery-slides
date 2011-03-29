@@ -288,7 +288,7 @@ $.extend($.gS, {
 			var postAnimation = function () {
 				if($(this).is(".active")) {
 					$.proxy($.gS.settings.hooks.postActivate, $(this))();
-					$(this).css({width:"auto"});	
+					if($.gS.orientation == "horizontal") $(this).css({width:"auto"});	
 				}
 			}
 		}

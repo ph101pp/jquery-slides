@@ -18,6 +18,7 @@
  						stayOpen:true,
  						keyEvents:true,
  						circle:false,
+ 						orientation:"vertical",
 				 		hover: {
 				 			mouseover:function () {
 				 				if($(this).hasClass("active")) return;
