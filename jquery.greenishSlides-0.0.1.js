@@ -11,12 +11,13 @@ Author {
 
 (function($) {
 ////////////////////////////////////////////////////////////////////////////////
-$.fn.greenishSlides = function (settings){
+$.fn.greenishSlides = function (options){
 	return $(this).each(function () {
-		$.gS.init($(this), settings);
+		$.gS.init($(this), options);
 	});
 };
 $.gS = $().greenishSlides;
+var cssFloat = 
 $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	defaults : {
@@ -43,66 +44,62 @@ $.extend($.gS, {
 			},
 		hooks : {
 			preActivate: function () {
-				return true;
-//				console.log("preActivate");
 			},
 			postActivate: function () {
-//				console.log("postActivate");
 			},
 			preDeactivate: function () {
-				return true;
-//				console.log("preDeactivate");
 			},
 			postDeactivate: function () {
-//				console.log("postDeactivate");
 			},
-			preActivateAnimation : function (css) {
-				return css;
+			preActivateAnimation : function (e, css) {
+				console.log(e);
+				console.log(css);
 			},
-			preDeactivateAnimation : function (css) {
-				return css;
+			preDeactivateAnimation : function (e, css) {
 			}
 		},
 		limits : {
-			sdaf: {
-				selector:"",
-				min:200,
-				max:200
-			}
-		
 		}
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	init : function (context, options) {
-////	Extends defaults into settings.
-		$.gS.setOptions(options);
+////	Extends defaults into options.
+		this.options=this.setOpts(options);
 
 ////	Sets css and classes
 		var slides = $(context).css($.gS.css.context).children().addClass("gSSlide").css($.gS.css.gSSlide);
-		if($.gS.settings.orientation == "horizontal") {
+		if($.gS.options.orientation == "horizontal") {
 			slides.addClass("gSHorizontal").css($.gS.css.gSHorizontal);
-			$.gS.ToL="top";
-			$.gS.WoH="width";
-			$.gS.LoT="left";
-			$.gS.RoB="right";
+			$.gS.options.ToL="top";
+			$.gS.options.WoH="width";
+			$.gS.options.LoT="left";
+			$.gS.options.RoB="right";
 		}
 		else {
 			slides.addClass("gSVertical").css($.gS.css.gSVertical);
-			$.gS.ToL="left";
-			$.gS.WoH="height";
-			$.gS.LoT="top";
-			$.gS.RoB="bottom";
+			$.gS.options.ToL="left";
+			$.gS.options.WoH="height";
+			$.gS.options.LoT="top";
+			$.gS.options.RoB="bottom";
 		}
+		
+////	Set hooks.
+		$.each(this.options.hooks,function(name,func) {
+			$(context).bind(name, function (e, param1, param2){
+				$.proxy(func, e.target)(e, param1, param2);
+			});
+		});
+////	/Set hooks.
 ////	Keyboard and Swipe events.		
-		if($.gS.settings.keyEvents) $(document).bind("keydown", function(event) {
+		if($.gS.options.keyEvents) $(document).bind("keydown", function(event) {
 			if(event.which == 39 || event.which == 40) $.gS.next(context);
 			else if(event.which == 37 || event.which == 38) $.gS.prev(context);
 		});
 		
-		if($.gS.settings.swipeEvents && typeof($().swipe)=="function") $(context).swipe({
+		if($.gS.options.swipeEvents && typeof($().swipe)=="function") $(context).swipe({
 			threshold: {
-				x: $.gS.settings.swipeThreshold.x,
-				y: $.gS.settings.swipeThreshold.y
+				x: $.gS.options.swipeThreshold.x,
+				y: $.gS.options.swipeThreshold.y
 			},
 			swipeLeft: function(){$.gS.next(context)},
 			swipeRight: function(){$.gS.prev(context)}
@@ -110,54 +107,54 @@ $.extend($.gS, {
 ////	/Keyboard and Swipe events.
 
 ////	Define hover
-		if($.gS.defaults.hover.mouseover!=$.gS.settings.hover.mouseover || $.gS.defaults.hover.mouseout!=$.gS.settings.hover.mouseout)
-			$($.gS.settings.handle).live("mouseover mouseout", function(event) {
+		if($.gS.defaults.hover.mouseover!=$.gS.options.hover.mouseover || $.gS.defaults.hover.mouseout!=$.gS.options.hover.mouseout)
+			$($.gS.options.handle).live("mouseover mouseout", function(event) {
 				var context=$(this);
-				if($.gS.defaults.handle!=$.gS.settings.handle) context=$(".gSSlide").has($(this));
+				if($.gS.defaults.handle!=$.gS.options.handle) context=$(".gSSlide").has($(this));
 
-				event.type == "mouseover" ? $.proxy($.gS.settings.hover.mouseover, context)(): $.proxy($.gS.settings.hover.mouseout, context)();
+				event.type == "mouseover" ? $.proxy($.gS.options.hover.mouseover, context)(): $.proxy($.gS.options.hover.mouseout, context)();
 			});
-			//$.gS.settings.hover.mouseover).live("mouseout", $.gS.settings.hover.mouseout);
+			//$.gS.options.hover.mouseover).live("mouseout", $.gS.options.hover.mouseout);
 
 ////	Define Activate Event
-		$($.gS.settings.handle).live($.gS.settings.events.activate, function (event){
+		$($.gS.options.handle).live($.gS.options.events.activate, function (event){
 				$.gS.activate($(this));
 		});
 ////	Define Deactivate Event
-		if(!$.gS.settings.stayOpen) $($.gS.settings.handle).live($.gS.settings.events.deactivate, function (event){
+		if(!$.gS.options.stayOpen) $($.gS.options.handle).live($.gS.options.events.deactivate, function (event){
 				$.gS.deactivate($(this));
 		});
 ////	First Initialisation	
-		if($(context).find(".active")) $.gS.activate($(context).find(".active").eq(0).removeClass("active"));
-		else $.gS.setSlides(context);
+		$(context).find(".active") ? 
+		$.gS.activate($(context).find(".active").eq(0).removeClass("active")):
+		$.gS.setSlides(context);
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	setOptions : function (options) {
-////	Extends defaults into settings.
-		$.gS.settings = $.extend(true,{},this.defaults, typeof( $.gS.settings) == "object" ?  $.gS.settings :{}, typeof(options) == "object" ? options :{});
+	setOpts : function (options) {
+////	Extends defaults into options.
+		return $.extend(true,{},this.defaults, this.options||{}, options||{});
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	activate : function (slide) {
 //		console.log("active");
-		if($.gS.defaults.handle!=$.gS.settings.handle && !$(slide).hasClass("gSSlide")) slide=$(".gSSlide").has($(slide));
+		if($.gS.defaults.handle!=$.gS.options.handle && !$(slide).hasClass("gSSlide")) slide=$(".gSSlide").has($(slide));
 		if($(slide).hasClass("active")) return;
-		if(!$.proxy($.gS.settings.hooks.preActivate, $(slide))()) return;
 		$(slide).siblings().removeClass("active");
 		$(slide).addClass("active");
 
 		if($(slide).parent().find(".deactivated").length > 0) {
 			$(slide).siblings().removeClass("deactivated");
-			$.proxy($.gS.settings.hooks.postDeactivate, $(slide))();
-
+			$(slide).trigger("postDeactivate"); //hook
 		}
+		$(slide).trigger("preActivate"); // hook
 		$.gS.setSlides($(slide).parent());
  	},
 ////////////////////////////////////////////////////////////////////////////////
  	deactivate : function (slide) {
-		if($.gS.defaults.handle!=$.gS.settings.handle) slide=$(".gSSlide").has($(slide));
+		if($.gS.defaults.handle!=$.gS.options.handle) slide=$(".gSSlide").has($(slide));
 		if(!$(slide).hasClass("active")) return;
-		if(!$.proxy($.gS.settings.hooks.preDeactivate, $(slide))()) return;
 		$(slide).removeClass("active").addClass("deactivated");
+		$(slide).trigger("preDeactivate"); // hook
 		$.gS.setSlides($(slide).parent());
  	}, 	
 ////////////////////////////////////////////////////////////////////////////////
@@ -175,35 +172,45 @@ $.extend($.gS, {
 		if(slides.filter(fromSlide).length <= 0) return;
 		var next = $(fromSlide).index()+(parseFloat(number)%slides.length);
 		
-		if($.gS.settings.circle) next >= slides.length ? next = next-slides.length : next < 0 ? next = slides.length+next :true;		
-		else next >= slides.length ? next = slides.length-1 : next < 0 ? next = 0 :true;		
+		if(next < 0) $.gS.options.circle ? 
+				next = slides.length+next:
+				next = 0;
+		else if(next>=slides.length) $.gS.options.circle ? 
+				next = next-slides.length: 
+				next = slides.length-1;
 				
 		$.gS.activate(slides.eq(next));
 	},
 ////////////////////////////////////////////////////////////////////////////////
+	cssFloat : function (context, value) {
+		return parseFloat($(context).css(value).replace("px","")) || undefined;
+	},
+////////////////////////////////////////////////////////////////////////////////
 	getCSS : function (context) {
+		var opts=$.gS.options;
 		var slides=$(context).children();
-		var t={css:{}, slides:{}, ai:slides.filter(".gSSlide.active").index(), cS:$(context)[$.gS.WoH]()};
+		var t={css:{}, slides:{}, ai:slides.filter(".gSSlide.active").index(), cS:$(context)[opts.WoH]()};
 //		get minWidth for every slide.
 		for(var i=c=0; i < slides.length; i++) {
 			t.css[i] = {};
 			t.slides[i]=slides.eq(i);
 			if(i == t.ai) {
 //				If there is an max-width defined for the active element - set it to the new width.
-				if($.gS.settings.limits[i] && $.gS.settings.limits[i].max >= 0) t.max=$.gS.settings.limits[i].max;
-				else t.max=$.gS.settings.limits.max || 0;
-				if(t.max > 0) t.css[t.ai][$.gS.WoH]=t.max;
+				opts.limits[i] && opts.limits.max? 
+					t.max=opts.limits[i].max:
+					t.max=opts.limits.max || 0;
+				if(t.max > 0) t.css[t.ai][opts.WoH]=t.max;
 			}
 			else {
-				if($.gS.settings.limits[i] && $.gS.settings.limits[i].min >= 0) t.min=$.gS.settings.limits[i].min;
-				else t.min=$.gS.settings.limits.min || 0;
-				c+=t.css[i][$.gS.WoH]=t.min;
+				opts.limits[i] && opts.limits[i].min ? 
+					t.min=opts.limits[i].min:
+					t.min=opts.limits.min || 0;
+				c+=t.css[i][opts.WoH]=t.min;
 			}
 		}
 //		if no max-width is set for the active element, it's filling all the space it can get. (everything else stays on min-width)
-		if(true && t.ai >= 0 && (!(t.max>0) || t.max>t.cS-c)) {
-			t.css[t.ai][$.gS.WoH] = t.cS-c;
-		}
+		if(t.ai>=0 && (!(t.max>0) || t.max>t.cS-c)) 
+			t.css[t.ai][opts.WoH] = t.cS-c;
 		else {
 //				Calculates which size elements have, that are not hitting any max/min limit.
 			var fullSize=t.cS;
@@ -212,62 +219,68 @@ $.extend($.gS, {
 			var skip=[];
 			
 			for(var i=0; i < slides.length; i++) 
-				if(!skip[i] && (t.css[i][$.gS.WoH] > newSize || (true && i == t.ai))) {
+				if(!skip[i] && (t.css[i][opts.WoH]>newSize || (true&&i==t.ai))){
 					skip[i]=true;
 					count--;
-					fullSize-=t.css[i][$.gS.WoH];
+					fullSize-=t.css[i][opts.WoH];
 					newSize=Math.ceil(fullSize/count);
 					i=-1;
 				}
 //				Sets calculated value.
-			for(var i=0; i < slides.length; i++) if(!skip[i]) t.css[i][$.gS.WoH]=newSize;
+			for(var i=0; i < slides.length; i++) 
+				if(!skip[i]) t.css[i][opts.WoH]=newSize;
 		}
 		for(var i=c=0; i < slides.length; i++) {
-			c+=t.css[i][$.gS.WoH];
-			if(true && i==t.ai && $.gS.settings.orientation == "horizontal") {
-				c-t.css[i][$.gS.WoH]<t.cS-(c-t.css[i][$.gS.WoH]+t.slides[i][$.gS.WoH]()) ?
-					$.gS.positioning(context,  t.slides[i], $.gS.LoT, true):
-					$.gS.positioning(context,  t.slides[i], $.gS.RoB, true);
+			c+=t.css[i][opts.WoH];
+			t.alignRoB=(t.slides[t.ai].css(opts.RoB)=="auto" && t.ai==i);
+			if(true && i==t.ai && opts.orientation == "horizontal") {
+				t.alignRoB ?
+					$.gS.positioning(context,  t.slides[i], opts.LoT, true):
+					$.gS.positioning(context,  t.slides[i], opts.RoB, true);
 				
-				t.css[i]["margin-"+$.gS.LoT]=c-t.css[i][$.gS.WoH];
-				t.css[i]["margin-"+$.gS.RoB]=t.cS-c;
+				t.css[i]["margin-"+opts.LoT]=c-t.css[i][opts.WoH];
+				t.css[i]["margin-"+opts.RoB]=t.cS-c;
 			}
-			else if((i<t.ai) || t.ai<0 || (c-t.css[i][$.gS.WoH]<t.cS-(c-t.css[i][$.gS.WoH]+t.slides[i][$.gS.WoH]()) && t.ai==i) ){
-				$.gS.positioning(context,  t.slides[i], $.gS.LoT);
-				t.css[i][$.gS.LoT]=c-t.css[i][$.gS.WoH];
+			else if((i<t.ai) || t.ai<0 || t.alignRoB){
+				$.gS.positioning(context,  t.slides[i], opts.LoT);
+				t.css[i][opts.LoT]=c-t.css[i][opts.WoH];
 			}
 			else {
-				$.gS.positioning(context, t.slides[i], $.gS.RoB);
-				t.css[i][$.gS.RoB]=t.cS-c;
+				$.gS.positioning(context, t.slides[i], opts.RoB);
+				t.css[i][opts.RoB]=t.cS-c;
 			}
 		}
 		return t.css;
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	positioning : function (context, obj, bind, active) {
-		var t={p : obj.offset(), "bind":bind, "from": bind==$.gS.LoT?$.gS.RoB:$.gS.LoT, cS:$(context)["inner"+$.gS.WoH.charAt(0).toUpperCase() + $.gS.WoH.slice(1)](), oS:obj["outer"+$.gS.WoH.charAt(0).toUpperCase() + $.gS.WoH.slice(1)]()};
+		var t={p : obj.offset(), "bind":bind, "from": bind==$.gS.options.LoT?$.gS.options.RoB:$.gS.options.LoT, cS:$(context)["inner"+$.gS.options.WoH.charAt(0).toUpperCase() + $.gS.options.WoH.slice(1)](), oS:obj["outer"+$.gS.options.WoH.charAt(0).toUpperCase() + $.gS.options.WoH.slice(1)]()};
 		
 		if(active) {
 			t.css={zIndex:0, position:"relative"};
-			t.css[$.gS.WoH]="auto";
-			t.css["margin-"+$.gS.LoT]=t.p[$.gS.LoT];
-			t.css["margin-"+$.gS.RoB]=t.cS-t.p[$.gS.LoT]-t.oS;
+			t.css[$.gS.options.WoH]="auto";
+			t.css["margin-"+$.gS.options.LoT]=t.p[$.gS.options.LoT];
+			t.css["margin-"+$.gS.options.RoB]=t.cS-t.p[$.gS.options.LoT]-t.oS;
 			t.css[bind]=0;
 		}
 		else {
 			t.css={zIndex:1, position:"absolute"};
-			if(parseFloat(obj.css("margin-"+t.bind).replace("px","")) > 0 || parseFloat(obj.css("margin-"+t.from).replace("px","")) > 0) 
-				t.css[t.bind]=parseFloat(obj.css("margin-"+t.bind).replace("px",""));
-			else t.bind==$.gS.LoT ? t.css[bind]=t.p[$.gS.LoT] : t.css[bind]=t.cS-t.p[$.gS.LoT]-t.oS;
-			t.css[$.gS.ToL]=t.css["margin-"+$.gS.LoT]=t.css["margin-"+$.gS.RoB]=0;
-			t.css[$.gS.WoH]=t.oS;
+			t.css[t.bind]=$.gS.cssFloat(obj,"margin-"+t.bind);
+			if(!t.css[t.bind] && !$.gS.cssFloat(obj,"margin-"+t.from)) 
+				t.bind==$.gS.options.LoT ? 
+					t.css[bind]=t.p[$.gS.options.LoT]:
+					t.css[bind]=t.cS-t.p[$.gS.options.LoT]-t.oS;
+			t.css[$.gS.options.ToL]=0;
+			t.css["margin-"+$.gS.options.LoT]=0;
+			t.css["margin-"+$.gS.options.RoB]=0;
+			t.css[$.gS.options.WoH]=t.oS;
 		}
 		t.css[t.from]="auto";
 		obj.removeClass(t.from).addClass(t.bind).stop().css(t.css);
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	setSlides : function (context, speed) {
-		speed=speed || $.gS.settings.transitionSpeed;
+	setSlides : function (context, opts) {
+		opts=this.setOpts(opts);
 		var slides=$(context).find(".gSSlide");
 		var css=$.gS.getCSS(context);
 		
@@ -275,25 +288,30 @@ $.extend($.gS, {
 		var active = $(context).find(".active");
 //		check if deactivation or activation and sets hooks.
 		if(active.length <=0) {
-			css=$.proxy($.gS.settings.hooks.preDeactivateAnimation, $(active))(css);	
+			$(active).trigger("preDeactivateAnimation", css); // hook
 			var postAnimation = function () {
 				if($(this).is(".deactivated")) {
-					$.proxy($.gS.settings.hooks.postDeactivate, $(this))();
+					$(this).trigger("postDeactivate"); // hook
 					$(this).removeClass("deactivated");
 				}
 			}
 		}
-		else { 
-			css=$.proxy($.gS.settings.hooks.preActivateAnimation, $(active))(css);
+		else {  
+			$(active).trigger("preActivateAnimation", css); // hook
 			var postAnimation = function () {
 				if($(this).is(".active")) {
-					$.proxy($.gS.settings.hooks.postActivate, $(this))();
-					if($.gS.orientation == "horizontal") $(this).css({width:"auto"});	
+					$(this).trigger("postActivate"); // hook
+					if(true && opts.orientation == "horizontal") 
+						$(this).css({width:"auto"});	
 				}
 			}
 		}
 //		each slide gets animated			
-		for(var i=0; i<=slides.length; i++) $(slides[i]).stop().dequeue("gSpre").animate(css[i], { duration:speed, easing:$.gS.settings.easing, complete:postAnimation}).dequeue("gSpost"); 
+		for(var i=0; i<=slides.length; i++) 
+			$(slides[i]).stop()
+			.dequeue("gSpre") // "hook" custom queue that runs befor the animation
+			.animate(css[i], {duration:opts.transitionSpeed, easing:opts.easing, complete:postAnimation})
+			.dequeue("gSpost"); // "hook" custom queue that runs befor the animation
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	css :{
