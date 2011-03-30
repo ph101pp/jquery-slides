@@ -17,7 +17,6 @@ $.fn.greenishSlides = function (options){
 	});
 };
 $.gS = $().greenishSlides;
-var cssFloat = 
 $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	defaults : {
@@ -39,27 +38,11 @@ $.extend($.gS, {
 		keyEvents:true,
 		swipeEvents:true,
 		swipeThreshold: {
-				x: 30,
-				y: 10
-			},
-		hooks : {
-			preActivate: function () {
-			},
-			postActivate: function () {
-			},
-			preDeactivate: function () {
-			},
-			postDeactivate: function () {
-			},
-			preActivateAnimation : function (e, css) {
-				console.log(e);
-				console.log(css);
-			},
-			preDeactivateAnimation : function (e, css) {
-			}
+			x: 30,
+			y: 10
 		},
-		limits : {
-		}
+		hooks : {},
+		limits : {}
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	init : function (context, options) {
@@ -118,11 +101,11 @@ $.extend($.gS, {
 
 ////	Define Activate Event
 		$($.gS.options.handle).live($.gS.options.events.activate, function (event){
-				$.gS.activate($(this));
+			$.gS.activate($(this));
 		});
 ////	Define Deactivate Event
 		if(!$.gS.options.stayOpen) $($.gS.options.handle).live($.gS.options.events.deactivate, function (event){
-				$.gS.deactivate($(this));
+			$.gS.deactivate($(this));
 		});
 ////	First Initialisation	
 		$(context).find(".active") ? 
