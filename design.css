@@ -10,11 +10,14 @@ body {
 	width:100%;
 	margin:0;
 	background-color:#bbbbbb;
+	text-indent:10px;
 }
 .greenishSlides div{
 	font-size:3em; 
 	text-align:center;
 	background-color:#ee00ee;
+	min-width:0px;
+	max-width:100%;
 }
 .minWidth{
 	background-color:#ee55ee;
