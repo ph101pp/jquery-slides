@@ -29,7 +29,7 @@ $.extend($.gS, {
 		var time = timer - $.gS.timer[key];
 		
 		$.gS.timer[key]=timer;
-		if(false && !hide) {
+		if(true && !hide) {
 			console.log(key+":"+comment+"////////////////////");
 			console.log("Time: "+time+"ms");
 		}
@@ -59,7 +59,8 @@ $.extend($.gS, {
 		},
 		hooks : {},
 		limits : {},
-		cache:false
+		cache:false,
+		queue:false
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	init : function (context, opts) {
@@ -123,8 +124,8 @@ $.extend($.gS, {
 		
 ////	First Initialisation	
 		$(".active", context) ? 
-		gS.activate($(".active", context).eq(0).removeClass("active")):
-		gS.setSlides(context);
+			gS.activate($(".active", context).eq(0).removeClass("active")):
+			gS.setSlides(context);
 		
 		
 		gS.timing("init" , "Done");
@@ -168,8 +169,7 @@ $.extend($.gS, {
 			slide=$(slide);
 
 		if(!slide.hasClass("active")) return;
-		slide.removeClass("active").addClass("deactivated")
-		.trigger("preDeactivate"); // hook
+		slide.removeClass("active").addClass("deactivated").trigger("preDeactivate"); // hook
 		
 		gS.setSlides(slide.parent());
  	}, 	
@@ -208,62 +208,69 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	getCSS : function (context) {
 		$.gS.timing("getCSS" , "Start",true);
+		
+		
 		var gS=$.gS,
 			opts=gS.opts,
-			slides=$(context).children(),
-			slidesLength=slides.length,
+			cache=(opts.cache? $(context).data("cache") || {}:{}),
+			slides=(cache.slides  || $(context).children()),
+			count=slidesLength=slides.length,
 			ai=slides.filter(".gSSlide.active").index(),
-			cS=$(context)[opts.WoH](),
-			alignLoT, posAct,
+			fullSize=cS=(cache.cS || $(context)[opts.WoH]()),
+			alignLoT, posAct, newSize,
 			data = {},
 			limits ={},
 			dcss={},
-			fullSize,count,newSize,skip,limit,hitMax;
+			skip={};
 
-		gS.timing("getCSS" , "GetData");
-
-
-///////////////// MAX/MIN TO BE HANDLED NEW
-		for(var i=c=0; i < slides.length; i++) {
-			data[i]={
-				obj:slides.eq(i),
-				dcss:{},
-				css:{},
+		if(!opts.cache || !cache.data) { 
+			cache.limits={};
+			cache.data={};
+			cache.slides=slides;
+			cache.cS=cS;
+			for(var i=c=0; i < slides.length; i++) {
+				cache.data[i]={
+					queue:opts.queue,
+					obj:slides.eq(i),
+					dcss:{},
+					css:{}
+				};
+				cache.data[i].dcss[i]={};
+				cache.data[i].css["min-"+opts.WoH]=gS.cssFloat(cache.data[i].obj,"min-"+opts.WoH);
+				cache.data[i].css["max-"+opts.WoH]=gS.cssFloat(cache.data[i].obj,"max-"+opts.WoH);
+	
+				cache.limits[i]={
+					max:cache.data[i].css["max-"+opts.WoH] || 
+					(opts.limits[i] ? opts.limits[i].max : false) || 
+					opts.limits.max || undefined,
+					
+					min:cache.data[i].css["min-"+opts.WoH] || 
+					(opts.limits[i] ? opts.limits[i].min : false) || 
+					opts.limits.min || 0			
+				};
 			};
-			data[i].css["min-"+opts.WoH]=gS.cssFloat(data[i].obj,"min-"+opts.WoH);
-			data[i].css["max-"+opts.WoH]=gS.cssFloat(data[i].obj,"max-"+opts.WoH);
-			data[i].css[opts.WoH]=data[i].obj[opts.WoH]();
-
-			limits[i]={
-				max:data[i].css["max-"+opts.WoH] || 
-				(opts.limits[i] ? opts.limits[i].max : false) || 
-				opts.limits.max || undefined,
-				
-				min:data[i].css["min-"+opts.WoH] || 
-				(opts.limits[i] ? opts.limits[i].min : false) || 
-				opts.limits.min || 0			
-			};
-			dcss[i]={}
-			
-			i != ai ? 
-				c+=dcss[i][opts.WoH]=limits[i].min:
-				dcss[i][opts.WoH]=limits[i].max;
-		};
+			$(context).data("cache",cache);
+			cache=$(context).data("cache");
+		}
+		data=cache.data;
+		limits=cache.limits;
 		
-		console.log(limits);
-
-
+		gS.timing("getCSS" , "GetData");
+	
+		for(i=c=0; limit=limits[i]; i++) {
+			dcss[i]={};
+			i != ai ? 
+				c+=dcss[i][opts.WoH]=limit.min:
+				dcss[i][opts.WoH]=limit.max;
+		}
+		
 
 //		if no max-width is set for the active element, it's filling all the space it can ge (everything else stays on min-width)
 		if(ai>=0 && (!limits[ai].max || limits[ai].max>cS-c)) 
 			dcss[ai][opts.WoH] = cS-c;
 		else {
 //			Calculates which size elements have, that are not hitting any max/min limi
-			fullSize=cS;
-			count=slidesLength;
 			newSize=Math.ceil(fullSize/count);
-			skip=[];
-			
 			for(i=0; limit = limits[i]; i++) {
 				hitMax=(limit.max<newSize);
 				if(!skip[i] && (limit.min>newSize || hitMax || i==ai)){
@@ -276,17 +283,15 @@ $.extend($.gS, {
 					i=-1;
 				}
 			}
-//				Sets calculated value.
+//			Sets calculated value.
 			for(var i=0; i < slidesLength; i++) 
 				if(!skip[i]) dcss[i][opts.WoH]=newSize;
 		}
 		gS.timing("getCSS" , "Got Width");
-///////////////// MAX/MIN TO BE HANDLED NEW
-
-
 
 		alignLoT= data[ai].obj.css(opts.RoB)=="auto";		
 		for(i=c=0; slide=data[i]; i++) {
+			slide.css[opts.WoH]=slide.obj[opts.WoH]();
 			c+=dcss[i][opts.WoH];
 			posAct = slide.obj.hasClass("posAct");
 			if(true && i==ai && !opts.vertical) {
@@ -366,14 +371,14 @@ $.extend($.gS, {
 			opts=gS.setOpts(opts),
 			active = $(".active", context),
 			data=gS.getCSS(context);
-			
+
 		context.data("data", data);
 
 		$.gS.timing("setSlides","gotCSS");
 
 //		check if deactivation or activation and sets hooks.
 		if(active.length <=0) {
-			active.trigger("preDeactivateAnimation", css); // hook
+			active.trigger("preDeactivateAnimation", data); // hook
 			var postAnimation = function () {
 				var deactive=$(this).find(".gSSlide.deactivated");
 				if(deactive.length>0) {
@@ -383,7 +388,7 @@ $.extend($.gS, {
 			}
 		}
 		else {  
-			active.trigger("preActivateAnimation", css); // hook
+			active.trigger("preActivateAnimation", data); // hook
 			var postAnimation = function () {
 				var active=$(this).find(".gSSlide.active");
 				if(active.length>0) {
