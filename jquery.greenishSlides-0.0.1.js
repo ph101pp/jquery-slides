@@ -369,18 +369,20 @@ $.extend($.gS, {
 		if(active.length <=0) {
 			active.trigger("preDeactivateAnimation", css); // hook
 			var postAnimation = function () {
-				if($(this).is(".deactivated")) {
-					$(this).trigger("postDeactivate"); // hook
-					$(this).removeClass("deactivated");
+				var deactive=$(this).find(".gSSlide.deactivated");
+				if(deactive.length>0) {
+					deactive.trigger("postDeactivate"); // hook
+					deactive.removeClass("deactivated");
 				}
 			}
 		}
 		else {  
 			active.trigger("preActivateAnimation", css); // hook
 			var postAnimation = function () {
-				if($(this).is(".active")) {
-					$(this).trigger("postActivate"); // hook
-					if(true && !opts.vertical) $(this).css({width:"auto"});	
+				var active=$(this).find(".gSSlide.active");
+				if(active.length>0) {
+					active.trigger("postActivate"); // hook
+					if(!opts.vertical) active.css({width:"auto"});
 				}
 			}
 		}
@@ -388,12 +390,7 @@ $.extend($.gS, {
 		$.gS.timing("setSlides","preanimation");
 
 //		each slide gets animated			
-		if(false) for(var i=0; i<slides.length; i++) 
-			data[i].obj.stop()
-			.dequeue("gSpre") // "hook" custom queue that runs befor the animation
-			.animate(data[i].dcss, {duration:opts.transitionSpeed, easing:opts.easing, complete:postAnimation})
-			.dequeue("gSpost"); // "hook" custom queue that runs befor the animation
-		else context
+		context
 			.dequeue("gSpre") // "hook" custom queue that runs before the animation
 			.css({textIndent:0})
 			.animate({textIndent:100}, {duration:opts.transitionSpeed, easing:opts.easing, complete:postAnimation , step:gS.animation})
