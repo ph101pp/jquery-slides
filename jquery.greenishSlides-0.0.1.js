@@ -30,14 +30,14 @@ $.extend($.gS, {
 		
 		$.gS.timer[key]=timer;
 		if(true && !hide) {
-			console.log(key+":"+comment+"////////////////////");
+//			console.log(key+":"+comment+"////////////////////");
 			console.log("Time: "+time+"ms");
 		}
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	defaults : {
 		stayOpen: false,
-		fillSpace: true,
+//		fillSpace: true,
 		vertical:false,
 		circle : false,
 		transitionSpeed: 400,
@@ -59,7 +59,7 @@ $.extend($.gS, {
 		},
 		hooks : {},
 		limits : {},
-		queue:false
+		queue:true
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	init : function (context, opts) {
@@ -208,7 +208,6 @@ $.extend($.gS, {
 	getCSS : function (context) {
 		$.gS.timing("getCSS" , "Start",true);
 		
-		
 		var gS=$.gS,
 			opts=gS.opts,
 			slides=$(context).children(),
@@ -216,22 +215,24 @@ $.extend($.gS, {
 			ai=slides.filter(".gSSlide.active").index(),
 			fullSize=cS=$(context)[opts.WoH](),
 			alignLoT, posAct, newSize,
-			data = {},
+			data = [],
 			limits ={},
 			dcss={},
-			skip={};
+			skip={},
+			c=0;
 
-		for(var i=c=0; i < slides.length; i++) {
+
+//		Get Data
+		for(var i=slidesLength-1; i >=0 ; i--) {
 			data[i]={
-				queue:opts.queue,
 				obj:slides.eq(i),
 				dcss:{},
 				css:{}
 			};
 			dcss[i]={};
+			data[i].css[opts.WoH]=data[i].obj[opts.WoH]();
 			data[i].css["min-"+opts.WoH]=gS.cssFloat(data[i].obj,"min-"+opts.WoH);
 			data[i].css["max-"+opts.WoH]=gS.cssFloat(data[i].obj,"max-"+opts.WoH);
-
 			limits[i]={
 				max:data[i].css["max-"+opts.WoH] || 
 				(opts.limits[i] ? opts.limits[i].max : false) || 
@@ -241,21 +242,17 @@ $.extend($.gS, {
 				(opts.limits[i] ? opts.limits[i].min : false) || 
 				opts.limits.min || 0			
 			};
-
 			i != ai ? 
 				c+=dcss[i][opts.WoH]=limits[i].min:
 				dcss[i][opts.WoH]=limits[i].max;
-
 		};
 		
 		gS.timing("getCSS" , "GetData");
 
-
-//		if no max-width is set for the active element, it's filling all the space it can ge (everything else stays on min-width)
+//		Calculate Width
 		if(ai>=0 && (!limits[ai].max || limits[ai].max>cS-c)) 
 			dcss[ai][opts.WoH] = cS-c;
 		else {
-//			Calculates which size elements have, that are not hitting any max/min limi
 			newSize=Math.ceil(fullSize/count);
 			for(i=0; limit = limits[i]; i++) {
 				hitMax=(limit.max<newSize);
@@ -269,15 +266,14 @@ $.extend($.gS, {
 					i=-1;
 				}
 			}
-//			Sets calculated value.
 			for(var i=0; i < slidesLength; i++) 
 				if(!skip[i]) dcss[i][opts.WoH]=newSize;
 		}
 		gS.timing("getCSS" , "Got Width");
 
+//		Calculate Position
 		alignLoT= data[ai].obj.css(opts.RoB)=="auto";		
 		for(i=c=0; slide=data[i]; i++) {
-			slide.css[opts.WoH]=slide.obj[opts.WoH]();
 			c+=dcss[i][opts.WoH];
 			posAct = slide.obj.hasClass("posAct");
 			if(true && i==ai && !opts.vertical) {
@@ -316,6 +312,7 @@ $.extend($.gS, {
 			from = bind==opts.LoT ? opts.RoB : opts.LoT,
 			cS = $(context)["inner"+gS.capitalize(opts.WoH)](),
 			oS = data.obj["outer"+gS.capitalize(opts.WoH)]();
+
 		if(active) {
 			css={zIndex:0, position:"relative"};
 			css[opts.WoH]="auto";
@@ -339,8 +336,8 @@ $.extend($.gS, {
 			data.obj.removeClass("posAct");
 		}
 		css[from]="auto";
+		data.obj.removeClass(from).addClass(bind).css(css);
 
-		data.obj.removeClass(from).addClass(bind).stop().css(css);
 
 		$.gS.timing("positioning" , "done");
 
@@ -355,10 +352,14 @@ $.extend($.gS, {
 		var slides=$(".gSSlide", context),
 			gS=$.gS,
 			opts=gS.setOpts(opts),
-			active = $(".active", context),
+			active = $(".active.gSSlide", context),
 			data=gS.getCSS(context);
 
-		context.data("data", data);
+		context.data("data", {
+			queue:opts.queue,
+			ai:active.index(),
+			data:data
+		});
 
 		$.gS.timing("setSlides","gotCSS");
 
@@ -399,13 +400,22 @@ $.extend($.gS, {
  	},
 ////////////////////////////////////////////////////////////////////////////////
 	animation : function (state, obj) {
-//		$.gS.timing("step","start",true)
+		$.gS.timing("step","start",true)
 		var context=$(obj.elem),
 			data= context.data("data"),
-			css, key;
-		state/=100;
-
-		for(var i=0; slide=data[i]; i++) {
+			css, key, slide;
+		
+		if(true && data.queue) {
+			perSlide=100/data.length;
+			
+			
+			
+		}
+		else {
+			state/=100;
+		}
+		for(i=data.length-1; i>=0; i--) {
+			slide=data[i];
 			css={};
 			for(key in slide.dcss) {
 				slide.css[key] = slide.css[key] || 0;
@@ -413,7 +423,7 @@ $.extend($.gS, {
 			}
 			slide.obj.css(css);		
 		}; 	
-//		$.gS.timing("step","end")
+		$.gS.timing("step","end",true)
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	orientation :{
