@@ -59,7 +59,7 @@ $.extend($.gS, {
 		},
 		hooks : {},
 		limits : {},
-		cache:false,
+		cache:true,
 		queue:false
 	},
 ////////////////////////////////////////////////////////////////////////////////
@@ -213,10 +213,10 @@ $.extend($.gS, {
 		var gS=$.gS,
 			opts=gS.opts,
 			cache=(opts.cache? $(context).data("cache") || {}:{}),
-			slides=(cache.slides  || $(context).children()),
+			slides=$(context).children(),
 			count=slidesLength=slides.length,
 			ai=slides.filter(".gSSlide.active").index(),
-			fullSize=cS=(cache.cS || $(context)[opts.WoH]()),
+			fullSize=cS=$(context)[opts.WoH](),
 			alignLoT, posAct, newSize,
 			data = {},
 			limits ={},
@@ -226,8 +226,6 @@ $.extend($.gS, {
 		if(!opts.cache || !cache.data) { 
 			cache.limits={};
 			cache.data={};
-			cache.slides=slides;
-			cache.cS=cS;
 			for(var i=c=0; i < slides.length; i++) {
 				cache.data[i]={
 					queue:opts.queue,
