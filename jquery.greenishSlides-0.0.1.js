@@ -59,7 +59,6 @@ $.extend($.gS, {
 		},
 		hooks : {},
 		limits : {},
-		cache:true,
 		queue:false
 	},
 ////////////////////////////////////////////////////////////////////////////////
@@ -212,7 +211,6 @@ $.extend($.gS, {
 		
 		var gS=$.gS,
 			opts=gS.opts,
-			cache=(opts.cache? $(context).data("cache") || {}:{}),
 			slides=$(context).children(),
 			count=slidesLength=slides.length,
 			ai=slides.filter(".gSSlide.active").index(),
@@ -223,45 +221,35 @@ $.extend($.gS, {
 			dcss={},
 			skip={};
 
-		if(!opts.cache || !cache.data) { 
-			cache.limits={};
-			cache.data={};
-			for(var i=c=0; i < slides.length; i++) {
-				cache.data[i]={
-					queue:opts.queue,
-					obj:slides.eq(i),
-					dcss:{},
-					css:{}
-				};
-				cache.data[i].dcss[i]={};
-				cache.data[i].css["min-"+opts.WoH]=gS.cssFloat(cache.data[i].obj,"min-"+opts.WoH);
-				cache.data[i].css["max-"+opts.WoH]=gS.cssFloat(cache.data[i].obj,"max-"+opts.WoH);
-	
-				cache.limits[i]={
-					max:cache.data[i].css["max-"+opts.WoH] || 
-					(opts.limits[i] ? opts.limits[i].max : false) || 
-					opts.limits.max || undefined,
-					
-					min:cache.data[i].css["min-"+opts.WoH] || 
-					(opts.limits[i] ? opts.limits[i].min : false) || 
-					opts.limits.min || 0			
-				};
+		for(var i=c=0; i < slides.length; i++) {
+			data[i]={
+				queue:opts.queue,
+				obj:slides.eq(i),
+				dcss:{},
+				css:{}
 			};
-			$(context).data("cache",cache);
-			cache=$(context).data("cache");
-		}
-		data=cache.data;
-		limits=cache.limits;
+			dcss[i]={};
+			data[i].css["min-"+opts.WoH]=gS.cssFloat(data[i].obj,"min-"+opts.WoH);
+			data[i].css["max-"+opts.WoH]=gS.cssFloat(data[i].obj,"max-"+opts.WoH);
+
+			limits[i]={
+				max:data[i].css["max-"+opts.WoH] || 
+				(opts.limits[i] ? opts.limits[i].max : false) || 
+				opts.limits.max || undefined,
+				
+				min:data[i].css["min-"+opts.WoH] || 
+				(opts.limits[i] ? opts.limits[i].min : false) || 
+				opts.limits.min || 0			
+			};
+
+			i != ai ? 
+				c+=dcss[i][opts.WoH]=limits[i].min:
+				dcss[i][opts.WoH]=limits[i].max;
+
+		};
 		
 		gS.timing("getCSS" , "GetData");
-	
-		for(i=c=0; limit=limits[i]; i++) {
-			dcss[i]={};
-			i != ai ? 
-				c+=dcss[i][opts.WoH]=limit.min:
-				dcss[i][opts.WoH]=limit.max;
-		}
-		
+
 
 //		if no max-width is set for the active element, it's filling all the space it can ge (everything else stays on min-width)
 		if(ai>=0 && (!limits[ai].max || limits[ai].max>cS-c)) 
