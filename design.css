@@ -16,11 +16,11 @@ body {
 	font-size:3em; 
 	text-align:center;
 	background-color:#ee00ee;
-	min-width:0px;
-	max-width:100%;
 }
 .minWidth{
 	background-color:#ee55ee;
+	min-width:20px;
+	max-width:20px;
 }
 .greenishSlides .active {
 	background-color:#eeCCee;

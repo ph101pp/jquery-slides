@@ -216,17 +216,15 @@ $.extend($.gS, {
 			cS=$(context)[opts.WoH](),
 			alignLoT, posAct,
 			data = {},
-			dcss={};
+			limits ={},
+			dcss={},
+			fullSize,count,newSize,skip,limit,hitMax;
+
 		gS.timing("getCSS" , "GetData");
-//		get minWidth for every slide.
-
-
 
 
 ///////////////// MAX/MIN TO BE HANDLED NEW
-		var limit= {};
 		for(var i=c=0; i < slides.length; i++) {
-			slide=slides.eq(i);
 			data[i]={
 				obj:slides.eq(i),
 				dcss:{},
@@ -234,52 +232,58 @@ $.extend($.gS, {
 			};
 			data[i].css["min-"+opts.WoH]=gS.cssFloat(data[i].obj,"min-"+opts.WoH);
 			data[i].css["max-"+opts.WoH]=gS.cssFloat(data[i].obj,"max-"+opts.WoH);
-			data[i].css[opts.WoH]=slide[opts.WoH]();
+			data[i].css[opts.WoH]=data[i].obj[opts.WoH]();
 
-			limit[i]={};
+			limits[i]={
+				max:data[i].css["max-"+opts.WoH] || 
+				(opts.limits[i] ? opts.limits[i].max : false) || 
+				opts.limits.max || undefined,
+				
+				min:data[i].css["min-"+opts.WoH] || 
+				(opts.limits[i] ? opts.limits[i].min : false) || 
+				opts.limits.min || 0			
+			};
 			dcss[i]={}
 			
-			if(i == ai) {
-//				If there is an max-width defined for the active element - set it to the new width.
-				opts.limits[i] && opts.limits.max? 
-					limit[i].max=0:
-					limit[i].max=opts.limits.max || 0;
-				if(limit[i].max > 0) dcss[i][opts.WoH]=limit[i].max;
-			}
-			else {
-				opts.limits[i] && opts.limits[i].min ? 
-					limit[i].min=opts.limits[i].min:
-					limit[i].min=opts.limits.min || 0;
-				c+=dcss[i][opts.WoH]=limit[i].min;
-			}
-		}
-///////////////// MAX/MIN TO BE HANDLED NEW
+			i != ai ? 
+				c+=dcss[i][opts.WoH]=limits[i].min:
+				dcss[i][opts.WoH]=limits[i].max;
+		};
+		
+		console.log(limits);
 
 
 
 //		if no max-width is set for the active element, it's filling all the space it can ge (everything else stays on min-width)
-		if(ai>=0 && (!(limit[ai].max>0) || limit[ai].max>cS-c)) 
+		if(ai>=0 && (!limits[ai].max || limits[ai].max>cS-c)) 
 			dcss[ai][opts.WoH] = cS-c;
 		else {
 //			Calculates which size elements have, that are not hitting any max/min limi
-			var fullSize=cS,
-				count=slidesLength,
-				newSize=Math.ceil(fullSize/count),
-				skip=[];
+			fullSize=cS;
+			count=slidesLength;
+			newSize=Math.ceil(fullSize/count);
+			skip=[];
 			
-			for(i=0; i < slidesLength; i++) 
-				if(!skip[i] && (dcss[i][opts.WoH]>newSize || (true&&i==ai))){
+			for(i=0; limit = limits[i]; i++) {
+				hitMax=(limit.max<newSize);
+				if(!skip[i] && (limit.min>newSize || hitMax || i==ai)){
 					skip[i]=true;
 					count--;
-					fullSize-=dcss[i][opts.WoH];
+					hitMax || i==ai? 
+						fullSize-=dcss[i][opts.WoH]=limit.max:
+						fullSize-=limit.min;
 					newSize=Math.ceil(fullSize/count);
 					i=-1;
 				}
+			}
 //				Sets calculated value.
 			for(var i=0; i < slidesLength; i++) 
 				if(!skip[i]) dcss[i][opts.WoH]=newSize;
 		}
 		gS.timing("getCSS" , "Got Width");
+///////////////// MAX/MIN TO BE HANDLED NEW
+
+
 
 		alignLoT= data[ai].obj.css(opts.RoB)=="auto";		
 		for(i=c=0; slide=data[i]; i++) {
@@ -294,14 +298,14 @@ $.extend($.gS, {
 				dcss[i]["margin-"+opts.RoB]=cS-c;
 			}
 			else if((i<ai) || ai<0 || (alignLoT && ai==i)){
-				if(slide.obj.hasClass("right") || posAct) 
+				if(!slide.obj.hasClass("left") || posAct) 
 					slide=gS.positioning(context,  slide, opts.LoT);
 
 				slide.css[opts.LoT]=gS.cssFloat(slide.obj, opts.LoT);
 				dcss[i][opts.LoT]=c-dcss[i][opts.WoH];
 			}
 			else {
-				if(slide.obj.hasClass("left") || posAct)  
+				if(!slide.obj.hasClass("right") || posAct)  
 					slide=gS.positioning(context, slide, opts.RoB);
 
 				slide.css[opts.RoB]=gS.cssFloat(slide.obj, opts.RoB);
@@ -314,14 +318,13 @@ $.extend($.gS, {
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	positioning : function (context, data, bind, active) {
+		$.gS.timing("positioning" , "Start",true);
 		var gS=$.gS,
 			opts=gS.opts,
 			p = data.obj.offset(),
 			from = bind==opts.LoT ? opts.RoB : opts.LoT,
 			cS = $(context)["inner"+gS.capitalize(opts.WoH)](),
 			oS = data.obj["outer"+gS.capitalize(opts.WoH)]();
-		gS.timing("positioning" , "Start",true);
-		
 		if(active) {
 			css={zIndex:0, position:"relative"};
 			css[opts.WoH]="auto";
@@ -340,13 +343,16 @@ $.extend($.gS, {
 			css["margin-"+opts.LoT]=0;
 			css["margin-"+opts.RoB]=0;
 			data.css[opts.WoH]=css[opts.WoH]=oS;
-			data.obj.removeClass("posAct");
 			data.css[bind]=css[bind];
 			data.css[from]="auto";
+			data.obj.removeClass("posAct");
 		}
-		
 		css[from]="auto";
+
 		data.obj.removeClass(from).addClass(bind).stop().css(css);
+
+		$.gS.timing("positioning" , "done");
+
 		return data;
 	},
 ////////////////////////////////////////////////////////////////////////////////

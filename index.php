@@ -19,7 +19,7 @@
  						stayOpen:true,
  						keyEvents:true,
  						circle:true,
- 						easing:"easeOutBounce",
+ 						easing:"swing",
  						transitionSpeed:1000,
 				 		hovder: {
 				 			mouseover:function () {
@@ -88,7 +88,7 @@
 			<div class="three "><img src="http://placehold.it/500x300"></div>
 			<div class="four"><img src="http://placekitten.com/200/300"></div>
 			<div class="two "><img src="http://placekitten.com/200/300"></div>
-			<div class="three "><img src="http://placehold.it/500x300"></div>
+			<div class="three minWidth"><img src="http://placehold.it/500x300"></div>
 			<div class="four"><img src="http://placekitten.com/200/300"></div>
 			<div class="two"><img src="http://placekitten.com/200/300"></div>
 			<div class="three "><img src="http://placehold.it/500x300"></div>
