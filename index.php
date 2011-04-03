@@ -21,7 +21,7 @@
  						circle:true,
  						easing:"swing",
  						transitionSpeed:1000,
-				 		hovder: {
+				 		hover: {
 				 			mouseover:function () {
 				 				if($(this).hasClass("active")) return;
 				 				var limits= {}
@@ -34,7 +34,7 @@
 								$.gS.activate($(this).parent().find(".active").removeClass("active"));
 				 			}
 				 		},
-						hodoks: {
+						hooks: {
  							preActivate: function () {
  								var slide=$(this);
 									ai=slide.index()

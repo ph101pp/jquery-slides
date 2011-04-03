@@ -29,8 +29,8 @@ $.extend($.gS, {
 		var time = timer - $.gS.timer[key];
 		
 		$.gS.timer[key]=timer;
-		if(true && !hide) {
-//			console.log(key+":"+comment+"////////////////////");
+		if(false && !hide) {
+			console.log(key+":"+comment+"////////////////////");
 			console.log("Time: "+time+"ms");
 		}
 	},
@@ -227,7 +227,8 @@ $.extend($.gS, {
 			data[i]={
 				obj:slides.eq(i),
 				dcss:{},
-				css:{}
+				css:{},
+				active:false
 			};
 			dcss[i]={};
 			data[i].css[opts.WoH]=data[i].obj[opts.WoH]();
@@ -288,13 +289,15 @@ $.extend($.gS, {
 				if(!slide.obj.hasClass("left") || posAct) 
 					slide=gS.positioning(context,  slide, opts.LoT);
 
+				slide.align=opts.LoT;
 				slide.css[opts.LoT]=gS.cssFloat(slide.obj, opts.LoT);
 				dcss[i][opts.LoT]=c-dcss[i][opts.WoH];
 			}
 			else {
 				if(!slide.obj.hasClass("right") || posAct)  
 					slide=gS.positioning(context, slide, opts.RoB);
-
+				
+				slide.align=opts.RoB;
 				slide.css[opts.RoB]=gS.cssFloat(slide.obj, opts.RoB);
 				dcss[i][opts.RoB]=cS-c;
 			}
@@ -320,6 +323,8 @@ $.extend($.gS, {
 			data.css["margin-"+opts.RoB]=css["margin-"+opts.RoB]=cS-p[opts.LoT]-oS;
 			css[bind]=0;
 			data.obj.addClass("posAct");
+			data.active=true;
+			data.align=bind;
 		}
 		else {
 			css={zIndex:1, position:"absolute"};
@@ -355,12 +360,17 @@ $.extend($.gS, {
 			active = $(".active.gSSlide", context),
 			data=gS.getCSS(context);
 
-		context.data("data", {
+		
+		this.data = {
 			queue:opts.queue,
 			ai:active.index(),
-			data:data
-		});
-
+			animation:data,
+			cS:$(context)[opts.WoH]()
+		}
+		
+		
+		context.data("data", this);
+		
 		$.gS.timing("setSlides","gotCSS");
 
 //		check if deactivation or activation and sets hooks.
@@ -402,28 +412,86 @@ $.extend($.gS, {
 	animation : function (state, obj) {
 		$.gS.timing("step","start",true)
 		var context=$(obj.elem),
-			data= context.data("data"),
-			css, key, slide;
+			info= context.data("data"),
+			opts=info.opts,
+			data=info.data.animation,
+			css={},
+			ai=info.data.ai,
+			key, slide, k;
 		
-		if(true && data.queue) {
-			perSlide=100/data.length;
+		percent=state/100;
+		
+		
+		if(false || false && state==100) {
+			for(var i=data.length-1; i>=0; i--) {
+				slide=data[i];
+				css={};
+				for(key in slide.dcss) {
+					slide.css[key] = slide.css[key] || 0;
+					css[key]=slide.css[key]+((slide.dcss[key]-slide.css[key])*percent)
+				}
+				slide.obj.css(css);		
+			};
+		}
+		else if(false) {		
+			for(var i=data.length-1; i>ai && ai>0; i--) {
+				slide=data[i];
+				css[i]={};
+				prev=css[i+1];
+				css[i]["width"]=slide.css["width"]+((slide.dcss["width"]-slide.css["width"])*percent);
+				
+				if(prev) css[i]["right"]=prev["right"]+prev["width"];
+				else css[i]["right"]=0;
+				
+				slide.obj.css(css[i]);		
+			};
+			for(i=0; i<ai  || (ai<=0 && i<data.length); i++){
+				slide=data[i];
+				css[i]={};
+				prev=css[i-1];
+				css[i]["width"]=slide.css["width"]+((slide.dcss["width"]-slide.css["width"])*percent);
+				
+				if(prev) css[i]["left"]=prev["left"]+prev["width"];
+				else css[i]["left"]=0;
+				
+				if(i!=ai) slide.obj.css(css[i]);		
+			};
 			
-			
-			
+			css[ai]={}
+			if(css[ai+1]) css[ai]["margin-right"]=css[ai+1]["right"]+css[ai+1]["width"];
+			else css[ai]["margin-right"]=0;
+			if(css[ai-1]) css[ai]["margin-left"]=css[ai-1]["left"]+css[ai-1]["width"];
+			else css[ai]["margin-left"]=0;
+			data[ai].obj.css(css[ai]);		
 		}
 		else {
-			state/=100;
-		}
-		for(i=data.length-1; i>=0; i--) {
-			slide=data[i];
-			css={};
-			for(key in slide.dcss) {
-				slide.css[key] = slide.css[key] || 0;
-				css[key]=slide.css[key]+((slide.dcss[key]-slide.css[key])*state)
+			for(i=data.length-1; i>=0; i--) {
+				slide=data[i];
+				css[i]={};
+				
+				if(slide.active) {
+					css[i]["margin-"+opts.LoT]=slide.css["margin-"+opts.LoT]+((slide.dcss["margin-"+opts.LoT]-slide.css["margin-"+opts.LoT])*percent);
+					css[i]["margin-"+opts.RoB]=slide.css["margin-"+opts.RoB]+((slide.dcss["margin-"+opts.RoB]-slide.css["margin-"+opts.RoB])*percent);
+				}
+				else {
+					slide.css[slide.align] = slide.css[slide.align] || 0;
+					css[i][slide.align]=slide.css[slide.align]+((slide.dcss[slide.align]-slide.css[slide.align])*percent);
+				}
+			};
+			for(i=data.length-1; i>=0; i--) {
+				slide=data[i];
+				slide.align == opts.LoT ? k=i+1 : k=i-1;
+
+				if(!slide.active) {
+					if(data[k].active) css[i][opts.WoH] =css[k]["margin-"+slide.align]-css[i][slide.align];
+					else css[i][opts.WoH] = css[k][slide.align]-css[i][slide.align];
+				}
+
+				slide.obj.css(css[i]);		
 			}
-			slide.obj.css(css);		
-		}; 	
-		$.gS.timing("step","end",true)
+		}
+		
+		$.gS.timing("step","end",true);
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	orientation :{
@@ -442,6 +510,7 @@ $.extend($.gS, {
 	css :{
 		context : {
 			overflow:"hidden",
+			zoom:1
 		},
 		gSSlide : {
 			position:"absolute",
