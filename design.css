@@ -16,9 +16,9 @@ body {
 	font-size:3em; 
 	text-align:center;
 	background-color:#ee00ee;
-	min-width:10px;
+/*	min-width:10px; */
 }
-.greenishSlides .minWidth{
+.greenishSlides .midnWidth{
 	background-color:#55ee55 !important;
 	min-width:20px;
 	max-width:20px;

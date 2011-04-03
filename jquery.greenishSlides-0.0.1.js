@@ -21,6 +21,7 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	timer :{},
 	timing : function (key, comment, hide) {
+		return;
 		comment=comment||"";
 		var timer = new Date()
 		$.gS.timer[key] = $.gS.timer[key]|| new Date();
@@ -28,7 +29,7 @@ $.extend($.gS, {
 		var time = timer - $.gS.timer[key];
 		
 		$.gS.timer[key]=timer;
-		if(false && !hide) {
+		if(true && !hide) {
 			console.log(key+":"+comment+"////////////////////");
 			console.log("Time: "+time+"ms");
 		}
@@ -58,7 +59,7 @@ $.extend($.gS, {
 		},
 		hooks : {},
 		limits : {},
-		queue:false
+		queue:true
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	init : function (context, opts) {
@@ -228,7 +229,7 @@ $.extend($.gS, {
 				obj:slides.eq(i),
 				dcss:{},
 				css:{},
-				active:false
+				active:i==ai?true:false
 			};
 			dcss[i]={};
 			data[i].css[opts.WoH]=data[i].obj[opts.WoH]();
@@ -286,7 +287,7 @@ $.extend($.gS, {
 				dcss[i]["margin-"+opts.RoB]=cS-c;
 			}
 			else if((i<ai) || ai<0 || (alignLoT && ai==i)){
-				if(!slide.obj.hasClass("left") || posAct) 
+				if(!slide.obj.hasClass(opts.LoT) || posAct) 
 					slide=gS.positioning(context,  slide, opts.LoT);
 
 				slide.align=opts.LoT;
@@ -294,7 +295,7 @@ $.extend($.gS, {
 				dcss[i][opts.LoT]=c-dcss[i][opts.WoH];
 			}
 			else {
-				if(!slide.obj.hasClass("right") || posAct)  
+				if(!slide.obj.hasClass(opts.RoB) || posAct)  
 					slide=gS.positioning(context, slide, opts.RoB);
 				
 				slide.align=opts.RoB;
@@ -323,7 +324,6 @@ $.extend($.gS, {
 			data.css["margin-"+opts.RoB]=css["margin-"+opts.RoB]=cS-p[opts.LoT]-oS;
 			css[bind]=0;
 			data.obj.addClass("posAct");
-			data.active=true;
 			data.align=bind;
 		}
 		else {
@@ -384,9 +384,11 @@ $.extend($.gS, {
 			}
 		}
 
+//		Store Data for the animation function
 		context.data("data", {
 			animation:data,
 			opts:opts,
+			cS:$(context)[opts.WoH]()
 		});
 //		each slide gets animated			
 		context
@@ -406,10 +408,12 @@ $.extend($.gS, {
 			opts=info.opts,
 			data=info.animation,
 			css={},
-			percent, slide, k, i, calc, ai;
+			percent, slide, k, i, ai, notAligned,
+			calc=function(i, key) {
+				return Math.round(data[i].css[key]+((data[i].dcss[key]-data[i].css[key])*(state[i] || state)));
+			};
 		
-		if(opts.queue) {
-			calc = 100/data.length;
+		if(false &&opts.queue) {
 			done = parseInt(state/data.length);
 			pos= state%data.length;
 			state={}
@@ -421,11 +425,7 @@ $.extend($.gS, {
 		}
 		else state/=100;
 		
-		console.log(state);
-
-		calc=function(i, key) {
-			return data[i].css[key]+((data[i].dcss[key]-data[i].css[key])*(state[i] || state));
-		}
+//		Set Position
 		for(i=data.length-1; slide=data[i]; i--) {
 			css[i]={};
 			percent=state[i] || state;
@@ -436,21 +436,34 @@ $.extend($.gS, {
 			}
 			else ai=i;
 		};
+//		Set Width
 		for(i=data.length-1; slide=data[i]; i--) {
 			slide.align == opts.LoT ? k=i+1 : k=i-1;
 
 			if(!slide.active) {
-				if(!data[k].active) css[i][opts.WoH] = css[k][slide.align]-css[i][slide.align];
-				else {
-					css[i][opts.WoH] = calc(i,"width");
-					css[ai]["margin-"+slide.align]=css[i][slide.align]+css[i][opts.WoH];
-				}
+				!data[k].active ? 
+					css[i][opts.WoH] = css[k][slide.align]-css[i][slide.align]:
+					css[i][opts.WoH] = calc(i,opts.WoH);
+				slide.obj.css(css[i]);		
 			}
-			slide.obj.css(css[i]);		
 		}
+//		Set Active
+		if(!opts.vertical) {
+			css[ai]["margin-"+opts.LoT]=css[ai-1] ? (css[ai-1][opts.LoT]+css[ai-1][opts.WoH]) : 0;
+			css[ai]["margin-"+opts.RoB]=css[ai+1] ? (css[ai+1][opts.RoB]+css[ai+1][opts.WoH]) : 0;
+		}
+		else {
+			data[ai].align == opts.LoT ? k=-1 : k=1;
+			css[ai][data[ai].align]=css[ai+k] ? (css[ai+k][data[ai].align]+css[ai+k][opts.WoH]) : 0;
+			(k*=-1)<0 ?
+				notAligned= (css[ai+k] ? (css[ai+k][opts.LoT]+css[ai+k][opts.WoH]) : 0):
+				notAligned= (css[ai+k] ? (css[ai+k][opts.RoB]+css[ai+k][opts.WoH]) : 0);
+			css[ai][opts.WoH]=info.cS-css[ai][data[ai].align]-notAligned;
+		}
+
 		data[ai].obj.css(css[ai]);
 		
-		$.gS.timing("step","end", true);
+		$.gS.timing("step","end",true);
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	orientation :{

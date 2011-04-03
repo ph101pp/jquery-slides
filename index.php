@@ -19,8 +19,9 @@
  						stayOpen:true,
  						keyEvents:true,
  						circle:true,
- 						easing:"swing",
+ 						easing:"easeOutBounce",
  						transitionSpeed:1000,
+ 						vertical:false,
 				 		hovder: {
 				 			mouseover:function () {
 				 				if($(this).hasClass("active")) return;
@@ -34,7 +35,7 @@
 								$.gS.activate($(this).parent().find(".active").removeClass("active"));
 				 			}
 				 		},
-						hoodks: {
+						hooks: {
  							preActivate: function () {
  								var slide=$(this);
 									ai=slide.index()
@@ -48,7 +49,7 @@
 									if((ai-i) >=0) limits[ai-i]={min:width};
 									if((ai+i) <= slide.siblings().length)limits[ai+i]={min:width};
 								}
- 					 			slide.parent().queue("gSpre", function (next) {
+ 					 			slide.parent().queue("gSpreAnimation", function (next) {
 									var slides=$(this).children(),
 										slide;
 									for(var k=0; k<slides.length; k++) {
