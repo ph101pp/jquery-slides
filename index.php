@@ -28,7 +28,7 @@
 				 				var limits= {}
 				 				limits[$(this).index()] = {min:40};
  								$.gS.options=$.gS.setOpts({limits:limits});
-								$.gS.setSlides($(this).parent(),{transitionSpeed:1000});
+								$.gS.update($(this).parent(),{transitionSpeed:1000});
 							},
 				 			mouseout:function () {
 				 				if($(this).hasClass("active")) return;
@@ -73,7 +73,7 @@
  					});
 					
 					$(window).resize(function () {
-//						$.gS.setSlides($(".greenishSlides"));
+//						$.gS.update($(".greenishSlides"));
 					});
 				});
 			})(jQuery);

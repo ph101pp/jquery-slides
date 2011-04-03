@@ -124,18 +124,13 @@ $.extend($.gS, {
 ////	First Initialisation	
 		$(".active", context) ? 
 			gS.activate($(".active", context).eq(0).removeClass("active")):
-			gS.setSlides(context);
+			gS.update(context);
 		
 		
 		gS.timing("init" , "Done");
 	},
 	
 	
-////////////////////////////////////////////////////////////////////////////////
-	setOpts : function (opts) {
-////	Extends defaults into opts.
-		return $.extend(true,{},this.defaults, this.opts||{}, opts||{});
-	},
 ////////////////////////////////////////////////////////////////////////////////
 	activate : function (slide) {
 		var gS=$.gS;
@@ -158,7 +153,7 @@ $.extend($.gS, {
 		
 		gS.timing("activate" , "activate");
 		
-		gS.setSlides(slide.parent());
+		gS.update(slide.parent());
  	},
 ////////////////////////////////////////////////////////////////////////////////
  	deactivate : function (slide) {
@@ -170,7 +165,7 @@ $.extend($.gS, {
 		if(!slide.hasClass("active")) return;
 		slide.removeClass("active").addClass("deactivated").trigger("preDeactivate"); // hook
 		
-		gS.setSlides(slide.parent());
+		gS.update(slide.parent());
  	}, 	
 ////////////////////////////////////////////////////////////////////////////////
 	prev : function (context, activeSlide) {
@@ -198,6 +193,11 @@ $.extend($.gS, {
 		gS.activate(slides.eq(next));
 	},
 ////////////////////////////////////////////////////////////////////////////////
+	setOpts : function (opts) {
+////	Extends defaults into opts.
+		return $.extend(true,{},this.defaults, this.opts||{}, opts||{});
+	},
+////////////////////////////////////////////////////////////////////////////////
 	cssFloat : function (context, value) {
 		return parseFloat($(context).css(value).replace("px","")) || undefined;
 	},
@@ -206,25 +206,27 @@ $.extend($.gS, {
 		return word.charAt(0).toUpperCase() + word.slice(1);
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	getCSS : function (context) {
-		$.gS.timing("getCSS" , "Start",true);
-		
+	update : function (context, opts) {
+		$.gS.timing("update" , "Start",true);
+		context=$(context).stop();
 		var gS=$.gS,
-			opts=gS.opts,
+			opts=gS.setOpts(opts),
 			slides=$(context).children(),
 			count=slidesLength=slides.length,
-			ai=slides.filter(".gSSlide.active").index(),
+			active = slides.filter(".gSSlide.active"),
+			ai=active.index(),
 			fullSize=cS=$(context)[opts.WoH](),
 			alignLoT, posAct, newSize,
 			data = [],
 			limits ={},
 			dcss={},
 			skip={},
-			c=0;
+			c=0
+			i;
 
 
 //		Get Data
-		for(var i=slidesLength-1; i >=0 ; i--) {
+		for(i=slidesLength-1; i >=0 ; i--) {
 			data[i]={
 				obj:slides.eq(i),
 				dcss:{},
@@ -249,7 +251,7 @@ $.extend($.gS, {
 				dcss[i][opts.WoH]=limits[i].max;
 		};
 		
-		gS.timing("getCSS" , "GetData");
+		gS.timing("update" , "Got Data");
 
 //		Calculate Width
 		if(ai>=0 && (!limits[ai].max || limits[ai].max>cS-c)) 
@@ -271,7 +273,7 @@ $.extend($.gS, {
 			for(var i=0; i < slidesLength; i++) 
 				if(!skip[i]) dcss[i][opts.WoH]=newSize;
 		}
-		gS.timing("getCSS" , "Got Width");
+		gS.timing("update" , "Got Width");
 
 //		Calculate Position
 		alignLoT= data[ai].obj.css(opts.RoB)=="auto";		
@@ -304,8 +306,43 @@ $.extend($.gS, {
 			}
 			slide.dcss=dcss[i];
 		}
-		gS.timing("getCSS" , "Got Position");
-		return data;
+		gS.timing("update" , "Got Position");
+
+//		Set hooks for either Activation or Deactivation.
+		if(active.length <=0) {
+			active.trigger("preDeactivateAnimation", data); // hook
+			var postAnimation = function () {
+				var deactive=$(this).find(".gSSlide.deactivated");
+				if(deactive.length>0) {
+					deactive.trigger("postDeactivate"); // hook
+					deactive.removeClass("deactivated");
+				}
+			}
+		}
+		else {  
+			active.trigger("preActivateAnimation", data); // hook
+			var postAnimation = function () {
+				var active=$(this).find(".gSSlide.active");
+				if(active.length>0) {
+					active.trigger("postActivate"); // hook
+					if(!opts.vertical) active.css({width:"auto"});
+				}
+			}
+		}
+
+//		Store Data for the animation function
+		context.data("data", {
+			animation:data,
+			opts:opts,
+			cS:$(context)[opts.WoH]()
+		});
+		
+//		Start Animation for Slides		
+		context
+			.dequeue("gSpreAnimation") // hook: custom queue that runs before the animation
+			.css({textIndent:0})
+			.animate({textIndent:100}, {duration:opts.transitionSpeed, easing:opts.easing, complete:postAnimation , step:gS.animation})
+			.dequeue("gSpostAnimation"); // hook: custom queue that runs after the animation
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	positioning : function (context, data, bind, active) {
@@ -349,68 +386,18 @@ $.extend($.gS, {
 		return data;
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	setSlides : function (context, opts) {
-
-		$.gS.timing("setSlides" , "start", true);
-
-		context=$(context).stop();
-		var slides=$(".gSSlide", context),
-			gS=$.gS,
-			opts=gS.setOpts(opts),
-			active = $(".active.gSSlide", context),
-			data=gS.getCSS(context);
-		
-		$.gS.timing("setSlides","gotCSS");
-
-//		check if deactivation or activation and sets hooks.
-		if(active.length <=0) {
-			active.trigger("preDeactivateAnimation", data); // hook
-			var postAnimation = function () {
-				var deactive=$(this).find(".gSSlide.deactivated");
-				if(deactive.length>0) {
-					deactive.trigger("postDeactivate"); // hook
-					deactive.removeClass("deactivated");
-				}
-			}
-		}
-		else {  
-			active.trigger("preActivateAnimation", data); // hook
-			var postAnimation = function () {
-				var active=$(this).find(".gSSlide.active");
-				if(active.length>0) {
-					active.trigger("postActivate"); // hook
-					if(!opts.vertical) active.css({width:"auto"});
-				}
-			}
-		}
-
-//		Store Data for the animation function
-		context.data("data", {
-			animation:data,
-			opts:opts,
-			cS:$(context)[opts.WoH]()
-		});
-//		each slide gets animated			
-		context
-			.dequeue("gSpreAnimation") // hook: custom queue that runs before the animation
-			.css({textIndent:0})
-			.animate({textIndent:100}, {duration:opts.transitionSpeed, easing:opts.easing, complete:postAnimation , step:gS.animation})
-			.dequeue("gSpostAnimation"); // hook: custom queue that runs after the animation
-
-		$.gS.timing("setSlides","done");
-		$.gS.timing("activation" , "Activation");
-
- 	},
-////////////////////////////////////////////////////////////////////////////////
 	animation : function (state, obj) {
 		$.gS.timing("step","start",true)
 		var info= $(obj.elem).dequeue("gSanimationStep").data("data"), // hook: custom queue that runs once on every step of the animation (MAKE IT FAST!)
 			opts=info.opts,
 			data=info.animation,
 			css={},
-			percent, slide, k, i, ai, notAligned,
+			slide, k, i, ai,
 			calc=function(i, key) {
 				return Math.round(data[i].css[key]+((data[i].dcss[key]-data[i].css[key])*(state[i] || state)));
+			},
+			getPosition = function(i, align) {
+				return css[i] ? css[i][align]+css[i][opts.WoH] : 0;
 			};
 		
 		if(false &&opts.queue) {
@@ -428,8 +415,6 @@ $.extend($.gS, {
 //		Set Position
 		for(i=data.length-1; slide=data[i]; i--) {
 			css[i]={};
-			percent=state[i] || state;
-			
 			if(!slide.active) {
 				slide.css[slide.align] = slide.css[slide.align] || 0;
 				css[i][slide.align]=calc(i, slide.align);
@@ -437,28 +422,27 @@ $.extend($.gS, {
 			else ai=i;
 		};
 //		Set Width
-		for(i=data.length-1; slide=data[i]; i--) {
+		for(i=data.length-1; slide=data[i]; i--) if(!slide.active) {
 			slide.align == opts.LoT ? k=i+1 : k=i-1;
-
-			if(!slide.active) {
-				!data[k].active ? 
-					css[i][opts.WoH] = css[k][slide.align]-css[i][slide.align]:
-					css[i][opts.WoH] = calc(i,opts.WoH);
-				slide.obj.css(css[i]);		
-			}
+			!data[k].active ? 
+				css[i][opts.WoH] = css[k][slide.align]-css[i][slide.align]:
+				css[i][opts.WoH] = calc(i,opts.WoH);
+			slide.obj.css(css[i]);		
 		}
 //		Set Active
 		if(!opts.vertical) {
-			css[ai]["margin-"+opts.LoT]=css[ai-1] ? (css[ai-1][opts.LoT]+css[ai-1][opts.WoH]) : 0;
-			css[ai]["margin-"+opts.RoB]=css[ai+1] ? (css[ai+1][opts.RoB]+css[ai+1][opts.WoH]) : 0;
+			css[ai]["margin-"+opts.LoT]=getPosition(ai-1 , opts.LoT);
+			css[ai]["margin-"+opts.RoB]=getPosition(ai+1 , opts.RoB);
 		}
 		else {
-			data[ai].align == opts.LoT ? k=-1 : k=1;
-			css[ai][data[ai].align]=css[ai+k] ? (css[ai+k][data[ai].align]+css[ai+k][opts.WoH]) : 0;
-			(k*=-1)<0 ?
-				notAligned= (css[ai+k] ? (css[ai+k][opts.LoT]+css[ai+k][opts.WoH]) : 0):
-				notAligned= (css[ai+k] ? (css[ai+k][opts.RoB]+css[ai+k][opts.WoH]) : 0);
-			css[ai][opts.WoH]=info.cS-css[ai][data[ai].align]-notAligned;
+			if(data[ai].align == opts.LoT) {
+				css[ai][opts.LoT]=getPosition(ai-1 ,opts.LoT);
+				css[ai][opts.WoH]=info.cS-css[ai][opts.LoT]-getPosition(ai+1,opts.RoB);
+			}
+			else {
+				css[ai][opts.RoB]=getPosition(ai+1 ,opts.RoB);
+				css[ai][opts.WoH]=info.cS-css[ai][opts.RoB]-getPosition(ai-1,opts.LoT);
+			}
 		}
 
 		data[ai].obj.css(css[ai]);
