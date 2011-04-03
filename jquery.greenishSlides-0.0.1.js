@@ -8,7 +8,6 @@ Author {
 }
 */
 
-
 (function($) {
 ////////////////////////////////////////////////////////////////////////////////
 $.fn.greenishSlides = function (opts){
@@ -59,7 +58,7 @@ $.extend($.gS, {
 		},
 		hooks : {},
 		limits : {},
-		queue:true
+		queue:false
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	init : function (context, opts) {
@@ -201,6 +200,7 @@ $.extend($.gS, {
 	cssFloat : function (context, value) {
 		return parseFloat($(context).css(value).replace("px","")) || undefined;
 	},
+////////////////////////////////////////////////////////////////////////////////
 	capitalize : function (word) {
 		return word.charAt(0).toUpperCase() + word.slice(1);
 	},
@@ -359,17 +359,6 @@ $.extend($.gS, {
 			opts=gS.setOpts(opts),
 			active = $(".active.gSSlide", context),
 			data=gS.getCSS(context);
-
-		
-		this.data = {
-			queue:opts.queue,
-			ai:active.index(),
-			animation:data,
-			cS:$(context)[opts.WoH]()
-		}
-		
-		
-		context.data("data", this);
 		
 		$.gS.timing("setSlides","gotCSS");
 
@@ -395,14 +384,16 @@ $.extend($.gS, {
 			}
 		}
 
-		$.gS.timing("setSlides","preanimation");
-
+		context.data("data", {
+			animation:data,
+			opts:opts,
+		});
 //		each slide gets animated			
 		context
-			.dequeue("gSpre") // "hook" custom queue that runs before the animation
+			.dequeue("gSpreAnimation") // hook: custom queue that runs before the animation
 			.css({textIndent:0})
 			.animate({textIndent:100}, {duration:opts.transitionSpeed, easing:opts.easing, complete:postAnimation , step:gS.animation})
-			.dequeue("gSpost"); // "hook" custom queue that runs after the animation
+			.dequeue("gSpostAnimation"); // hook: custom queue that runs after the animation
 
 		$.gS.timing("setSlides","done");
 		$.gS.timing("activation" , "Activation");
@@ -411,87 +402,55 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	animation : function (state, obj) {
 		$.gS.timing("step","start",true)
-		var context=$(obj.elem),
-			info= context.data("data"),
+		var info= $(obj.elem).dequeue("gSanimationStep").data("data"), // hook: custom queue that runs once on every step of the animation (MAKE IT FAST!)
 			opts=info.opts,
-			data=info.data.animation,
+			data=info.animation,
 			css={},
-			ai=info.data.ai,
-			key, slide, k;
+			percent, slide, k, i, calc, ai;
 		
-		percent=state/100;
-		
-		
-		if(false || false && state==100) {
-			for(var i=data.length-1; i>=0; i--) {
-				slide=data[i];
-				css={};
-				for(key in slide.dcss) {
-					slide.css[key] = slide.css[key] || 0;
-					css[key]=slide.css[key]+((slide.dcss[key]-slide.css[key])*percent)
-				}
-				slide.obj.css(css);		
-			};
-		}
-		else if(false) {		
-			for(var i=data.length-1; i>ai && ai>0; i--) {
-				slide=data[i];
-				css[i]={};
-				prev=css[i+1];
-				css[i]["width"]=slide.css["width"]+((slide.dcss["width"]-slide.css["width"])*percent);
-				
-				if(prev) css[i]["right"]=prev["right"]+prev["width"];
-				else css[i]["right"]=0;
-				
-				slide.obj.css(css[i]);		
-			};
-			for(i=0; i<ai  || (ai<=0 && i<data.length); i++){
-				slide=data[i];
-				css[i]={};
-				prev=css[i-1];
-				css[i]["width"]=slide.css["width"]+((slide.dcss["width"]-slide.css["width"])*percent);
-				
-				if(prev) css[i]["left"]=prev["left"]+prev["width"];
-				else css[i]["left"]=0;
-				
-				if(i!=ai) slide.obj.css(css[i]);		
-			};
-			
-			css[ai]={}
-			if(css[ai+1]) css[ai]["margin-right"]=css[ai+1]["right"]+css[ai+1]["width"];
-			else css[ai]["margin-right"]=0;
-			if(css[ai-1]) css[ai]["margin-left"]=css[ai-1]["left"]+css[ai-1]["width"];
-			else css[ai]["margin-left"]=0;
-			data[ai].obj.css(css[ai]);		
-		}
-		else {
+		if(opts.queue) {
+			calc = 100/data.length;
+			done = parseInt(state/data.length);
+			pos= state%data.length;
+			state={}
 			for(i=data.length-1; i>=0; i--) {
-				slide=data[i];
-				css[i]={};
-				
-				if(slide.active) {
-					css[i]["margin-"+opts.LoT]=slide.css["margin-"+opts.LoT]+((slide.dcss["margin-"+opts.LoT]-slide.css["margin-"+opts.LoT])*percent);
-					css[i]["margin-"+opts.RoB]=slide.css["margin-"+opts.RoB]+((slide.dcss["margin-"+opts.RoB]-slide.css["margin-"+opts.RoB])*percent);
-				}
-				else {
-					slide.css[slide.align] = slide.css[slide.align] || 0;
-					css[i][slide.align]=slide.css[slide.align]+((slide.dcss[slide.align]-slide.css[slide.align])*percent);
-				}
-			};
-			for(i=data.length-1; i>=0; i--) {
-				slide=data[i];
-				slide.align == opts.LoT ? k=i+1 : k=i-1;
-
-				if(!slide.active) {
-					if(data[k].active) css[i][opts.WoH] =css[k]["margin-"+slide.align]-css[i][slide.align];
-					else css[i][opts.WoH] = css[k][slide.align]-css[i][slide.align];
-				}
-
-				slide.obj.css(css[i]);		
+				if(i<=done) state[i]=1;
+				else if(i==done+1) state[i]=pos/100;
+				else state[i]=0;
 			}
 		}
+		else state/=100;
 		
-		$.gS.timing("step","end",true);
+		console.log(state);
+
+		calc=function(i, key) {
+			return data[i].css[key]+((data[i].dcss[key]-data[i].css[key])*(state[i] || state));
+		}
+		for(i=data.length-1; slide=data[i]; i--) {
+			css[i]={};
+			percent=state[i] || state;
+			
+			if(!slide.active) {
+				slide.css[slide.align] = slide.css[slide.align] || 0;
+				css[i][slide.align]=calc(i, slide.align);
+			}
+			else ai=i;
+		};
+		for(i=data.length-1; slide=data[i]; i--) {
+			slide.align == opts.LoT ? k=i+1 : k=i-1;
+
+			if(!slide.active) {
+				if(!data[k].active) css[i][opts.WoH] = css[k][slide.align]-css[i][slide.align];
+				else {
+					css[i][opts.WoH] = calc(i,"width");
+					css[ai]["margin-"+slide.align]=css[i][slide.align]+css[i][opts.WoH];
+				}
+			}
+			slide.obj.css(css[i]);		
+		}
+		data[ai].obj.css(css[ai]);
+		
+		$.gS.timing("step","end", true);
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	orientation :{
