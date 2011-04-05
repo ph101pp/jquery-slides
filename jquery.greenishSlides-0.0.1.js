@@ -59,7 +59,7 @@ $.extend($.gS, {
 		},
 		hooks : {},
 		limits : {},
-		queue:true
+		queue:false
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	init : function (context, opts) {
