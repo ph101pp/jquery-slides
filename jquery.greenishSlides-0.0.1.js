@@ -71,7 +71,7 @@ $.extend($.gS, {
 		
 		gS.timing("init" , "Start");
 ////	Extends defaults into opts.
-		opts=this.opts=this.setOpts(opts);
+		opts=this.opts=this.setOpts(context,opts);
 		
 ////	Sets css and classes
 		if(opts.vertical) {
@@ -84,7 +84,7 @@ $.extend($.gS, {
 		}
 ////	/Sets css and classes
 ////	Set hooks.
-		$.each(this.opts.hooks,function(name,func) {
+		$.each(opts.hooks,function(name,func) {
 			context.bind(name, function (e, param1, param2){
 				$.proxy(func, e.target)(param1, param2, e);
 			});
@@ -123,14 +123,18 @@ $.extend($.gS, {
 					$(context).find(opts.handle));
 ////		Define Activate Event
 			$(slide).bind(opts.events.activate, function (event){
+				if($(this).hasClass("active")) return;
 				gS.activate($(this));
-				$(this).unbind(event);
 ////			Define Deactivate Event
-				if(!opts.stayOpen) $(this).bind(opts.events.deactivate, function (event){
-					gS.deactivate($(this));
+				if(!opts.stayOpen) {
 					$(this).unbind(event);
-					setEvent($(this));
-				});
+					$(this).bind(opts.events.deactivate, function (event){
+//						if(event.currentTarget!=event.fromElement) return;
+						gS.deactivate($(this));
+						$(this).unbind(event);
+						setEvent($(this));
+					});
+				}
 			});
 		})();
 		
@@ -147,7 +151,7 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	activate : function (slide) {
 		$.gS.timing("activate", "Start", true);
-
+		console.log("activate");
 		var gS=$.gS,
 			opts=gS.opts,
 			deactivated;
@@ -156,7 +160,8 @@ $.extend($.gS, {
 			slide=$(slide);
 
 		if(slide.hasClass("active")) return;
-		slide.siblings(".active").trigger(opts.events.deactivate);
+		if(!opts.stayOpen) slide.siblings(".active").trigger(opts.events.deactivate);
+		else gS.deactivate(slide.siblings(".active"));
 		
 		deactivated =slide.siblings(".deactivated");
 		if(deactivated.length > 0) {
@@ -170,6 +175,7 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
  	deactivate : function (slide) {
 		var gS=$.gS;
+		console.log("deactivate");
 		gS.defaults.handle!=gS.opts.handle && !slide.hasClass("gSSlide")?
 			slide=$(".gSSlide").has($(slide)):
 			slide=$(slide);
@@ -206,9 +212,14 @@ $.extend($.gS, {
 		gS.activate(slides.eq(next));
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	setOpts : function (opts) {
+	setOpts : function (context,opts) {
+		var merged=$.extend(true,{},this.defaults, this.opts||{}, opts||{});
+////	Remove cached data.	
+		context=$(context);
+		context.removeData("data");
 ////	Extends defaults into opts.
-		return $.extend(true,{},this.defaults, this.opts||{}, opts||{});
+		context.data("data",{opts:merged});
+		return merged;		
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	cssFloat : function (context, value) {
@@ -219,10 +230,8 @@ $.extend($.gS, {
 		return word.charAt(0).toUpperCase() + word.slice(1);
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	update : function (context, opts) {
+	getData : function (context, opts) {
 		$.gS.timing("update" , "Start",true);
-		context=$(context).stop();
-		opts=$.gS.setOpts(opts);
 		var gS=$.gS,
 			slides=$(context).children(),
 			count=slidesLength=slides.length,
@@ -234,10 +243,8 @@ $.extend($.gS, {
 			limits ={},
 			dcss={},
 			skip={},
-			c=0,
-			postAnimation,i;
-
-
+			c=0,i;
+	
 //		Get Data
 		for(i=slidesLength-1; i >=0 ; i--) {
 			data[i]={
@@ -320,42 +327,8 @@ $.extend($.gS, {
 			slide.dcss=dcss[i];
 		}
 		gS.timing("update" , "Got Position");
-
-//		Set hooks for either Activation or Deactivation.
-		if(active.length <=0) {
-			active.trigger("preDeactivateAnimation", data); // hook
-			postAnimation = function () {
-				var deactive=$(this).find(".gSSlide.deactivated");
-				if(deactive.length>0) {
-					deactive.trigger("postDeactivate"); // hook
-					deactive.removeClass("deactivated");
-				}
-			}
-		}
-		else {  
-			active.trigger("preActivateAnimation", data); // hook
-			postAnimation = function () {
-				var active=$(this).find(".gSSlide.active");
-				if(active.length>0) {
-					active.trigger("postActivate"); // hook
-					if(!opts.vertical) active.css({width:"auto"});
-				}
-			}
-		}
-
-//		Store Data for the animation function
-		context.data("data", {
-			animation:data,
-			opts:opts,
-			cS:$(context)[opts.WoH]()
-		});
+		return data;
 		
-//		Start Animation for Slides		
-		context
-			.dequeue("gSpreAnimation") // hook: custom queue that runs before the animation
-			.css({textIndent:0})
-			.animate({textIndent:100}, {duration:opts.transitionSpeed, easing:opts.easing, complete:postAnimation , step:gS.animation})
-			.dequeue("gSpostAnimation"); // hook: custom queue that runs after the animation
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	positioning : function (context, data, bind, active) {
@@ -399,6 +372,62 @@ $.extend($.gS, {
 		$.gS.timing("positioning" , "done");
 
 		return data;
+	},
+////////////////////////////////////////////////////////////////////////////////
+	update : function (context, opts) {
+		context=$(context).stop();
+		var gS=$.gS,
+			slides=$(context).children(),
+			active = slides.filter(".gSSlide.active"),
+			ai = active.index(),
+			postAnimation,
+			storedData=context.data("data") || {},
+			data;
+	
+		this.opts=opts=opts || !storedData.opts?
+			$.gS.setOpts(opts):
+			storedData.opts;
+		
+		data= gS.getData(context, opts);
+
+
+	
+//		Set hooks for either Activation or Deactivation.
+		if(active.length <=0) {
+			active.trigger("preDeactivateAnimation", data); // hook
+			postAnimation = function () {
+				var deactive=$(this).find(".gSSlide.deactivated");
+				if(deactive.length>0) {
+					deactive.trigger("postDeactivate"); // hook
+					deactive.removeClass("deactivated");
+				}
+			}
+		}
+		else {  
+			active.trigger("preActivateAnimation", data); // hook
+			postAnimation = function () {
+				var active=$(this).find(".gSSlide.active");
+				if(active.length>0) {
+					active.trigger("postActivate"); // hook
+					if(!opts.vertical) active.css({width:"auto"});
+				}
+			}
+		}
+
+//		Store Data for the animation function
+		context.data("data", {
+			animation:data,
+			opts:opts,
+			cS:storedData.cS || $(context)[opts.WoH]()		
+		});
+		
+		
+//		Start Animation for Slides		
+		context
+			.dequeue("gSpreAnimation") // hook: custom queue that runs before the animation
+			.css({textIndent:0})
+			.animate({textIndent:100}, {duration:opts.transitionSpeed, easing:opts.easing, complete:postAnimation , step:gS.animation})
+			.dequeue("gSpostAnimation"); // hook: custom queue that runs after the animation
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	animation : function (state, obj) {

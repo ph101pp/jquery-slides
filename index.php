@@ -19,7 +19,7 @@
  						stayOpen:false,
  						keyEvents:false,
  						circle:false,
- 						easing:"swing",
+ 						easing:"easeInOutQuad",
  						events:{
  							activate:"mouseover",
  							deactivate:"mouseout"
@@ -95,7 +95,7 @@
 			<li class="two"><img src="http://placekitten.com/200/300"></li>
 			<li class="three "><img src="http://placehold.it/500x300"></li>
 			<li class="four"><img src="http://placekitten.com/200/300"></li>
-			<li class="two " style="min-width:400px;"><img src="http://placekitten.com/200/300"></li>
+			<li class="two"><img src="http://placekitten.com/200/300"></li>
 		</ul>
 	</body>
 </html>
