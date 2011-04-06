@@ -334,7 +334,7 @@ $.extend($.gS, {
 		$.gS.timing("positioning" , "Start",true);
 		var gS=$.gS,
 			opts=gS.opts,
-			p = data.obj.offset(),
+			p = data.obj.position(),
 			from = bind==opts.LoT ? opts.RoB : opts.LoT,
 			cS = $(context)["inner"+gS.capitalize(opts.WoH)](),
 			oS = data.obj["outer"+gS.capitalize(opts.WoH)]();
