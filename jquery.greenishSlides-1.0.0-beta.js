@@ -138,7 +138,7 @@ $.extend($.gS, {
 		})();
 		
 ////	First Initialisation	
-		$(".active", context) ? 
+		$(".active", context).length >0 ? 
 			$(".active", context).eq(0).removeClass("active").trigger(opts.events.activate):
 			gS.update(context);
 		
@@ -150,7 +150,6 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	activate : function (slide) {
 		$.gS.timing("activate", "Start", true);
-		console.log("activate");
 		var gS=$.gS,
 			opts=gS.opts,
 			deactivated;
@@ -174,7 +173,6 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
  	deactivate : function (slide) {
 		var gS=$.gS;
-		console.log("deactivate");
 		gS.defaults.handle!=gS.opts.handle && !slide.hasClass("gSSlide")?
 			slide=$(".gSSlide").has($(slide)):
 			slide=$(slide);

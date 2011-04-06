@@ -90,7 +90,7 @@
 		<ul class="greenishSlides" id="greenishSlides">
 			<li class="one "><img src="http://placehold.it/500x300"></li>
 			<li class="two"><img src="http://placekitten.com/200/300"></li>
-			<li class="three active"><img src="http://placehold.it/500x300"></li>
+			<li class="three"><img src="http://placehold.it/500x300"></li>
 			<li class="four"><img src="http://placekitten.com/200/300"></li>
 			<li class="two"><img src="http://placekitten.com/200/300"></li>
 			<li class="three "><img src="http://placehold.it/500x300"></li>
