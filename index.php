@@ -16,12 +16,19 @@
 			(function($) {
 				$(document).ready(function() { 
  					$(".greenishSlides").greenishSlides({	
- 						stayOpen:true,
- 						keyEvents:true,
- 						circle:true,
- 						easing:"easeOutBounce",
- 						transitionSpeed:1000,
+ 						stayOpen:false,
+ 						keyEvents:false,
+ 						circle:false,
+ 						easing:"swing",
+ 						events:{
+ 							activate:"mouseover",
+ 							deactivate:"mouseout"
+ 						},
+ 						transitionSpeed:600,
  						vertical:false,
+ 						limits: {
+ 							min:20
+ 						},
 				 		hovder: {
 				 			mouseover:function () {
 				 				if($(this).hasClass("active")) return;
@@ -35,7 +42,7 @@
 								$.gS.activate($(this).parent().find(".active").removeClass("active"));
 				 			}
 				 		},
-						hooks: {
+						hodoks: {
  							preActivate: function () {
  								var slide=$(this);
 									ai=slide.index()
@@ -80,27 +87,15 @@
 		</script>		
 	</head>
 	<body>
-		<div class="greenishSlides" id="greenishSlides">
-			<div class="one minWidth"><img src="http://placehold.it/500x300"></div>
-			<div class="two"><img src="http://placekitten.com/200/300"></div>
-			<div class="three active"><img src="http://placehold.it/500x300"></div>
-			<div class="four"><img src="http://placekitten.com/200/300"></div>
-			<div class="two"><img src="http://placekitten.com/200/300"></div>
-			<div class="three "><img src="http://placehold.it/500x300"></div>
-			<div class="four"><img src="http://placekitten.com/200/300"></div>
-			<div class="two "><img src="http://placekitten.com/200/300"></div>
-			<div class="three minWidth"><img src="http://placehold.it/500x300"></div>
-			<div class="four"><img src="http://placekitten.com/200/300"></div>
-			<div class="two"><img src="http://placekitten.com/200/300"></div>
-			<div class="three "><img src="http://placehold.it/500x300"></div>
-			<div class="four"><img src="http://placekitten.com/200/300"></div>
-			<div class="two"><img src="http://placekitten.com/200/300"></div>
-			<div class="three "><img src="http://placehold.it/500x300"></div>
-			<div class="four"><img src="http://placekitten.com/200/300"></div>
-			<div class="two"><img src="http://placekitten.com/200/300"></div>
-			<div class="three "><img src="http://placehold.it/500x300"></div>
-			<div class="four"><img src="http://placekitten.com/200/300"></div>
-			<div class="five"><img src="http://placehold.it/500x300"></div>
-		</div>
+		<ul class="greenishSlides" id="greenishSlides">
+			<li class="one "><img src="http://placehold.it/500x300"></li>
+			<li class="two"><img src="http://placekitten.com/200/300"></li>
+			<li class="three active"><img src="http://placehold.it/500x300"></li>
+			<li class="four"><img src="http://placekitten.com/200/300"></li>
+			<li class="two"><img src="http://placekitten.com/200/300"></li>
+			<li class="three "><img src="http://placehold.it/500x300"></li>
+			<li class="four"><img src="http://placekitten.com/200/300"></li>
+			<li class="two " style="min-width:400px;"><img src="http://placekitten.com/200/300"></li>
+		</ul>
 	</body>
 </html>
