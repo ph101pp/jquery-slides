@@ -5,7 +5,7 @@
 		<title>greenishSlides</title>
 		<link rel="stylesheet" type="text/css" href="design.css">
 		<script type="text/javascript" src="jquery-1.5.1.min.js"></script>
-		<script type="text/javascript" src="jquery.greenishSlides-0.0.1.js"></script>
+		<script type="text/javascript" src="jquery.greenishSlides-1.0.0-beta.js"></script>
 
 <!--		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
 		<script type="text/javascript" src="http://jmar777.googlecode.com/svn/trunk/js/jquery.easing.1.3.js"></script>-->

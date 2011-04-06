@@ -1,12 +1,11 @@
 /*! 
-
-Author {
-	Philipp C. Adrian
-	www.philippadrian.com
-	www.greenish.ch
-	@gre_nish
-}
-*/
+ * greenishSlides: jQuery Slideshow plugin - v1.0.0 - beta (4/6/2011)
+ * http://www.philippadrian.com
+ * 
+ * Copyright (c) 2011 Philipp C. Adrian
+ * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
+ * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses. 
+ */
 
 (function($) {
 ////////////////////////////////////////////////////////////////////////////////
