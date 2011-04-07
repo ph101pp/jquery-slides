@@ -156,7 +156,7 @@ $.extend($.gS, {
 		var gS=$.gS,
 			opts=gS.opts,
 			deactivated;
-		!slide.is(".gSSlide"+opts.handle)?
+		!slide.is(".gSSlide, .gSSlide"+opts.handle)?
 			slide=$(".gSSlide").has($(slide)):
 			slide=$(slide);
 
@@ -176,7 +176,7 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
  	deactivate : function (slide) {
 		var gS=$.gS;
-		!slide.is(".gSSlide"+gS.opts.handle)?
+		!slide.is(".gSSlide, .gSSlide"+gS.opts.handle)?
 			slide=$(".gSSlide").has($(slide)):
 			slide=$(slide);
 
