@@ -16,10 +16,11 @@
 			(function($) {
 				$(document).ready(function() { 
  					$(".greenishSlides").greenishSlides({	
- 						stayOpen:false,
- 						keyEvents:false,
+ 						stayOpen:true,
+ 						keyEvents:true,
  						circle:false,
  						handle:".handle",
+ 						active:false,
  						easing:"easeInOutQuad",
  						events:{
  							activate:"mouseover",

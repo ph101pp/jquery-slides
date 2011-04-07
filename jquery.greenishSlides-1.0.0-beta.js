@@ -59,6 +59,7 @@ $.extend($.gS, {
 		},
 		hooks : {},
 		limits : {},
+		active:false,
 		queue:false
 	},
 ////////////////////////////////////////////////////////////////////////////////
@@ -115,29 +116,34 @@ $.extend($.gS, {
 
 		
 ////	Define deactivation and activation events
-		(setEvent=function(slide) {
+		if(opts.handle) (setEvent=function(slide) {
 			var slide= slide || $(context).find(opts.handle);
 ////		Define Activate Event
-			$(slide).bind(opts.events.activate, function (event){
+			$(slide).bind(opts.events.activate, function (e){
 				if($(this).hasClass("active")) return;
 				gS.activate($(this));
 ////			Define Deactivate Event
 				if(!opts.stayOpen) {
-					$(this).unbind(event);
-					$(this).bind(opts.events.deactivate, function (event){
-//						if(event.currentTarget!=event.fromElement) return;
+					$(this).unbind(e);
+					$(this).bind(opts.events.deactivate, function (e){
+						if($(this).has(e.relatedTarget).length >0 || this == e.relatedTarget) return false;
 						gS.deactivate($(this));
-						$(this).unbind(event);
+						$(this).unbind(e);
 						setEvent($(this));
+						return false;
 					});
 				}
 			});
 		})();
 		
-////	First Initialisation	
-		$(".active", context).length >0 ? 
-			$(".active", context).eq(0).removeClass("active").trigger(opts.events.activate):
-			gS.update(context);
+////	First Initialisation
+
+		if($(".active", context).length) 
+			$(".active", context).eq(0).removeClass("active").trigger(opts.events.activate);
+		else if(opts.active !== false) !!parseInt(opts.active) ? 
+					slides.eq(opts.active).removeClass("active").trigger(opts.events.activate):
+					$(opts.active, context).eq(0).removeClass("active").trigger(opts.events.activate);
+		else gS.update(context);
 		
 		
 		gS.timing("init" , "Done");
@@ -145,7 +151,7 @@ $.extend($.gS, {
 	
 	
 ////////////////////////////////////////////////////////////////////////////////
-	activate : function (slide) {
+	activate : function (slide) {	
 		$.gS.timing("activate", "Start", true);
 		var gS=$.gS,
 			opts=gS.opts,
