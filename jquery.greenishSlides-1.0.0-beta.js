@@ -116,10 +116,7 @@ $.extend($.gS, {
 		
 ////	Define deactivation and activation events
 		(setEvent=function(slide) {
-			var slide= slide || 
-				(gS.defaults.handle!=opts.handle ? 
-					context : 
-					$(context).find(opts.handle));
+			var slide= slide || $(context).find(opts.handle);
 ////		Define Activate Event
 			$(slide).bind(opts.events.activate, function (event){
 				if($(this).hasClass("active")) return;
@@ -153,7 +150,7 @@ $.extend($.gS, {
 		var gS=$.gS,
 			opts=gS.opts,
 			deactivated;
-		gS.defaults.handle!=opts.handle && !slide.hasClass("gSSlide")?
+		!slide.is(".gSSlide"+opts.handle)?
 			slide=$(".gSSlide").has($(slide)):
 			slide=$(slide);
 
@@ -173,7 +170,7 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
  	deactivate : function (slide) {
 		var gS=$.gS;
-		gS.defaults.handle!=gS.opts.handle && !slide.hasClass("gSSlide")?
+		!slide.is(".gSSlide"+gS.opts.handle)?
 			slide=$(".gSSlide").has($(slide)):
 			slide=$(slide);
 
@@ -515,6 +512,8 @@ $.extend($.gS, {
 		gSSlide : {
 			position:"absolute",
 			margin:0,
+			border:0,
+			padding:0,
 			display:"block",
 			overflow:"hidden",
 			textIndent:0
