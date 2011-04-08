@@ -20,6 +20,7 @@
  						keyEvents:true,
  						circle:false,
  						handle:".handle",
+ 						activeClass:"mySuperActiveClass",
  						active:false,
  						easing:"easeInOutQuad",
  						events:{
@@ -31,6 +32,7 @@
  						limits: {
  							min:20
  						},
+ 						active:1,
 				 		hovder: {
 				 			mouseover:function () {
 				 				if($(this).hasClass("active")) return;
@@ -44,7 +46,7 @@
 								$.gS.activate($(this).parent().find(".active").removeClass("active"));
 				 			}
 				 		},
-						hodoks: {
+						hooks: {
  							preActivate: function () {
  								var slide=$(this);
 									ai=slide.index()
@@ -63,10 +65,10 @@
 										slide;
 									for(var k=0; k<slides.length; k++) {
 										slide=slides.eq(k)
-										if(slide.hasClass("active")) var color="#FFFFFF";
+										if(slide.hasClass("mySuperActiveClass")) var color="#FFFFFF";
 										else {
 											var colors=["#EEEEEE","#DDDDDD","#CCCCCC","#BBBBBB","#AAAAAA","#999999","#888888","#777777","#666666","#555555","#444444","#333333","#222222","#111111"];
-											var i=slide.parent().find(".active").index();
+											var i=slide.parent().find(".mySuperActiveClass").index();
 											i<slide.index() ? i=slide.index()-i :i-=slide.index();
 											var color=colors[i] || "#444444";
 										}							
@@ -75,7 +77,7 @@
 			
 									next();									 
 								});
- 								$.gS.opts=$.gS.setOpts({limits:limits});
+ 								$.gS.opts=$.gS.setOpts(slide.parent(),{limits:limits});
  								return true;
  							}
  						}	

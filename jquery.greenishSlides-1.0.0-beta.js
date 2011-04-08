@@ -60,18 +60,22 @@ $.extend($.gS, {
 		hooks : {},
 		limits : {},
 		active:false,
+		activeClass:"active",
+		resizable:true,
 		queue:false
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	init : function (context, opts) {
 		context=$(context);
+////	Extends defaults into opts.
+		opts=this.opts=this.setOpts(context,opts);
+		$.gS.hook("preInit", context); // hook
+		
 		var gS=$.gS,
 			slides = context.css(gS.css.context).children().addClass("gSSlide").css(gS.css.gSSlide),
 			setEvents;
 		
 		gS.timing("init" , "Start");
-////	Extends defaults into opts.
-		opts=this.opts=this.setOpts(context,opts);
 		
 ////	Sets css and classes
 		if(opts.vertical) {
@@ -83,20 +87,13 @@ $.extend($.gS, {
 			$.extend(opts, gS.orientation.horizontal)
 		}
 ////	/Sets css and classes
-////	Set hooks.
-		$.each(opts.hooks,function(name,func) {
-			context.bind(name, function (e, param1, param2){
-				$.proxy(func, e.target)(param1, param2, e);
-			});
-		});
-////	/Set hooks.
 ////	Keyboard and Swipe events.		
-		if(opts.keyEvents) $(document).bind("keydown", function(event) {
-			if(event.which == 39 || event.which == 40) gS.next(context);
-			else if(event.which == 37 || event.which == 38) gS.prev(context);
+		if(opts.keyEvents) $(document).bind("keydown", function(e) {
+			if(e.which == 39 || e.which == 40) gS.next(context);
+			else if(e.which == 37 || e.which == 38) gS.prev(context);
 		});
 		
-		if(opts.swipeEvents && typeof($().swipe)=="function") context.swipe({
+		if(opts.swipeEvents && context.swipe) context.swipe({
 			threshold: opts.swipeThreshold,
 			swipeLeft: function(){gS.next(context)},
 			swipeRight: function(){gS.prev(context)}
@@ -114,37 +111,43 @@ $.extend($.gS, {
 					$.proxy(opts.hover.mouseout, context)();
 			});
 
-		
 ////	Define deactivation and activation events
-		if(opts.handle) (setEvent=function(slide) {
-			var slide= slide || $(context).find(opts.handle);
-////		Define Activate Event
-			$(slide).bind(opts.events.activate, function (e){
-				if($(this).hasClass("active")) return;
-				gS.activate($(this));
-////			Define Deactivate Event
-				if(!opts.stayOpen) {
-					$(this).unbind(e);
-					$(this).bind(opts.events.deactivate, function (e){
-						if($(this).has(e.relatedTarget).length >0 || this == e.relatedTarget) return false;
-						gS.deactivate($(this));
+		if(opts.handle) (setEvent=function(handle) {
+				handle = typeof(handle) == "object" ? 
+					handle:
+					$(context).find(handle);
+	////		Define Activate Event
+				$(handle).bind(opts.events.activate, function (e){
+					if($(this).hasClass(opts.activeClass)) return;
+					gS.activate($(this));
+	////			Define Deactivate Event
+					if(!opts.stayOpen && opts.handle) {
 						$(this).unbind(e);
-						setEvent($(this));
-						return false;
-					});
-				}
+						$(this).bind(opts.events.deactivate, function (e, justEvents){
+							if($(this).has(e.relatedTarget).length >0 || this == e.relatedTarget) return false;
+							if(!justEvents) gS.deactivate($(this));
+							$(this).unbind(e);
+							setEvent($(this));
+							return false;
+						});
+					}
+				});
+			})(opts.handle);
+		else slides.bind((opts.events.activate="gSactivate"), function(e){
+				$.gS.activate($(this));
 			});
-		})();
 		
 ////	First Initialisation
 
-		if($(".active", context).length) 
-			$(".active", context).eq(0).removeClass("active").trigger(opts.events.activate);
-		else if(opts.active !== false) !!parseInt(opts.active) ? 
-					slides.eq(opts.active).removeClass("active").trigger(opts.events.activate):
-					$(opts.active, context).eq(0).removeClass("active").trigger(opts.events.activate);
+		if($("."+opts.activeClass, context).length)
+			$("."+opts.activeClass, context).eq(0).removeClass(opts.activeClass).trigger(opts.events.activate);
+		else if(opts.active !== false) {
+			!isNaN(opts.active) ? 
+					slides.eq(opts.active).removeClass(opts.activeClass).trigger(opts.events.activate):
+					$(opts.active, context).eq(0).removeClass(opts.activeClass).trigger(opts.events.activate);
+		}
 		else gS.update(context);
-		
+		gS.hook("postInit", context); // hook
 		
 		gS.timing("init" , "Done");
 	},
@@ -160,28 +163,32 @@ $.extend($.gS, {
 			slide=$(".gSSlide").has($(slide)):
 			slide=$(slide);
 
-		if(slide.hasClass("active")) return;
-		if(!opts.stayOpen) slide.siblings(".active").trigger(opts.events.deactivate);
-		else gS.deactivate(slide.siblings(".active"));
+		if(slide.hasClass(opts.activeClass)) return;
+		if(!opts.stayOpen && opts.handle) slide.siblings("."+opts.activeClass).trigger(opts.events.deactivate, true);
 		
-		deactivated =slide.siblings(".deactivated");
+		slide.siblings("."+opts.activeClass).removeClass(opts.activeClass).addClass("gSdeactivated");
+		
+		deactivated =slide.siblings(".gSdeactivated");
 		if(deactivated.length > 0) {
-			deactivated.removeClass("deactivated");
-			slide.trigger("postDeactivate"); //hook
+			deactivated.removeClass("gSdeactivated");
+			gS.hook("postDeactivate", slide); // hook
 		}
-		slide.addClass("active").trigger("preActivate"); // hook
+		slide.addClass(opts.activeClass)
+		gS.hook("preActivate", slide); // hook
 
 		gS.update(slide.parent());
  	},
 ////////////////////////////////////////////////////////////////////////////////
  	deactivate : function (slide) {
-		var gS=$.gS;
-		!slide.is(".gSSlide, .gSSlide"+gS.opts.handle)?
+		var gS=$.gS,
+			opts=gS.opts;
+		!slide.is(".gSSlide, .gSSlide"+opts.handle)?
 			slide=$(".gSSlide").has($(slide)):
 			slide=$(slide);
 
-		if(!slide.hasClass("active")) return;
-		slide.removeClass("active").addClass("deactivated").trigger("preDeactivate"); // hook
+		if(!slide.hasClass(opts.activeClass)) return;
+		slide.removeClass(opts.activeClass).addClass("gSdeactivated");
+		gS.hook("preDeactivate", slide); // hook
 		
 		gS.update(slide.parent());
  	}, 	
@@ -196,10 +203,11 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	step : function (context, number, fromSlide) {
 		var gS=$.gS,
+			opts=gS.opts,
 			slides=$(context).children(),
 			next;
-		fromSlide=fromSlide || slides.filter(".gSSlide.active");
-		if(slides.filter(fromSlide).length <= 0) return;
+		fromSlide=fromSlide || slides.filter(".gSSlide."+opts.activeClass);
+		if(!slides.filter(fromSlide).length) return;
 		next = $(fromSlide).index()+(parseFloat(number)%slides.length);
 		
 		if(next < 0) gS.opts.circle ? 
@@ -208,7 +216,6 @@ $.extend($.gS, {
 		else if(next>=slides.length) gS.opts.circle ? 
 				next = next-slides.length: 
 				next = slides.length-1;
-				
 		gS.activate(slides.eq(next));
 	},
 ////////////////////////////////////////////////////////////////////////////////
@@ -220,6 +227,10 @@ $.extend($.gS, {
 ////	Extends defaults into opts.
 		context.data("data",{opts:merged});
 		return merged;		
+	},
+////////////////////////////////////////////////////////////////////////////////
+	hook : function (hook, hookContext, hookParams) {
+		if(this.opts.hooks[hook]) $.proxy(this.opts.hooks[hook], hookContext)(hookParams);
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	cssFloat : function (context, value) {
@@ -235,7 +246,7 @@ $.extend($.gS, {
 		var gS=$.gS,
 			slides=$(context).children(),
 			count=slidesLength=slides.length,
-			active = slides.filter(".gSSlide.active"),
+			active = slides.filter(".gSSlide."+opts.activeClass),
 			ai=active.index(),
 			fullSize=cS=$(context)[opts.WoH](),
 			alignLoT, posAct, newSize,
@@ -296,11 +307,11 @@ $.extend($.gS, {
 		gS.timing("update" , "Got Width");
 
 //		Calculate Position
-		alignLoT= data[ai] && data[ai].obj.css(opts.RoB)=="auto";		
+		alignLoT= data[ai] && data[ai].obj.hasClass(opts.LoT);
 		for(i=c=0; slide=data[i]; i++) {
 			c+=dcss[i][opts.WoH];
 			posAct = slide.obj.hasClass("posAct");
-			if(true && i==ai && !opts.vertical) {
+			if(opts.resizable && i==ai && !opts.vertical) {
 				alignLoT ?
 					slide=gS.positioning(context,  slide, opts.LoT, true):
 					slide=gS.positioning(context,  slide, opts.RoB, true);
@@ -338,15 +349,15 @@ $.extend($.gS, {
 			p = data.obj.position(),
 			from = bind==opts.LoT ? opts.RoB : opts.LoT,
 			cS = $(context)["inner"+gS.capitalize(opts.WoH)](),
-			oS = data.obj["outer"+gS.capitalize(opts.WoH)]();
+			oS = data.obj["outer"+gS.capitalize(opts.WoH)](),
+			marginLoT="margin-"+opts.LoT,
+			marginRoB="margin-"+opts.RoB;
 
 		if(active) {
 			css={zIndex:0, position:"relative"};
 			css[opts.WoH]="auto";
-			css["margin-"+opts.LoT]=p[opts.LoT];
-			css["margin-"+opts.RoB]=cS-p[opts.LoT]-oS;
-			data.css["margin-"+opts.LoT]=css["margin-"+opts.LoT];
-			data.css["margin-"+opts.RoB]=css["margin-"+opts.RoB];
+			data.css[marginLoT]=css[marginLoT]=p[opts.LoT];
+			data.css[marginRoB]=css[marginRoB]=cS-p[opts.LoT]-oS;
 			css[bind]=0;
 			data.obj.addClass("posAct");
 			data.align=bind;
@@ -358,8 +369,8 @@ $.extend($.gS, {
 				bind==opts.LoT ? 
 					css[bind]=p[opts.LoT]:
 					css[bind]=cS-p[opts.LoT]-oS;
-			css["margin-"+opts.LoT]=0;
-			css["margin-"+opts.RoB]=0;
+			css[marginLoT]=0;
+			css[marginRoB]=0;
 			data.css[opts.WoH]=css[opts.WoH]=oS;
 			data.css[bind]=css[bind];
 			data.css[from]="auto";
@@ -378,8 +389,8 @@ $.extend($.gS, {
 		context=$(context).stop();
 		var gS=$.gS,
 			slides=$(context).children(),
-			active = slides.filter(".gSSlide.active"),
-			ai = active.index(),
+			active,
+			ai,
 			postAnimation,
 			storedData=context.data("data") || {},
 			data;
@@ -389,27 +400,27 @@ $.extend($.gS, {
 			storedData.opts;
 		
 		data= gS.getData(context, opts);
-
-
+		active = slides.filter(".gSSlide."+opts.activeClass);
+		ai= active.index();
 	
 //		Set hooks for either Activation or Deactivation.
 		if(active.length <=0) {
-			active.trigger("preDeactivateAnimation", data); // hook
+			gS.hook("preDeactivateAnimation", active, data); // hook
 			postAnimation = function () {
-				var deactive=$(this).find(".gSSlide.deactivated");
+				var deactive=$(this).find(".gSSlide.gSdeactivated");
 				if(deactive.length>0) {
-					deactive.trigger("postDeactivate"); // hook
-					deactive.removeClass("deactivated");
+					gS.hook("postDeactivate", deactive); // hook
+					deactive.removeClass("gSdeactivated");
 				}
 			}
 		}
 		else {  
-			active.trigger("preActivateAnimation", data); // hook
+			gS.hook("preActivateAnimation", active, data); // hook
 			postAnimation = function () {
-				var active=$(this).find(".gSSlide.active");
+				var active=$(this).find(".gSSlide."+opts.activeClass);
 				if(active.length>0) {
-					active.trigger("postActivate"); // hook
-					if(!opts.vertical) active.css({width:"auto"});
+					gS.hook("postActivate", active); // hook
+					if(!opts.vertical && opts.resizable) active.css({width:"auto"});
 				}
 			}
 		}
@@ -432,8 +443,12 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	animation : function (state, obj) {
 		$.gS.timing("step","start",true)
-		var info= $(obj.elem).dequeue("gSanimationStep").data("data"), // hook: custom queue that runs once on every step of the animation (MAKE IT FAST!)
-			opts=info.opts,
+		var info= $(obj.elem).dequeue("gSanimationStep").data("data"); // hook: custom queue that runs once on every step of the animation (MAKE IT FAST!)
+		if(!info) {
+			$(this).stop()
+			return;
+		};
+		var	opts=info.opts,
 			data=info.animation,
 			css={},
 			slide, k, i, ai,
@@ -468,14 +483,16 @@ $.extend($.gS, {
 //		Set Width
 		for(i=data.length-1; slide=data[i]; i--) if(!slide.active) {
 			slide.align == opts.LoT ? k=i+1 : k=i-1;
-			data[k] && !data[k].active ? 
+			if(data[k]) !data[k].active? 
 				css[i][opts.WoH] = css[k][slide.align]-css[i][slide.align]:
 				css[i][opts.WoH] = calc(i,opts.WoH);
+			else css[i][opts.WoH]= info.cS-css[i][slide.align];
+			
 			slide.obj.css(css[i]);		
 		}
 //		Set Active
 		if(css[ai]) {
-			if(!opts.vertical) {
+			if(!opts.vertical && opts.resizable) {
 				css[ai]["margin-"+opts.LoT]=getPosition(ai-1 , opts.LoT);
 				css[ai]["margin-"+opts.RoB]=getPosition(ai+1 , opts.RoB);
 			}
@@ -489,7 +506,6 @@ $.extend($.gS, {
 					css[ai][opts.WoH]=info.cS-css[ai][opts.RoB]-getPosition(ai-1,opts.LoT);
 				}
 			}
-	
 			data[ai].obj.css(css[ai]);
 		}
 		
@@ -511,9 +527,12 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	css :{
 		context : {
-			overflow:"hidden",
 			zoom:1,
-			listStyle:"none"
+			listStyle:"none",
+			margin:0,
+			padding:0,
+			border:0,
+			overflow:"hidden"
 		},
 		gSSlide : {
 			position:"absolute",
