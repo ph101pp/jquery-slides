@@ -20,7 +20,7 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	timer :{},
 	timing : function (key, comment, hide) {
-		return;
+		
 		var timer,time;
 		comment=comment||"";
 		timer = new Date()
@@ -38,6 +38,7 @@ $.extend($.gS, {
 	defaults : {
 		stayOpen: false,
 //		fillSpace: true,
+		resizable:true,
 		vertical:false,
 		circle : false,
 		transitionSpeed: 400,
@@ -61,8 +62,8 @@ $.extend($.gS, {
 		limits : {},
 		active:false,
 		activeClass:"active",
-		resizable:true,
-		queue:false
+//		queue:false
+		cache:true
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	init : function (context, opts) {
@@ -155,7 +156,7 @@ $.extend($.gS, {
 	
 ////////////////////////////////////////////////////////////////////////////////
 	activate : function (slide) {	
-		$.gS.timing("activate", "Start", true);
+		$.gS.timing("activation", "Start", true);
 		var gS=$.gS,
 			opts=gS.opts,
 			deactivated;
@@ -165,7 +166,6 @@ $.extend($.gS, {
 
 		if(slide.hasClass(opts.activeClass)) return;
 		if(!opts.stayOpen && opts.handle) slide.siblings("."+opts.activeClass).trigger(opts.events.deactivate, true);
-		
 		slide.siblings("."+opts.activeClass).removeClass(opts.activeClass).addClass("gSdeactivated");
 		
 		deactivated =slide.siblings(".gSdeactivated");
@@ -220,17 +220,11 @@ $.extend($.gS, {
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	setOpts : function (context,opts) {
-		var merged=$.extend(true,{},this.defaults, this.opts||{}, opts||{});
-////	Remove cached data.	
-		context=$(context);
-		context.removeData("data");
-////	Extends defaults into opts.
-		context.data("data",{opts:merged});
-		return merged;		
+		return $.extend(true,{},this.defaults, this.opts||{}, opts||{});
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	hook : function (hook, hookContext, hookParams) {
-		if(this.opts.hooks[hook]) $.proxy(this.opts.hooks[hook], hookContext)(hookParams);
+		if(this.opts.hooks[hook]) return $.proxy(this.opts.hooks[hook], hookContext)(hookParams);
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	cssFloat : function (context, value) {
@@ -241,109 +235,44 @@ $.extend($.gS, {
 		return word.charAt(0).toUpperCase() + word.slice(1);
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	getData : function (context, opts) {
-		$.gS.timing("update" , "Start",true);
-		var gS=$.gS,
-			slides=$(context).children(),
-			count=slidesLength=slides.length,
-			active = slides.filter(".gSSlide."+opts.activeClass),
-			ai=active.index(),
-			fullSize=cS=$(context)[opts.WoH](),
-			alignLoT, posAct, newSize,
-			data = [],
-			limits ={},
-			dcss={},
-			skip={},
-			c=0,i;
-	
-//		Get Data
-		for(i=slidesLength-1; i >=0 ; i--) {
-			data[i]={
-				obj:slides.eq(i),
-				dcss:{},
-				css:{},
-				active:i==ai?true:false
-			};
-			dcss[i]={};
-			data[i].css[opts.WoH]=data[i].obj[opts.WoH]();
-			data[i].css["min-"+opts.WoH]=gS.cssFloat(data[i].obj,"min-"+opts.WoH);
-			data[i].css["max-"+opts.WoH]=gS.cssFloat(data[i].obj,"max-"+opts.WoH);
-			limits[i]={
-				max:data[i].css["max-"+opts.WoH] || 
-				(opts.limits[i] ? opts.limits[i].max : false) || 
-				opts.limits.max || undefined,
-				
-				min:data[i].css["min-"+opts.WoH] || 
-				(opts.limits[i] ? opts.limits[i].min : false) || 
-				opts.limits.min || 0			
-			};
-			i != ai ? 
-				c+=dcss[i][opts.WoH]=limits[i].min:
-				dcss[i][opts.WoH]=limits[i].max;
-		};
-		
-		gS.timing("update" , "Got Data");
-
-//		Calculate Width
-		if(ai>=0 && (!limits[ai].max || limits[ai].max>cS-c)) 
-			dcss[ai][opts.WoH] = cS-c;
-		else {
-			newSize=Math.ceil(fullSize/count);
-			for(i=0; limit = limits[i]; i++) {
-				hitMax=(limit.max<newSize);
-				if(!skip[i] && (limit.min>newSize || hitMax || i==ai)){
-					skip[i]=true;
-					count--;
-					hitMax || i==ai? 
-						fullSize-=dcss[i][opts.WoH]=limit.max:
-						fullSize-=limit.min;
-					newSize=Math.ceil(fullSize/count);
-					i=-1;
-				}
-			}
-			for(i=0; i < slidesLength; i++) 
-				if(!skip[i]) dcss[i][opts.WoH]=newSize;
-		}
-		gS.timing("update" , "Got Width");
-
-//		Calculate Position
-		alignLoT= data[ai] && data[ai].obj.hasClass(opts.LoT);
-		for(i=c=0; slide=data[i]; i++) {
-			c+=dcss[i][opts.WoH];
-			posAct = slide.obj.hasClass("posAct");
-			if(opts.resizable && i==ai && !opts.vertical) {
-				alignLoT ?
-					slide=gS.positioning(context,  slide, opts.LoT, true):
-					slide=gS.positioning(context,  slide, opts.RoB, true);
-				
-				dcss[i]["margin-"+opts.LoT]=c-dcss[i][opts.WoH];
-				dcss[i]["margin-"+opts.RoB]=cS-c;
-			}
-			else if((i<ai) || ai<0 || (alignLoT && ai==i)){
-				if(!slide.obj.hasClass(opts.LoT) || posAct) 
-					slide=gS.positioning(context,  slide, opts.LoT);
-
-				slide.align=opts.LoT;
-				slide.css[opts.LoT]=gS.cssFloat(slide.obj, opts.LoT);
-				dcss[i][opts.LoT]=c-dcss[i][opts.WoH];
-			}
-			else {
-				if(!slide.obj.hasClass(opts.RoB) || posAct)  
-					slide=gS.positioning(context, slide, opts.RoB);
-				
-				slide.align=opts.RoB;
-				slide.css[opts.RoB]=gS.cssFloat(slide.obj, opts.RoB);
-				dcss[i][opts.RoB]=cS-c;
-			}
-			slide.dcss=dcss[i];
-		}
-		gS.timing("update" , "Got Position");
-		return data;
-		
+	emptyCache : function (context) {
+		$(context).removeData("cache");
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	positioning : function (context, data, bind, active) {
-		$.gS.timing("positioning" , "Start",true);
+	_getCSS : function (context, data, i, ai) {
+		var gS = $.gS,
+			opts = gS.opts,
+			slide= data[i],
+			posAct = slide.obj.hasClass("posAct"),
+			alignLoT= ai==i && slide.obj.hasClass(opts.LoT);
+		
+		slide.css=slide.css||{};
+		slide.css[opts.WoH]=data[i].obj[opts.WoH]();
+		slide.active=(i==ai?true:false);
+		
+		if(opts.resizable && slide.active) {
+			alignLoT ?
+				slide=gS._positioning(context,  slide, opts.LoT, true):
+				slide=gS._positioning(context,  slide, opts.RoB, true);
+		}
+		else if((i<ai) || ai<0 || (slide.active && alignLoT)){
+			if(!slide.obj.hasClass(opts.LoT) || posAct) 
+				slide=gS._positioning(context,  slide, opts.LoT);
+
+			slide.align=opts.LoT;
+			slide.css[opts.LoT]=gS.cssFloat(slide.obj, opts.LoT);
+		}
+		else {
+			if(!slide.obj.hasClass(opts.RoB) || posAct)  
+				slide=gS._positioning(context, slide, opts.RoB);
+			
+			slide.align=opts.RoB;
+			slide.css[opts.RoB]=gS.cssFloat(slide.obj, opts.RoB);
+		}
+		return data;
+	},	
+////////////////////////////////////////////////////////////////////////////////
+	_positioning : function (context, data, bind, active) {
 		var gS=$.gS,
 			opts=gS.opts,
 			p = data.obj.position(),
@@ -380,9 +309,105 @@ $.extend($.gS, {
 		data.obj.removeClass(from).addClass(bind).css(css);
 
 
-		$.gS.timing("positioning" , "done");
 
 		return data;
+	},
+////////////////////////////////////////////////////////////////////////////////
+	_getLimits : function (context, data, i) {
+		console.log("limits"+i);
+		var gS = $.gS,
+			opts = gS.opts,
+			slide= data[i];
+		
+		slide.css["min-"+opts.WoH]=slide.css["min-"+opts.WoH] || gS.cssFloat(slide.obj,"min-"+opts.WoH);
+		slide.css["max-"+opts.WoH]=slide.css["min-"+opts.WoH] || gS.cssFloat(slide.obj,"max-"+opts.WoH);
+		slide.limits={
+			max:slide.css["max-"+opts.WoH] || 
+			(opts.limits[i] ? opts.limits[i].max : false) || 
+			opts.limits.max || undefined,
+			
+			min:slide.css["min-"+opts.WoH] || 
+			(opts.limits[i] ? opts.limits[i].min : false) || 
+			opts.limits.min || 0			
+		};
+		
+		return data;
+	},	
+////////////////////////////////////////////////////////////////////////////////
+	_getDCss : function (context, data, ai) {
+		var gS = $.gS,
+			opts = gS.opts,
+			skip={},
+			count=data.length,
+			fullSize=cS=$(context)[opts.WoH](),
+			newSize,
+			hitMax,
+			i,c
+			dcss={};
+//		Calculate Width
+		for(i=c=0; slide=data[i]; i++) {
+			if(!slide.active) c+=slide.limits.min;
+			dcss[i]={};
+		}
+		if(ai>=0 && (!data[ai].limits.max || data[ai].limits.max>cS-c)) 
+			for(i=0; i < data.length; i++)  
+				i==ai?
+					dcss[i][opts.WoH] = cS-c:
+					dcss[i][opts.WoH] = data[i].limits.min;
+		else {
+			newSize=Math.ceil(fullSize/count);
+			for(i=0; limit = data[i].limits; i++) {
+				hitMax=(limit.max<newSize);
+				if(!skip[i] && (limit.min>newSize || hitMax || i==ai)){
+					skip[i]=true;
+					count--;
+					hitMax || i==ai? 
+						fullSize-=dcss[i][opts.WoH]=limit.max:
+						fullSize-=dcss[i][opts.WoH]=limit.min;
+					newSize=Math.ceil(fullSize/count);
+					i=-1;
+				}
+			}
+			for(i=0; i < data.length; i++) 
+				if(!skip[i]) dcss[i][opts.WoH]=newSize;
+		}
+
+//		Caculate position.		
+		for(i=c=0; slide=data[i]; i++) {
+			c+= dcss[i][opts.WoH];
+
+			if(opts.resizable && i==ai) {			
+				dcss[i]["margin-"+opts.LoT]= c-dcss[i][opts.WoH];
+				dcss[i]["margin-"+opts.RoB]= cS-c;
+			}
+			else if((i<ai) || ai<0 || (slide.obj.hasClass(opts.LoT) && ai==i))
+				dcss[i][opts.LoT]= c-dcss[i][opts.WoH];
+			else 
+				dcss[i][opts.RoB]= cS-c;
+		}
+		return dcss;
+		
+	},
+////////////////////////////////////////////////////////////////////////////////
+	_getData : function (context, data) {
+		$.gS.timing("update" , "Start",true);
+		var gS=$.gS,
+			opts=gS.opts,
+			slides=$(context).children(),
+			active = slides.filter(".gSSlide."+opts.activeClass),
+			ai=active.index(),
+			i;
+//		Get Data
+		for(i=slides.length-1; i >=0 ; i--) {
+			data[i]= data[i] || {
+				obj:slides.eq(i),
+			};
+			
+			data=gS._getCSS(context, data, i, ai);
+			if(!opts.cache || !data[i].limits) data=gS._getLimits(context, data, i);
+		};
+		return data;
+		
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	update : function (context, opts) {
@@ -392,20 +417,43 @@ $.extend($.gS, {
 			active,
 			ai,
 			postAnimation,
-			storedData=context.data("data") || {},
-			data;
-	
-		this.opts=opts=opts || !storedData.opts?
-			$.gS.setOpts(opts):
-			storedData.opts;
+			animation=context.data("animation") || {},
+			data=animation.data || [],
+			cache=context.data("cache") || {},			
+			dcss=cache.dcss || {};
 		
-		data= gS.getData(context, opts);
+		this.opts=opts=opts || !cache.opts?
+			gS.setOpts(opts):
+			cache.opts;
+			
 		active = slides.filter(".gSSlide."+opts.activeClass);
 		ai= active.index();
+
+
+//		Data Calculations		
+		data= gS._getData(context, data);
+		if( !opts.cache || !dcss[ai]) dcss[ai] = gS._getDCss(context, data, ai);
+		
+//		Store Data for the animation function
+		animation = {
+			dcss:dcss[ai],
+			data:data,
+			opts:opts,
+			cS:animation.cS || $(context)[opts.WoH]()		
+		};
+		context.data("animation", animation);	
+		
+		if(opts.cache) {
+			cache = {
+				dcss:dcss,
+				opts:opts,
+			};
+			context.data("cache", cache);	
+		}
 	
 //		Set hooks for either Activation or Deactivation.
 		if(active.length <=0) {
-			gS.hook("preDeactivateAnimation", active, data); // hook
+			gS.hook("preDeactivateAnimation", active, animation); // hook
 			postAnimation = function () {
 				var deactive=$(this).find(".gSSlide.gSdeactivated");
 				if(deactive.length>0) {
@@ -415,23 +463,14 @@ $.extend($.gS, {
 			}
 		}
 		else {  
-			gS.hook("preActivateAnimation", active, data); // hook
+			gS.hook("preActivateAnimation", active, cache); // hook
 			postAnimation = function () {
 				var active=$(this).find(".gSSlide."+opts.activeClass);
 				if(active.length>0) {
 					gS.hook("postActivate", active); // hook
-					if(!opts.vertical && opts.resizable) active.css({width:"auto"});
 				}
 			}
 		}
-
-//		Store Data for the animation function
-		context.data("data", {
-			animation:data,
-			opts:opts,
-			cS:storedData.cS || $(context)[opts.WoH]()		
-		});
-		
 		
 //		Start Animation for Slides		
 		context
@@ -439,37 +478,30 @@ $.extend($.gS, {
 			.css({textIndent:0})
 			.animate({textIndent:100}, {duration:opts.transitionSpeed, easing:opts.easing, complete:postAnimation , step:gS.animation})
 			.dequeue("gSpostAnimation"); // hook: custom queue that runs after the animation
+		
+		$.gS.timing("activation" , "done");
+	
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	animation : function (state, obj) {
 		$.gS.timing("step","start",true)
-		var info= $(obj.elem).dequeue("gSanimationStep").data("data"); // hook: custom queue that runs once on every step of the animation (MAKE IT FAST!)
+		var info= $(obj.elem).dequeue("gSanimationStep").data("animation"); // hook: custom queue that runs once on every step of the animation (MAKE IT FAST!)
 		if(!info) {
-			$(this).stop()
+			$(this).stop();
 			return;
 		};
 		var	opts=info.opts,
-			data=info.animation,
+			data=info.data,
+			dcss=info.dcss,
 			css={},
-			slide, k, i, ai,
+			slide, k, i,
 			calc=function(i, key) {
-				return Math.round(data[i].css[key]+((data[i].dcss[key]-data[i].css[key])*(state[i] || state)));
+				return Math.round(data[i].css[key]+((dcss[i][key]-data[i].css[key])*(state[i] || state)));
 			},
 			getPosition = function(i, align) {
 				return css[i] ? css[i][align]+css[i][opts.WoH] : 0;
 			};
-		
-		if(false &&opts.queue) {
-			done = parseInt(state/data.length);
-			pos= state%data.length;
-			state={}
-			for(i=data.length-1; i>=0; i--) {
-				if(i<=done) state[i]=1;
-				else if(i==done+1) state[i]=pos/100;
-				else state[i]=0;
-			}
-		}
-		else state/=100;
+		state/=100;
 		
 //		Set Position
 		for(i=data.length-1; slide=data[i]; i--) {
@@ -492,7 +524,7 @@ $.extend($.gS, {
 		}
 //		Set Active
 		if(css[ai]) {
-			if(!opts.vertical && opts.resizable) {
+			if(opts.resizable) {
 				css[ai]["margin-"+opts.LoT]=getPosition(ai-1 , opts.LoT);
 				css[ai]["margin-"+opts.RoB]=getPosition(ai+1 , opts.RoB);
 			}
@@ -508,7 +540,6 @@ $.extend($.gS, {
 			}
 			data[ai].obj.css(css[ai]);
 		}
-		
 		$.gS.timing("step","end",true);
 	},
 ////////////////////////////////////////////////////////////////////////////////

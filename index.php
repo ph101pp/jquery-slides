@@ -18,7 +18,7 @@
  					$(".greenishSlides").greenishSlides({	
  						stayOpen:true,
  						keyEvents:true,
- 						circle:false,
+ 						circle:true,
  						handle:".handle",
  						activeClass:"mySuperActiveClass",
  						active:false,
@@ -30,10 +30,11 @@
  						transitionSpeed:600,
  						vertical:false,
  						limits: {
- 							min:20
+ 							min:0
  						},
  						active:1,
-				 		hovder: {
+ 						cache:true,
+				 		hoer: {
 				 			mouseover:function () {
 				 				if($(this).hasClass("active")) return;
 				 				var limits= {}
@@ -43,7 +44,7 @@
 							},
 				 			mouseout:function () {
 				 				if($(this).hasClass("active")) return;
-								$.gS.activate($(this).parent().find(".active").removeClass("active"));
+								$.gS.update($(this).parent());
 				 			}
 				 		},
 						hooks: {
@@ -77,6 +78,7 @@
 			
 									next();									 
 								});
+ 								$.gS.emptyCache(slide.parent());
  								$.gS.opts=$.gS.setOpts(slide.parent(),{limits:limits});
  								return true;
  							}
@@ -96,6 +98,18 @@
 			<li class="two handle"><img src="http://placekitten.com/200/300"></li>
 			<li class="three handle"><img src="http://placehold.it/500x300"></li>
 			<li class="four handle"><img src="http://placekitten.com/200/300"></li>
+			<li class="two"><img class="handle" src="http://placekitten.com/200/300"><img class="handle" src="http://placekitten.com/200/300"></li>
+			<li class="three handle"><img src="http://placehold.it/500x300"></li>
+			<li class="four handle"><img src="http://placekitten.com/200/300"></li>
+			<li class="two handle"><img src="http://placekitten.com/200/300"></li>
+			<li class="one handle"><img src="http://placehold.it/500x300"></li>
+			<li class="two handle"><img src="http://placekitten.com/200/300"></li>
+			<li class="three handle"><img src="http://placehold.it/500x300"></li>
+			<li class="four handle"><img src="http://placekitten.com/200/300"></li>
+			<li class="two"><img class="handle" src="http://placekitten.com/200/300"><img class="handle" src="http://placekitten.com/200/300"></li>
+			<li class="three handle"><img src="http://placehold.it/500x300"></li>
+			<li class="four handle"><img src="http://placekitten.com/200/300"></li>
+			<li class="two handle"><img src="http://placekitten.com/200/300"></li>
 			<li class="two"><img class="handle" src="http://placekitten.com/200/300"><img class="handle" src="http://placekitten.com/200/300"></li>
 			<li class="three handle"><img src="http://placehold.it/500x300"></li>
 			<li class="four handle"><img src="http://placekitten.com/200/300"></li>

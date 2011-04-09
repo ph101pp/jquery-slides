@@ -24,7 +24,7 @@ body {
 	min-width:20px;
 	max-width:20px;
 }
-.greenishSlides .active {
+.greenishSlides .mySuperActiveClass {
 	background-color:#eeCCee;
 }
 
