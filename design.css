@@ -14,7 +14,7 @@ body {
 	padding:0;
 }
 .greenishSlides li{
-	font-size:3em; 
+	font-size:2em; 
 	text-align:center;
 	background-color:#ee00ee;
 /*	min-width:10px; */
@@ -28,9 +28,53 @@ body {
 	background-color:#eeCCee;
 }
 
+.liLiner {
+	position:absolute;
+	height:100%;
+	width:100%;
+	border:1px solid #000000;
+	
+}
+
+.handle {
+	max-width:0px;
+	min-width:0%;
+	background-color:#ffFF00 !important;
+	overflow:visible !important;
+	z-index:10000 !important;
+}
 
 
-
-
+.handle .marker {
+	height:20px;
+	position:absolute;
+	width:100px;
+	background-color:#cc0000;
+}
+.handle.mySuperActiveClass .marker {
+	background-color:#ffFF00;
+}
+.handle.right .marker {
+	right:0px;	
+	left:auto;
+} 
+.handle.right.mySuperActiveClass .marker,
+.handle.left.mySuperActiveClass .marker,
+.handle.left .marker {
+	left:0px !important;
+	right:auto;
+}
+.handle.one .marker {
+	bottom:100px;
+}
+.handle.two .marker {
+	bottom:70px;
+}
+.handle.three .marker {
+	bottom:40px;
+}
+.handle.four .marker {
+	bottom:10px;
+}
 
 

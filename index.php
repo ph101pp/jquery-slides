@@ -19,21 +19,13 @@
  						stayOpen:true,
  						keyEvents:true,
  						circle:true,
- 						handle:".handle",
  						activeClass:"mySuperActiveClass",
  						active:false,
  						easing:"easeInOutQuad",
- 						events:{
- 							activate:"mouseover",
- 							deactivate:"mouseout"
- 						},
  						transitionSpeed:600,
  						vertical:false,
- 						limits: {
- 							min:0
- 						},
  						active:1,
- 						cache:true,
+ 						cache:false,
 				 		hoer: {
 				 			mouseover:function () {
 				 				if($(this).hasClass("active")) return;
@@ -48,37 +40,66 @@
 				 			}
 				 		},
 						hooks: {
- 							preActivate: function () {
- 								var slide=$(this);
-									ai=slide.index()
-									width=(40/0.7)+1;
-									limits = {};
-
-								for(var i=0; i<=slide.siblings().length; i++) {
-									width=width*0.7-1;
-									if(width<1) width=0;
-									width=Math.ceil(width);
-									if((ai-i) >=0) limits[ai-i]={min:width};
-									if((ai+i) <= slide.siblings().length)limits[ai+i]={min:width};
+							prev : function (slideId) {
+								var slide=$(this).children().eq(slideId);
+								if(slide.hasClass("handle")) {
+									$.gS.prev($(this), slide);
+									return false;
 								}
- 					 			slide.parent().queue("gSpreAnimation", function (next) {
-									var slides=$(this).children(),
-										slide;
-									for(var k=0; k<slides.length; k++) {
-										slide=slides.eq(k)
-										if(slide.hasClass("mySuperActiveClass")) var color="#FFFFFF";
-										else {
-											var colors=["#EEEEEE","#DDDDDD","#CCCCCC","#BBBBBB","#AAAAAA","#999999","#888888","#777777","#666666","#555555","#444444","#333333","#222222","#111111"];
-											var i=slide.parent().find(".mySuperActiveClass").index();
-											i<slide.index() ? i=slide.index()-i :i-=slide.index();
-											var color=colors[i] || "#444444";
-										}							
-										slide.animate({backgroundColor:color},{queue:false});
+								else return slideId;
+							},
+							next : function (slideId) {
+								var slide=$(this).children().eq(slideId);
+								if(slide.hasClass("handle")) {
+									$.gS.next($(this), slide);
+									return false;
+								}
+								else return slideId;
+							},
+ 							preActivate: function () {
+								var slide=$(this),
+									ai=slide.index(),
+									width=(40/0.7)+1,
+									limits = {},
+									slides=slide.siblings().andSelf();
+								if(slide.hasClass("handle")) {
+									for(var i=0; i<slides.length; i++) {
+										if(slides.eq(i).hasClass(slide.attr("id"))) limits[i]={max:2000};
+										else limits[i]={max:0};
+									}	
+									slide.parent().queue("gSpreAnimation", function (next) {
+										var slides=$(this).children();
+										for(var k=0; k<slides.length; k++) 
+											slides.eq(k).animate({backgroundColor:"#cccccc"},{queue:false});
+									});	
+								//	return true;
+								}	
+								else {	
+									for(var i=0; i<slides.length; i++) {
+										width=width*0.7-1;
+										if(width<1) width=0;
+										width=Math.ceil(width);
+										if((ai-i) >=0) limits[ai-i]={min:width, max:30000};
+										if((ai+i) <= slide.siblings().length)limits[ai+i]={min:width, max:30000};
 									}
-			
-									next();									 
-								});
- 								$.gS.emptyCache(slide.parent());
+									slide.parent().queue("gSpreAnimation", function (next) {
+										var slides=$(this).children(),
+											slide;
+										for(var k=0; k<slides.length; k++) {
+											slide=slides.eq(k)
+											if(slide.hasClass("mySuperActiveClass")) var color="#FFFFFF";
+											else {
+												var colors=["#EEEEEE","#DDDDDD","#CCCCCC","#BBBBBB","#AAAAAA","#999999","#888888","#777777","#666666","#555555","#444444","#333333","#222222","#111111"];
+												var i=slide.parent().find(".mySuperActiveClass").index();
+												i<slide.index() ? i=slide.index()-i :i-=slide.index();
+												var color=colors[i] || "#000000";
+											}							
+											slide.animate({backgroundColor:color},{queue:false});
+										}
+				
+										next();									 
+									});
+								}
  								$.gS.opts=$.gS.setOpts(slide.parent(),{limits:limits});
  								return true;
  							}
@@ -94,26 +115,26 @@
 	</head>
 	<body>
 		<ul class="greenishSlides" id="greenishSlides">
-			<li class="one handle"><img src="http://placehold.it/500x300"></li>
-			<li class="two handle"><img src="http://placekitten.com/200/300"></li>
-			<li class="three handle"><img src="http://placehold.it/500x300"></li>
-			<li class="four handle"><img src="http://placekitten.com/200/300"></li>
-			<li class="two"><img class="handle" src="http://placekitten.com/200/300"><img class="handle" src="http://placekitten.com/200/300"></li>
-			<li class="three handle"><img src="http://placehold.it/500x300"></li>
-			<li class="four handle"><img src="http://placekitten.com/200/300"></li>
-			<li class="two handle"><img src="http://placekitten.com/200/300"></li>
-			<li class="one handle"><img src="http://placehold.it/500x300"></li>
-			<li class="two handle"><img src="http://placekitten.com/200/300"></li>
-			<li class="three handle"><img src="http://placehold.it/500x300"></li>
-			<li class="four handle"><img src="http://placekitten.com/200/300"></li>
-			<li class="two"><img class="handle" src="http://placekitten.com/200/300"><img class="handle" src="http://placekitten.com/200/300"></li>
-			<li class="three handle"><img src="http://placehold.it/500x300"></li>
-			<li class="four handle"><img src="http://placekitten.com/200/300"></li>
-			<li class="two handle"><img src="http://placekitten.com/200/300"></li>
-			<li class="two"><img class="handle" src="http://placekitten.com/200/300"><img class="handle" src="http://placekitten.com/200/300"></li>
-			<li class="three handle"><img src="http://placehold.it/500x300"></li>
-			<li class="four handle"><img src="http://placekitten.com/200/300"></li>
-			<li class="two handle"><img src="http://placekitten.com/200/300"></li>
+			<li id="one" class="one handle"><div class="marker">2008</div></li>
+			<li class="one"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li id="two"  class="two handle"><div class="marker">2009</div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li id="three"  class="three handle"><div class="marker">2010</div></li>
+			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li id="four"  class="four handle"><div class="marker">2011</div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
 		</ul>
 	</body>
 </html>
