@@ -21,7 +21,7 @@
  						circle:true,
  						activeClass:"mySuperActiveClass",
  						active:false,
- 						easing:"easeInOutQuad",
+ 						easing:"swing",
  						transitionSpeed:600,
  						vertical:false,
  						active:1,
@@ -59,47 +59,63 @@
  							preActivate: function () {
 								var slide=$(this),
 									ai=slide.index(),
-									width=(40/0.7)+1,
+									width=40,
 									limits = {},
-									slides=slide.siblings().andSelf();
-								if(slide.hasClass("handle")) {
-									for(var i=0; i<slides.length; i++) {
-										if(slides.eq(i).hasClass(slide.attr("id"))) limits[i]={max:2000};
-										else limits[i]={max:0};
-									}	
-									slide.parent().queue("gSpreAnimation", function (next) {
-										var slides=$(this).children();
-										for(var k=0; k<slides.length; k++) 
-											slides.eq(k).animate({backgroundColor:"#cccccc"},{queue:false});
-									});	
-								//	return true;
-								}	
-								else {	
-									for(var i=0; i<slides.length; i++) {
-										width=width*0.7-1;
-										if(width<1) width=0;
+									slides=slide.siblings().andSelf(),
+									spreads=slide.attr("id")? slides.filter("."+slide.attr("id")) : {length:0},
+									min=ai,
+									max=ai+spreads.length,
+									k=slides.slice(0,ai).filter(".handle").length,
+									j=0;
+										
+									
+								for(var i=0; i<slides.length; i++) {
+									if(i<min) {
+										width=Math.pow(40,Math.pow(0.91,(min-k)));
+										if(width<3) width=0;
 										width=Math.ceil(width);
-										if((ai-i) >=0) limits[ai-i]={min:width, max:30000};
-										if((ai+i) <= slide.siblings().length)limits[ai+i]={min:width, max:30000};
+										limits[i]={min:width, max:width};
+										
+										if(!slides.eq(i).hasClass("handle")) k++;										
 									}
-									slide.parent().queue("gSpreAnimation", function (next) {
-										var slides=$(this).children(),
-											slide;
-										for(var k=0; k<slides.length; k++) {
-											slide=slides.eq(k)
-											if(slide.hasClass("mySuperActiveClass")) var color="#FFFFFF";
-											else {
-												var colors=["#EEEEEE","#DDDDDD","#CCCCCC","#BBBBBB","#AAAAAA","#999999","#888888","#777777","#666666","#555555","#444444","#333333","#222222","#111111"];
-												var i=slide.parent().find(".mySuperActiveClass").index();
-												i<slide.index() ? i=slide.index()-i :i-=slide.index();
-												var color=colors[i] || "#000000";
-											}							
-											slide.animate({backgroundColor:color},{queue:false});
-										}
-				
-										next();									 
-									});
+									else if(i>max) {
+										width=Math.pow(40,Math.pow(0.91,(i-max-j))),
+										if(width<3) width=0;
+										width=Math.ceil(width);
+										limits[i]={min:width, max:width};
+
+										if(slides.eq(i).hasClass("handle")) j++;
+									}
+									else limits[i]={min:0,max:33333333333333};									
 								}
+									
+								slide.parent().queue("gSpreAnimation", function (next) {
+									var slides=$(this).children(),
+										active=slides.filter(".mySuperActiveClass").eq(0),
+										ai=active.index(),
+										spreads=active.attr("id")? slides.filter("."+active.attr("id")) : {length:0},
+										min=ai,
+										max=ai+spreads.length,
+										k=1+slides.slice(0,ai).filter(".handle").length,
+										j=1,
+										colors=["#EEEEEE","#DDDDDD","#CCCCCC","#BBBBBB","#AAAAAA","#999999","#888888","#777777","#666666","#555555","#444444","#333333","#222222","#111111"],
+										color;
+									for(var i=0; i<slides.length; i++) {
+										if(i<min) {
+											color=colors[min-k] || "#000000";
+											if(!slides.eq(i).hasClass("handle")) k++;
+										}
+										else if(i>max) {
+											color=colors[i-max-j] || "#000000";
+											if(slides.eq(i).hasClass("handle")) j++;
+
+										}
+										else color="#ffffff";
+										slides.eq(i).animate({backgroundColor:color},{queue:false});
+									}
+			
+									next();									 
+								});
  								$.gS.opts=$.gS.setOpts(slide.parent(),{limits:limits});
  								return true;
  							}
@@ -117,7 +133,49 @@
 		<ul class="greenishSlides" id="greenishSlides">
 			<li id="one" class="one handle"><div class="marker">2008</div></li>
 			<li class="one"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="one"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="one"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="one"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="one"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="one"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="one"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="one"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
 			<li id="two"  class="two handle"><div class="marker">2009</div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
 			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
 			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
 			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
@@ -130,7 +188,34 @@
 			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
 			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
 			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
+			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
 			<li id="four"  class="four handle"><div class="marker">2011</div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
 			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
 			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
 			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>

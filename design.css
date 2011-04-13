@@ -32,7 +32,7 @@ body {
 	position:absolute;
 	height:100%;
 	width:100%;
-	border:1px solid #000000;
+	border:0px solid #000000;
 	
 }
 
@@ -55,14 +55,12 @@ body {
 	background-color:#ffFF00;
 }
 .handle.right .marker {
-	right:0px;	
-	left:auto;
+	left:-100px;
 } 
 .handle.right.mySuperActiveClass .marker,
 .handle.left.mySuperActiveClass .marker,
 .handle.left .marker {
-	left:0px !important;
-	right:auto;
+	left:0px;
 }
 .handle.one .marker {
 	bottom:100px;
