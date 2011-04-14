@@ -7,8 +7,6 @@
 		<script type="text/javascript" src="jquery-1.5.1.min.js"></script>
 		<script type="text/javascript" src="jquery.greenishSlides-1.0.0-beta.js"></script>
 
-<!--		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
-		<script type="text/javascript" src="http://jmar777.googlecode.com/svn/trunk/js/jquery.easing.1.3.js"></script>-->
 		<script type="text/javascript" src="jquery-ui-1.8.11.custom.min.js"></script>
 		<script type="text/javascript" src="jquery.easing.1.3.js"></script>
 <!--		<script type="text/javascript" src="jquery.jswipe-0.1.2.js"></script>-->
@@ -26,6 +24,9 @@
  						vertical:false,
  						active:1,
  						cache:false,
+ 						limits:{
+ 							min:20
+ 						},
 				 		hoer: {
 				 			mouseover:function () {
 				 				if($(this).hasClass("active")) return;
@@ -39,7 +40,7 @@
 								$.gS.update($(this).parent());
 				 			}
 				 		},
-						hooks: {
+						hfooks: {
 							prev : function (slideId) {
 								var slide=$(this).children().eq(slideId);
 								if(slide.hasClass("handle")) {
@@ -131,80 +132,6 @@
 	</head>
 	<body>
 		<ul class="greenishSlides" id="greenishSlides">
-			<li id="one" class="one handle"><div class="marker">2008</div></li>
-			<li class="one"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="one"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="one"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="one"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="one"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="one"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="one"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="one"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li id="two"  class="two handle"><div class="marker">2009</div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li class="two"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-			<li id="three"  class="three handle"><div class="marker">2010</div></li>
-			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li class="three"><div class="liLiner"><img src="http://placehold.it/500x300"></div></li>
-			<li id="four"  class="four handle"><div class="marker">2011</div></li>
-			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
 			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
 			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
 			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>

@@ -535,7 +535,7 @@ $.extend($.gS, {
 			}
 			else ai=i;
 		};
-//		Set Width
+//		Set Width to fill up space
 		for(i=data.length-1; slide=data[i]; i--) if(!slide.active) {
 			k= (slide.align == opts.LoT ? i+1:i-1);
 			if(data[k]) !data[k].active? 
