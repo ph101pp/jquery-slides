@@ -359,7 +359,7 @@ $.extend($.gS, {
 					dcss[i][opts.WoH] = cS-c:
 					dcss[i][opts.WoH] = data[i].limits.min || 0;
 		else {
-			newSize=Math.ceil(fullSize/count);
+			newSize=fullSize/count;
 			for(i=0; limit = data[i]; i++) {
 				limit=limit.limits;
 				hitMax=(limit.max<newSize);
@@ -369,7 +369,7 @@ $.extend($.gS, {
 					hitMax || i==ai? 
 						fullSize-=dcss[i][opts.WoH]=limit.max:
 						fullSize-=dcss[i][opts.WoH]=limit.min;
-					newSize=Math.ceil(fullSize/count);
+					newSize=fullSize/count;
 					i=-1;
 				}
 			}
