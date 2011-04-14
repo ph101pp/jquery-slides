@@ -48,10 +48,6 @@ $.extend($.gS, {
 			activate:"click",
 			deactivate:"click"
 		},
-		hover: {
-			mouseover:function () {},
-			mouseout:function () {}
-		},
 		keyEvents:true,
 		swipeEvents:true,
 		swipeThreshold: {
@@ -100,17 +96,6 @@ $.extend($.gS, {
 			swipeRight: function(){gS.prev(context)}
 		});
 ////	/Keyboard and Swipe events.
-
-////	Define hover
-		if(gS.defaults.hover.mouseover!=opts.hover.mouseover || gS.defaults.hover.mouseout!=opts.hover.mouseout)
-			$(opts.handle).live("mouseover mouseout", function(event) {
-				var context=$(this);
-				if(gS.defaults.handle!=opts.handle) context=$(".gSSlide").has(context);
-
-				event.type == "mouseover" ? 
-					$.proxy(opts.hover.mouseover, context)(): 
-					$.proxy(opts.hover.mouseout, context)();
-			});
 
 ////	Define deactivation and activation events
 		if(opts.handle) (setEvent=function(handle) {
