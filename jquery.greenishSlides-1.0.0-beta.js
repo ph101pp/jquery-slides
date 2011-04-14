@@ -65,7 +65,7 @@ $.extend($.gS, {
 	init : function (context, opts) {
 		context=$(context);
 ////	Extends defaults into opts.
-		opts=this.opts=this.setOpts(context,opts);
+		opts=this.opts=this.setOpts(opts);
 		$.gS.hook("preInit", context); // hook
 		
 		var gS=$.gS,
@@ -210,7 +210,7 @@ $.extend($.gS, {
 		return next;
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	setOpts : function (context,opts) {
+	setOpts : function (opts) {
 		return $.extend(true,{},this.defaults, this.opts||{}, opts||{});
 	},
 ////////////////////////////////////////////////////////////////////////////////
@@ -571,7 +571,6 @@ $.extend($.gS, {
 			margin:0,
 			padding:0,
 			border:0,
-			overflow:"hidden"
 		},
 		gSSlide : {
 			position:"absolute",
