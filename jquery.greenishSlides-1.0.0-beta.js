@@ -92,8 +92,8 @@ $.extend($.gS, {
 		
 		if(opts.swipeEvents && context.swipe) context.swipe({
 			threshold: opts.swipeThreshold,
-			swipeLeft: function(){gS.next(context)},
-			swipeRight: function(){gS.prev(context)}
+			swipeLeft: function(){$.gS.next(context)},
+			swipeRight: function(){$.gS.prev(context)}
 		});
 ////	/Keyboard and Swipe events.
 
@@ -129,8 +129,8 @@ $.extend($.gS, {
 			$("."+opts.activeClass, context).eq(0).removeClass(opts.activeClass).trigger(opts.events.activate);
 		else if(opts.active !== false) {
 			!isNaN(opts.active) ? 
-					slides.eq(opts.active).removeClass(opts.activeClass).trigger(opts.events.activate):
-					$(opts.active, context).eq(0).removeClass(opts.activeClass).trigger(opts.events.activate);
+				slides.eq(opts.active).removeClass(opts.activeClass).trigger(opts.events.activate):
+				$(opts.active, context).eq(0).removeClass(opts.activeClass).trigger(opts.events.activate);
 		}
 		else gS.update(context);
 		gS.hook("postInit", context); // hook
@@ -423,14 +423,10 @@ $.extend($.gS, {
 
 		if(!opts.cache || !dcss[ai]) dcss[ai] = gS._getDCss(context, data, ai);
 		
-		
-		if(opts.cache) {
-			cache = {
+		if(opts.cache) context.data("cache", {
 				dcss:dcss,
 				limits:limits
-			};
-			context.data("cache", cache);	
-		}		
+			});	
 		
 		return {
 			dcss:dcss[ai],
@@ -485,14 +481,14 @@ $.extend($.gS, {
 		context
 			.dequeue("gSpreAnimation") // hook: custom queue that runs before the animation
 			.css({textIndent:0})
-			.animate({textIndent:100}, {duration:opts.transitionSpeed, easing:opts.easing, complete:postAnimation , step:gS.animation})
+			.animate({textIndent:100}, {duration:opts.transitionSpeed, easing:opts.easing, complete:postAnimation , step:gS.animationStep})
 			.dequeue("gSpostAnimation"); // hook: custom queue that runs after the animation
 		
 		$.gS.timing("activation" , "done");
 	
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	animation : function (state, obj) {
+	animationStep : function (state, obj) {
 		$.gS.timing("step","start",true)
 		var info= $(obj.elem).dequeue("gSanimationStep").data("animation"); // hook: custom queue that runs once on every step of the animation (MAKE IT FAST!)
 		if(!info) {
