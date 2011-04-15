@@ -335,6 +335,8 @@ $.extend($.gS, {
 							opts.limits.min : 
 							undefined,
 			};
+		if(cssMin && cssMin > limits.max) limits.max=cssMin;
+		if(cssMax && cssMax < limits.min) limits.min=cssMax;
 		return limits;
 	},	
 ////////////////////////////////////////////////////////////////////////////////
