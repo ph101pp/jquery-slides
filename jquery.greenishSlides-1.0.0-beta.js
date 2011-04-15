@@ -11,6 +11,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 $.fn.greenishSlides = function (opts){
 	return $(this).each(function () {
+		console.log($(this));
 		$.gS.init($(this), opts);
 	});
 };
@@ -70,7 +71,27 @@ $.extend($.gS, {
 		
 		var gS=$.gS,
 			slides = context.css(gS.css.context).children().addClass("gSSlide").css(gS.css.gSSlide),
-			setEvents;
+			activateEvent=function (e) {
+				var slide= eventSlide(e);
+				if(!slide.hasClass(opts.activeClass)) 
+					gS.activate(slide);
+			},
+			deactivateEvent=function (e){
+				var slide= eventSlide(e);
+				if(slide.has(e.relatedTarget).length <=0 && slide != e.relatedTarget)
+					gS.deactivate(slide);
+			},
+			eventSlide= function(e) {
+				var activeHandle=$(e.target);
+				if(activeHandle.hasClass("gSSlide")) return activeHandle;
+				else {
+					activeHandle=context.find(opts.handle).has(e.target);
+					return activeHandle.hasClass("gSSlide") ? 
+						activeHandle:
+						context.children().has(activeHandle).eq(0);
+				}
+			};
+
 		
 		gS.timing("init" , "Start");
 		
@@ -97,31 +118,9 @@ $.extend($.gS, {
 		});
 ////	/Keyboard and Swipe events.
 
-////	Define deactivation and activation events
-		if(opts.handle) (setEvent=function(handle) {
-				handle = typeof(handle) == "object" ? 
-					handle:
-					$(context).find(handle);
-	////		Define Activate Event
-				$(handle).bind(opts.events.activate, function (e){
-					if($(this).hasClass(opts.activeClass)) return;
-					gS.activate($(this));
-	////			Define Deactivate Event
-					if(!opts.stayOpen && opts.handle) {
-						$(this).unbind(e);
-						$(this).bind(opts.events.deactivate, function (e, justEvents){
-							if($(this).has(e.relatedTarget).length >0 || this == e.relatedTarget) return false;
-							if(!justEvents) gS.deactivate($(this));
-							$(this).unbind(e);
-							setEvent($(this));
-							return false;
-						});
-					}
-				});
-			})(opts.handle);
-		else slides.bind((opts.events.activate="gSactivate"), function(e){
-				$.gS.activate($(this));
-			});
+		if(!opts.handle) opts.events.activate="gSactivate";
+		context.bind(opts.events.activate+" focusin", activateEvent); // focusin for Keyboard accessability;
+		if(!opts.stayOpen) context.bind(opts.events.deactivate+" focusout", deactivateEvent); // focusout for Keyboard accessability;
 		
 ////	First Initialisation
 
