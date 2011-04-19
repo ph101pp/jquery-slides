@@ -6,12 +6,10 @@
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses. 
  */
-
 (function($) {
 ////////////////////////////////////////////////////////////////////////////////
 $.fn.greenishSlides = function (opts){
 	return $(this).each(function () {
-		console.log($(this));
 		$.gS.init($(this), opts);
 	});
 };
@@ -98,11 +96,11 @@ $.extend($.gS, {
 ////	Sets css and classes
 		if(opts.vertical) {
 			slides.addClass("gSVertical").css(gS.css.gSVertical);
-			$.extend(opts, gS.orientation.vertical)
+			$.extend(opts, gS.orientation.vertical);
 		}
 		else {
 			slides.addClass("gSHorizontal").css(gS.css.gSHorizontal);
-			$.extend(opts, gS.orientation.horizontal)
+			$.extend(opts, gS.orientation.horizontal);
 		}
 ////	/Sets css and classes
 ////	Keyboard and Swipe events.		
@@ -113,8 +111,8 @@ $.extend($.gS, {
 		
 		if(opts.swipeEvents && context.swipe) context.swipe({
 			threshold: opts.swipeThreshold,
-			swipeLeft: function(){$.gS.next(context)},
-			swipeRight: function(){$.gS.prev(context)}
+			swipeLeft: function(){$.gS.next(context);},
+			swipeRight: function(){$.gS.prev(context);}
 		});
 ////	/Keyboard and Swipe events.
 
@@ -136,8 +134,6 @@ $.extend($.gS, {
 		
 		gS.timing("init" , "Done");
 	},
-	
-	
 ////////////////////////////////////////////////////////////////////////////////
 	activate : function (slide) {	
 		$.gS.timing("activation", "Start", true);
@@ -267,7 +263,7 @@ $.extend($.gS, {
 			slide.css[opts.RoB]=gS.cssFloat(slide.obj, opts.RoB);
 		}
 		return data;
-	},	
+	},
 ////////////////////////////////////////////////////////////////////////////////
 	_positioning : function (context, data, bind, active) {
 		var gS=$.gS,
@@ -332,12 +328,12 @@ $.extend($.gS, {
 						opts.limits[i].min :
 						!isNaN(opts.limits.min) ? 
 							opts.limits.min : 
-							undefined,
+							undefined
 			};
 		if(cssMin && cssMin > limits.max) limits.max=cssMin;
 		if(cssMax && cssMax < limits.min) limits.min=cssMax;
 		return limits;
-	},	
+	},
 ////////////////////////////////////////////////////////////////////////////////
 	_getDCss : function (context, data, ai) {
 		var gS = $.gS,
@@ -347,7 +343,7 @@ $.extend($.gS, {
 			fullSize=cS=$(context)[opts.WoH](),
 			newSize,
 			hitMax,
-			i,c
+			i,c,
 			dcss={};
 //		Calculate Width
 		for(i=c=0; slide=data[i]; i++) {
@@ -411,7 +407,7 @@ $.extend($.gS, {
 //		Get Data
 		for(i=slides.length-1; i >=0 ; i--) {
 			data[i]= data[i] || {
-				obj:slides.eq(i),
+				obj:slides.eq(i)
 			};
 			
 			data=gS._getCSS(context, data, i, ai);
@@ -567,7 +563,7 @@ $.extend($.gS, {
 			listStyle:"none",
 			margin:0,
 			padding:0,
-			border:0,
+			border:0
 		},
 		gSSlide : {
 			position:"absolute",
@@ -589,6 +585,7 @@ $.extend($.gS, {
 			left:0
 		}
 	}
+////////////////////////////////////////////////////////////////////////////////
 });
 })(jQuery);
 
