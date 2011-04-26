@@ -24,8 +24,14 @@
  						vertical:false,
  						active:1,
  						cache:false,
+ 						handle:"img",
  						limits:{
  							min:20
+ 						},
+ 						classes:{
+ 							active:"bla",
+ 							horizontal:"blub",
+ 							slide:"loveit"
  						}
  					});
 					

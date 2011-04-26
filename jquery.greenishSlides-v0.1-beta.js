@@ -1,12 +1,12 @@
 /*! 
- * greenishSlides: jQuery Slideshow plugin - v1.0.0 - beta (4/6/2011)
+ * greenishSlides: jQuery Slideshow plugin - v0.1 - beta (4/6/2011)
  * http://www.philippadrian.com
  * 
  * Copyright (c) 2011 Philipp C. Adrian
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses. 
  */
-(function($) {
+;(function($) {
 ////////////////////////////////////////////////////////////////////////////////
 $.fn.greenishSlides = function (opts){
 	return $(this).each(function () {
@@ -42,7 +42,6 @@ $.extend($.gS, {
 		circle : false,
 		transitionSpeed: 400,
 		easing: "swing",
-		handle:".gSSlide",
 		events: {
 			activate:"click",
 			deactivate:"click"
@@ -56,7 +55,13 @@ $.extend($.gS, {
 		hooks : {},
 		limits : {},
 		active:false,
-		activeClass:"active",
+		classes:{
+			active:"active",
+			vertical:"gSVertical",
+			horizontal:"gSHorizontal",
+			slide:"gSSlide"
+		},
+		handle:".gSSlide",
 //		queue:false
 		cache:true
 	},
@@ -68,38 +73,36 @@ $.extend($.gS, {
 		$.gS.hook("preInit", context); // hook
 		
 		var gS=$.gS,
-			slides = context.css(gS.css.context).children().addClass("gSSlide").css(gS.css.gSSlide),
-			activateEvent=function (e) {
-				var slide= eventSlide(e);
-				if(!slide.hasClass(opts.activeClass)) 
+			slides = context.css(gS.css.context).children().addClass(opts.classes.slide).css(gS.css.gSSlide),
+			activateEvent=function (e, triggeredSlide) {
+				var slide= triggeredSlide ? $(e.target) : eventSlide(e);
+				if(slide && !slide.hasClass(opts.classes.active)) 
 					gS.activate(slide);
 			},
-			deactivateEvent=function (e){
-				var slide= eventSlide(e);
-				if(slide.has(e.relatedTarget).length <=0 && slide != e.relatedTarget)
+			deactivateEvent=function (e, triggeredSlide){
+				var slide= triggeredSlide ? $(e.target) : eventSlide(e);
+				if(slide && slide.has(e.relatedTarget).length <=0 && slide != e.relatedTarget)
 					gS.deactivate(slide);
 			},
 			eventSlide= function(e) {
-				var activeHandle=$(e.target);
-				if(activeHandle.hasClass("gSSlide")) return activeHandle;
-				else {
-					activeHandle=context.find(opts.handle).has(e.target);
-					return activeHandle.hasClass("gSSlide") ? 
-						activeHandle:
-						context.children().has(activeHandle).eq(0);
-				}
+				var target=$(e.target),
+					handle=target.is(opts.handle) ? target : $(opts.handle, context).has(target),
+					slide = handle.hasClass(opts.classes.slide) ? handle : context.children().has(handle);
+				
+					return slide.length ? slide : false;					
 			};
+
 
 		
 		gS.timing("init" , "Start");
 		
 ////	Sets css and classes
 		if(opts.vertical) {
-			slides.addClass("gSVertical").css(gS.css.gSVertical);
+			slides.addClass(opts.classes.vertical).css(gS.css.gSVertical);
 			$.extend(opts, gS.orientation.vertical);
 		}
 		else {
-			slides.addClass("gSHorizontal").css(gS.css.gSHorizontal);
+			slides.addClass(opts.classes.horizontal).css(gS.css.gSHorizontal);
 			$.extend(opts, gS.orientation.horizontal);
 		}
 ////	/Sets css and classes
@@ -122,12 +125,12 @@ $.extend($.gS, {
 		
 ////	First Initialisation
 
-		if($("."+opts.activeClass, context).length)
-			$("."+opts.activeClass, context).eq(0).removeClass(opts.activeClass).trigger(opts.events.activate);
+		if($("."+opts.classes.active, context).length)
+			$("."+opts.classes.active, context).eq(0).removeClass(opts.classes.active).trigger(opts.events.activate, true);
 		else if(opts.active !== false) {
 			!isNaN(opts.active) ? 
-				slides.eq(opts.active).removeClass(opts.activeClass).trigger(opts.events.activate):
-				$(opts.active, context).eq(0).removeClass(opts.activeClass).trigger(opts.events.activate);
+				slides.eq(opts.active).removeClass(opts.classes.active).trigger(opts.events.activate, true):
+				$(opts.active, context).eq(0).removeClass(opts.classes.active).trigger(opts.events.activate, true);
 		}
 		else gS.update(context);
 		gS.hook("postInit", context); // hook
@@ -140,21 +143,21 @@ $.extend($.gS, {
 		var gS=$.gS,
 			opts=gS.opts,
 			deactivated;
-		!slide.is(".gSSlide, .gSSlide"+opts.handle)?
-			slide=$(".gSSlide").has($(slide)):
+		!slide.is("."+opts.classes.slide+", ."+opts.classes.slide+opts.handle)?
+			slide=$("."+opts.classes.slide).has($(slide)):
 			slide=$(slide);
 
-		if(slide.hasClass(opts.activeClass)) return;
+		if(slide.hasClass(opts.classes.active)) return;
 		if(!opts.stayOpen && opts.handle) 
-			slide.siblings("."+opts.activeClass).trigger(opts.events.deactivate, true);
-		slide.siblings("."+opts.activeClass).removeClass(opts.activeClass).addClass("gSdeactivated");
+			slide.siblings("."+opts.classes.active).trigger(opts.events.deactivate, true);
+		slide.siblings("."+opts.classes.active).removeClass(opts.classes.active).addClass("gSdeactivated");
 		
 		deactivated =slide.siblings(".gSdeactivated");
 		if(deactivated.length > 0) {
 			deactivated.removeClass("gSdeactivated");
 			gS.hook("postDeactivate", slide); // hook
 		}
-		slide.addClass(opts.activeClass)
+		slide.addClass(opts.classes.active)
 		gS.hook("preActivate", slide); // hook
 
 		gS.update(slide.parent());
@@ -163,12 +166,12 @@ $.extend($.gS, {
  	deactivate : function (slide) {
 		var gS=$.gS,
 			opts=gS.opts;
-		!slide.is(".gSSlide, .gSSlide"+opts.handle)?
-			slide=$(".gSSlide").has($(slide)):
+		!slide.is("."+opts.classes.slide+", ."+opts.classes.slide+opts.handle)?
+			slide=$("."+opts.classes.slide).has($(slide)):
 			slide=$(slide);
 
-		if(!slide.hasClass(opts.activeClass)) return;
-		slide.removeClass(opts.activeClass).addClass("gSdeactivated");
+		if(!slide.hasClass(opts.classes.active)) return;
+		slide.removeClass(opts.classes.active).addClass("gSdeactivated");
 		gS.hook("preDeactivate", slide); // hook
 		
 		gS.update(slide.parent());
@@ -191,7 +194,7 @@ $.extend($.gS, {
 			opts=gS.opts,
 			slides=$(context).children(),
 			next;
-		fromSlide=fromSlide || slides.filter(".gSSlide."+opts.activeClass);
+		fromSlide=fromSlide || slides.filter("."+opts.classes.slide+"."+opts.classes.active);
 		if(!slides.filter(fromSlide).length) return;
 		next = $(fromSlide).index()+(parseFloat(number)%slides.length);
 		
@@ -396,7 +399,7 @@ $.extend($.gS, {
 		var gS=$.gS,
 			opts=gS.opts,
 			slides=$(context).children(),
-			active = slides.filter(".gSSlide."+opts.activeClass),
+			active = slides.filter("."+opts.classes.slide+"."+opts.classes.active),
 			ai=active.index(),
 			i,
 			cache=context.data("cache") || {},			
@@ -445,7 +448,7 @@ $.extend($.gS, {
 			gS.setOpts(opts):
 			gS.opts;
 			
-		active = slides.filter(".gSSlide."+opts.activeClass);
+		active = slides.filter("."+opts.classes.slide+"."+opts.classes.active);
 
 //		Get and store Data for the animation function
 		data=gS._getData(context);
@@ -455,7 +458,7 @@ $.extend($.gS, {
 		if(active.length <=0) {
 			gS.hook("preDeactivateAnimation", active, data); // hook
 			postAnimation = function () {
-				var deactive=$(this).find(".gSSlide.gSdeactivated");
+				var deactive=$(this).find("."+opts.classes.slide+".gSdeactivated");
 				if(deactive.length>0) {
 					gS.hook("postDeactivate", deactive); // hook
 					deactive.removeClass("gSdeactivated");
@@ -465,7 +468,7 @@ $.extend($.gS, {
 		else {  
 			gS.hook("preActivateAnimation", active, data); // hook
 			postAnimation = function () {
-				var active=$(this).find(".gSSlide."+opts.activeClass);
+				var active=$(this).find("."+opts.classes.slide+"."+opts.classes.active);
 				if(active.length>0) {
 					gS.hook("postActivate", active); // hook
 				}
@@ -476,14 +479,14 @@ $.extend($.gS, {
 		context
 			.dequeue("gSpreAnimation") // hook: custom queue that runs before the animation
 			.css({textIndent:0})
-			.animate({textIndent:100}, {duration:opts.transitionSpeed, easing:opts.easing, complete:postAnimation , step:gS.animationStep})
+			.animate({textIndent:100}, {duration:opts.transitionSpeed, easing:opts.easing, complete:postAnimation , step:gS._animationStep})
 			.dequeue("gSpostAnimation"); // hook: custom queue that runs after the animation
 		
 		$.gS.timing("activation" , "done");
 	
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	animationStep : function (state, obj) {
+	_animationStep : function (state, obj) {
 		$.gS.timing("step","start",true)
 		var info= $(obj.elem).dequeue("gSanimationStep").data("animation"); // hook: custom queue that runs once on every step of the animation (MAKE IT FAST!)
 		if(!info) {
