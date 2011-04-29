@@ -5,7 +5,7 @@
 		<title>greenishSlides</title>
 		<link rel="stylesheet" type="text/css" href="design.css">
 		<script type="text/javascript" src="jquery-1.5.1.min.js"></script>
-		<script type="text/javascript" src="jquery.greenishSlides-1.0.0-beta.js"></script>
+		<script type="text/javascript" src="jquery.greenishSlides-v0.1-beta.js"></script>
 
 		<script type="text/javascript" src="jquery-ui-1.8.11.custom.min.js"></script>
 		<script type="text/javascript" src="jquery.easing.1.3.js"></script>
@@ -14,10 +14,9 @@
 			(function($) {
 				$(document).ready(function() { 
  					$(".greenishSlides").greenishSlides({	
- 						stayOpen:true,
+ 						stayOpen:false,
  						keyEvents:true,
  						circle:true,
- 						activeClass:"mySuperActiveClass",
  						active:false,
  						easing:"swing",
  						transitionSpeed:600,
@@ -25,6 +24,10 @@
  						active:1,
  						cache:false,
  						handle:"img",
+						events: {
+							activate:"click",
+							deactivate:"click"
+						},
  						limits:{
  							min:20
  						},
