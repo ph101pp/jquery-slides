@@ -86,28 +86,23 @@ $.extend($.gS, {
 		opts=$.gS.opts(context, opts, true);
 		$.gS.hook("preInit", context); // hook
 		
+		$("body").bind("click",function(e){console.log("click")});
+		
 		var gS=$.gS,
 			slides = context.css(gS.css.context).children().addClass(opts.classes.slide).css(gS.css.gSSlide),
-			activateEvent=function (e, triggeredSlide) {
+			activateDeactivateEvent=function (e, triggeredSlide) {
 				var target=$(e.target);
 				target= triggeredSlide ? [target,target] : eventSlide(e);
-				if(target && !target[0].hasClass(opts.classes.active)) {
+				if((e.type == "focusin" || e.type==opts.events.activate) && target && !target[0].hasClass(opts.classes.active)) {
 					gS.activate(target[0]);
-					if(!opts.stayOpen) target[0].bind(opts.events.deactivate+".gS focusout.gS", deactivateEvent); // focusout for Keyboard accessability;
+				}
+				else if(!opts.stayOpen && (e.type == "focusout" || e.type==opts.events.deactivate) && target && target[0].hasClass(opts.classes.active) && target[1].has(e.relatedTarget).length <=0 && target[1] != e.relatedTarget) {
+					gS.deactivate(target[0]);
 				}
 			},
-			deactivateEvent=function (e, triggeredSlide){
-				var target=$(e.target);
-				target= triggeredSlide ? [target,target] : eventSlide(e);
-				if(target && target[1].has(e.relatedTarget).length <=0 && target[1] != e.relatedTarget) {
-					gS.deactivate(target[0]);
-					if(!opts.stayOpen) target[0].unbind(opts.events.deactivate+".gS focusout.gS"); // focusout for Keyboard accessability;
-				}
-				return false;
-			},	
 			eventSlide= function(e) {
 				var target=$(e.target),
-					handle=target.is(opts.handle) ? target : $(opts.handle, context).has(target),
+					handle=target.is(opts.handle) ? target : $(opts.handle, context).has(target).eq(0),
 					slide = handle.hasClass(opts.classes.slide) ? handle : context.children().has(handle);
 					return slide.length ? [slide, handle] : false;					
 			};
@@ -126,6 +121,7 @@ $.extend($.gS, {
 			$.extend(opts, gS.orientation.horizontal);
 		}
 ////	/Sets css and classes
+
 ////	Keyboard and Swipe events.		
 		if(opts.keyEvents) $(document).bind("keydown", function(e) {
 			if(e.which == 39 || e.which == 40) gS.next(context);
@@ -140,7 +136,7 @@ $.extend($.gS, {
 ////	/Keyboard and Swipe events.
 
 		if(!opts.handle) opts.events.activate="gSactivate";
-		context.bind(opts.events.activate+".gS focusin.gS", activateEvent); // focusin for Keyboard accessability;
+		context.bind(opts.events.activate+".gS focusin.gS"+opts.events.deactivate+".gS focusout.gS", activateDeactivateEvent); // focusin for Keyboard accessability;
 		
 ////	First Initialisation
 

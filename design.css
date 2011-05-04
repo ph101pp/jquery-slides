@@ -4,99 +4,16 @@ body {
 	padding:0;
 }
 
-.greenishSlides1{
-	position:absolute;
-	height:50%;
-	width:100%;
-	margin:0;
-	background-color:#ee0000;
-	text-indent:10px;
-	padding:0;
-}
-.greenishSlides1 li{
-	font-size:2em; 
-	text-align:center;
-	background-color:#ee00ee;
-/*	min-width:10px; */
-}
-.greenishSlides1 .minWidth{
-	background-color:#55ee55 !important;
-	min-width:20px;
-	max-width:20px;
-}
-.greenishSlides1 .mySuperActiveClass {
-	background-color:#eeCCee;
-}
-.greenishSlides2{
-	position:absolute;
-	top:50%;
-	height:50%;
-	width:100%;
-	margin:0;
-	background-color:#ee0000;
-	text-indent:10px;
-	padding:0;
-}
-.greenishSlides2 li{
-	font-size:2em; 
-	text-align:center;
-	background-color:#ee00ee;
-/*	min-width:10px; */
-}
-.greenishSlides2 .minWidth{
-	background-color:#55ee55 !important;
-	min-width:20px;
-	max-width:20px;
-}
-.greenishSlides2 .mySuperActiveClass {
-	background-color:#eeCCee;
-}
-
-.liLiner {
+.horizontal, .vertical{
 	position:absolute;
 	height:100%;
 	width:100%;
-	border:0px solid #000000;
-	
+	margin:0;
+	padding:0;
 }
-
-.handle {
-	max-width:0px;
-	min-width:0%;
-	background-color:#ffFF00 !important;
-	overflow:visible !important;
-	z-index:10000 !important;
+.vertical li{
+	text-align:center;
+	background-color:#ee00ee;
+/*	min-width:10px; */
 }
-
-
-.handle .marker {
-	height:20px;
-	position:absolute;
-	width:100px;
-	background-color:#cc0000;
-}
-.handle.mySuperActiveClass .marker {
-	background-color:#ffFF00;
-}
-.handle.right .marker {
-	left:-100px;
-} 
-.handle.right.mySuperActiveClass .marker,
-.handle.left.mySuperActiveClass .marker,
-.handle.left .marker {
-	left:0px;
-}
-.handle.one .marker {
-	bottom:100px;
-}
-.handle.two .marker {
-	bottom:70px;
-}
-.handle.three .marker {
-	bottom:40px;
-}
-.handle.four .marker {
-	bottom:10px;
-}
-
 
