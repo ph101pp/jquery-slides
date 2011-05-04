@@ -4,27 +4,51 @@ body {
 	padding:0;
 }
 
-.greenishSlides{
+.greenishSlides1{
 	position:absolute;
-	height:100%;
+	height:50%;
 	width:100%;
 	margin:0;
 	background-color:#ee0000;
 	text-indent:10px;
 	padding:0;
 }
-.greenishSlides li{
+.greenishSlides1 li{
 	font-size:2em; 
 	text-align:center;
 	background-color:#ee00ee;
 /*	min-width:10px; */
 }
-.greenishSlides .minWidth{
+.greenishSlides1 .minWidth{
 	background-color:#55ee55 !important;
 	min-width:20px;
 	max-width:20px;
 }
-.greenishSlides .mySuperActiveClass {
+.greenishSlides1 .mySuperActiveClass {
+	background-color:#eeCCee;
+}
+.greenishSlides2{
+	position:absolute;
+	top:50%;
+	height:50%;
+	width:100%;
+	margin:0;
+	background-color:#ee0000;
+	text-indent:10px;
+	padding:0;
+}
+.greenishSlides2 li{
+	font-size:2em; 
+	text-align:center;
+	background-color:#ee00ee;
+/*	min-width:10px; */
+}
+.greenishSlides2 .minWidth{
+	background-color:#55ee55 !important;
+	min-width:20px;
+	max-width:20px;
+}
+.greenishSlides2 .mySuperActiveClass {
 	background-color:#eeCCee;
 }
 

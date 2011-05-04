@@ -13,7 +13,7 @@
 		<script type="text/javascript">
 			(function($) {
 				$(document).ready(function() { 
- 					$(".greenishSlides").greenishSlides({	
+ 					$(".greenishSlides1").greenishSlides({	
  						stayOpen:false,
  						keyEvents:true,
  						circle:true,
@@ -41,12 +41,30 @@
 					$(window).resize(function () {
 //						$.gS.update($(".greenishSlides"));
 					});
+ 				$(".greenishSlides2").greenishSlides({stayOpen:false});	
 				});
 			})(jQuery);
 		</script>		
 	</head>
 	<body>
-		<ul class="greenishSlides" id="greenishSlides">
+		<ul class="greenishSlides1" id="greenishSlides1">
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+		</ul>
+		<ul class="greenishSlides2" id="greenishSlides2">
 			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
 			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
 			<li class="four"><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
