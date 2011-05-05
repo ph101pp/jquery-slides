@@ -84,10 +84,12 @@ $.extend($.gS, {
 		context=$(context);
 ////	Extends defaults into opts.
 		opts=$.gS.opts(context, opts, true);
-		$.gS.hook("preInit", context); // hook
+
+//		binding hooks to make them available.
+		for(hooks in opts.hooks) context.bind(hooks,opts.hooks[hooks]);
 		
-		$("body").bind("click",function(e){console.log("click")});
-		
+		context.trigger("preInit"); // hook
+				
 		var gS=$.gS,
 			slides = context.css(gS.css.context).children().addClass(opts.classes.slide).css(gS.css.gSSlide),
 			activateDeactivateEvent=function (e, triggeredSlide) {
@@ -148,12 +150,12 @@ $.extend($.gS, {
 				$(opts.active, context).eq(0).removeClass(opts.classes.active).trigger(opts.events.activate, true);
 		}
 		else gS.update(context);
-		gS.hook("postInit", context); // hook
+		context.trigger("postInit"); // hook
 		
 		gS.timing("init" , "Done");
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	activate : function (slide) {	
+	activate : function (slide) {
 		$.gS.timing("activation", "Start", true);
 		var gS=$.gS,
 			context=slide.parent(),
@@ -171,10 +173,10 @@ $.extend($.gS, {
 		deactivated =slide.siblings(".gSdeactivated");
 		if(deactivated.length > 0) {
 			deactivated.removeClass("gSdeactivated");
-			gS.hook("postDeactivate", slide); // hook
+			slide.trigger("postDeactivate"); // hook
 		}
 		slide.addClass(opts.classes.active)
-		gS.hook("preActivate", slide); // hook
+		slide.trigger("preActivate"); // hook
 
 		gS.update(slide.parent());
  	},
@@ -189,7 +191,7 @@ $.extend($.gS, {
 
 		if(!slide.hasClass(opts.classes.active)) return;
 		slide.removeClass(opts.classes.active).addClass("gSdeactivated");
-		gS.hook("preDeactivate", slide); // hook
+		slide.trigger("preDeactivate"); // hook
 		
 		gS.update(slide.parent());
  	}, 	
@@ -200,7 +202,7 @@ $.extend($.gS, {
 			slide,
 			slideId=gS._step(context, -1, fromSlide);
 		if(slideId === undefined) slideId=$(context).children().length-1;
-		slideId=gS.hook("prev", context, slideId);
+		slideId=context.trigger("prev", slideId);
 		slide=$(context).children().eq(slideId);
 		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.trigger(opts.events.activate, true);
 	},
@@ -211,7 +213,7 @@ $.extend($.gS, {
 			slide,
 			slideId=gS._step(context, 1, fromSlide)
 		if(slideId === undefined) slideId=0;
-		slideId=gS.hook("next", context, slideId);
+		slideId=context.trigger("next", slideId);
 		slide=$(context).children().eq(slideId);
 		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.trigger(opts.events.activate, true);
 	},
@@ -239,13 +241,6 @@ $.extend($.gS, {
 		opts=$.extend(true,{},this.defaults, data||{}, opts||{});
 		if(save) $(context).data("opts", opts);
 		return opts;
-	},
-////////////////////////////////////////////////////////////////////////////////
-	hook : function (hook, hookContext, hookParams) {
-		var opts=this.opts($(".greenishSlides"));
-		if(opts.hooks[hook]) 
-			return $.proxy(opts.hooks[hook], hookContext)(hookParams);
-		else return hookParams;
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	_cssFloat : function (context, value) {
@@ -483,21 +478,21 @@ $.extend($.gS, {
 	
 //		Set hooks for either Activation or Deactivation.
 		if(active.length <=0) {
-			gS.hook("preDeactivateAnimation", active, data); // hook
+			active.trigger("preDeactivateAnimation", data); // hook
 			postAnimation = function () {
 				var deactive=$(this).find("."+opts.classes.slide+".gSdeactivated");
 				if(deactive.length>0) {
-					gS.hook("postDeactivate", deactive); // hook
+					deactive.trigger("postDeactivate"); // hook
 					deactive.removeClass("gSdeactivated");
 				}
 			}
 		}
 		else {  
-			gS.hook("preActivateAnimation", active, data); // hook
+			active.trigger("preActivateAnimation", data); // hook
 			postAnimation = function () {
 				var active=$(this).find("."+opts.classes.slide+"."+opts.classes.active);
 				if(active.length>0) {
-					gS.hook("postActivate", active); // hook
+					active.trigger("postActivate"); // hook
 				}
 			}
 		}
