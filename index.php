@@ -12,29 +12,41 @@
 <!--		<script type="text/javascript" src="jquery.jswipe-0.1.2.js"></script>-->
 		<script type="text/javascript">
 			(function($) {
-				$(document).ready(function() { 
- 					$(".horizontal").greenishSlides({	
- 						vertical:false,
- 						cache:false,
-						events: {
-							activate:"click",
-							deactivate:"click"
+				$(document).ready(function() {
+					var preActivate=function(e){
+							console.log(e);
+							return false;
+							
+							
+							var slide=$(this);
+								ai=slide.index();
+								$(".vertical").each(function(){
+									$.gS.activate($(this).children().eq(ai));								
+								});
+								
+							return false;
 						},
-						limits: {
-							min:20
-						}
-					});
-					$(".vertical").greenishSlides({
-							vertical:true,
-							cache:false,
+						config= {
+							cache:true,
 							events: {
 								activate:"click",
 								deactivate:"click"
 							},
 							limits: {
 								min:20
+							},
+							hooks:{
+								preActivate:preActivate
 							}
-					});	
+						};
+					
+					
+ 					$(".horizontal").greenishSlides($.extend(config,{	
+ 						vertical:false
+					}));
+					$(".vertical").greenishSlides($.extend(config,{
+						vertical:true
+					}));	
 				});
 			})(jQuery);
 		</script>		
