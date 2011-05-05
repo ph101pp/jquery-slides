@@ -13,15 +13,15 @@
 		<script type="text/javascript">
 			(function($) {
 				$(document).ready(function() {
-					var preActivate=function(e){
-							console.log(e);
-							return false;
-							
-							
-							var slide=$(this);
+					var postActivate=function(e){
+							console.log($(this));
+							console.log("///////////////////////");
+							var slide=$(e.target);
 								ai=slide.index();
+								console.log($(".vertical").length);
 								$(".vertical").each(function(){
-									$.gS.activate($(this).children().eq(ai));								
+									var slide = $(this).children().eq(ai);
+									if(!slide.hasClass("active")) $.gS.activate(slide);								
 								});
 								
 							return false;
@@ -30,14 +30,11 @@
 							cache:true,
 							events: {
 								activate:"click",
-								deactivate:"click"
+								deactivate:false
 							},
 							limits: {
 								min:20
 							},
-							hooks:{
-								preActivate:preActivate
-							}
 						};
 					
 					
@@ -45,7 +42,10 @@
  						vertical:false
 					}));
 					$(".vertical").greenishSlides($.extend(config,{
-						vertical:true
+						vertical:true,
+						hooks:{
+							preActivateEvent:postActivate
+						}
 					}));	
 				});
 			})(jQuery);
@@ -55,156 +55,156 @@
 		<ul class="horizontal">
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
 				</ul>
 			</li>
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
 				</ul>
 			</li>
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
 				</ul>
 			</li>
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
 				</ul>
 			</li>
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
 				</ul>
 			</li>
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
 				</ul>
 			</li>
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
 				</ul>
 			</li>
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
 				</ul>
 			</li>
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
 				</ul>
 			</li>
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
 				</ul>
 			</li>
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
-						<li><div class="liLiner"><img src="http://placekitten.com/200/300"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
+						<li><div class="liLiner"></div></li>
 				</ul>
 			</li>
 		</ul>

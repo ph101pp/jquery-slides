@@ -17,3 +17,7 @@ body {
 /*	min-width:10px; */
 }
 
+.gSSlide .active {
+	background-color:#ff0000 !important;
+}
+

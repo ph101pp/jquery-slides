@@ -51,7 +51,7 @@ $.extend($.gS, {
 	defaults : {
 		stayOpen: false,
 //		fillSpace: true,
-		resizable:true,
+		resizable:false,
 		vertical:false,
 		circle : false,
 		transitionSpeed: 400,
@@ -92,13 +92,16 @@ $.extend($.gS, {
 				
 		var gS=$.gS,
 			slides = context.css(gS.css.context).children().addClass(opts.classes.slide).css(gS.css.gSSlide),
+			events,
 			activateDeactivateEvent=function (e, triggeredSlide) {
 				var target=$(e.target);
 				target= triggeredSlide ? [target,target] : eventSlide(e);
 				if((e.type == "focusin" || e.type==opts.events.activate) && target && !target[0].hasClass(opts.classes.active)) {
+					target[0].trigger("preActivateEvent"); // hook
 					gS.activate(target[0]);
 				}
 				else if(!opts.stayOpen && (e.type == "focusout" || e.type==opts.events.deactivate) && target && target[0].hasClass(opts.classes.active) && target[1].has(e.relatedTarget).length <=0 && target[1] != e.relatedTarget) {
+					target[0].trigger("preDeactivateEvent"); // hook
 					gS.deactivate(target[0]);
 				}
 			},
@@ -137,8 +140,13 @@ $.extend($.gS, {
 		});
 ////	/Keyboard and Swipe events.
 
+
+//		activateDeactivateEvent
+		if(opts.events.activate) events+="focusin.gS ";
+		if(opts.events.deactivate) events+=opts.events.deactivate+".gS focusout.gS ";
 		if(!opts.handle) opts.events.activate="gSactivate";
-		context.bind(opts.events.activate+".gS focusin.gS"+opts.events.deactivate+".gS focusout.gS", activateDeactivateEvent); // focusin for Keyboard accessability;
+		
+		context.bind(events+opts.events.activate+".gS", activateDeactivateEvent); // focusin for Keyboard accessability;
 		
 ////	First Initialisation
 
@@ -166,8 +174,6 @@ $.extend($.gS, {
 			slide=$(slide);
 
 		if(slide.hasClass(opts.classes.active)) return;
-		if(!opts.stayOpen && opts.handle) 
-			slide.siblings("."+opts.classes.active).trigger(opts.events.deactivate, true);
 		slide.siblings("."+opts.classes.active).removeClass(opts.classes.active).addClass("gSdeactivated");
 		
 		deactivated =slide.siblings(".gSdeactivated");
