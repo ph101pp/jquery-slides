@@ -87,21 +87,20 @@ $.extend($.gS, {
 
 //		binding hooks to make them available.
 		for(hooks in opts.hooks) context.bind(hooks,opts.hooks[hooks]);
-		
 		context.trigger("preInit"); // hook
 				
 		var gS=$.gS,
 			slides = context.css(gS.css.context).children().addClass(opts.classes.slide).css(gS.css.gSSlide),
-			events,
 			activateDeactivateEvent=function (e, triggeredSlide) {
 				var target=$(e.target);
 				target= triggeredSlide ? [target,target] : eventSlide(e);
+				console.log(target);
 				if((e.type == "focusin" || e.type==opts.events.activate) && target && !target[0].hasClass(opts.classes.active)) {
-					target[0].trigger("preActivateEvent"); // hook
+					target[0].trigger("preActivateEvent");
 					gS.activate(target[0]);
 				}
 				else if(!opts.stayOpen && (e.type == "focusout" || e.type==opts.events.deactivate) && target && target[0].hasClass(opts.classes.active) && target[1].has(e.relatedTarget).length <=0 && target[1] != e.relatedTarget) {
-					target[0].trigger("preDeactivateEvent"); // hook
+					target[0].trigger("preDeactivateEvent");
 					gS.deactivate(target[0]);
 				}
 			},
@@ -110,7 +109,8 @@ $.extend($.gS, {
 					handle=target.is(opts.handle) ? target : $(opts.handle, context).has(target).eq(0),
 					slide = handle.hasClass(opts.classes.slide) ? handle : context.children().has(handle);
 					return slide.length ? [slide, handle] : false;					
-			};
+			},
+			event;
 
 
 		
@@ -129,6 +129,7 @@ $.extend($.gS, {
 
 ////	Keyboard and Swipe events.		
 		if(opts.keyEvents) $(document).bind("keydown", function(e) {
+			console.log("keyEvent");
 			if(e.which == 39 || e.which == 40) gS.next(context);
 			else if(e.which == 37 || e.which == 38) gS.prev(context);
 		});
@@ -141,13 +142,19 @@ $.extend($.gS, {
 ////	/Keyboard and Swipe events.
 
 
-//		activateDeactivateEvent
-		if(opts.events.activate) events+="focusin.gS ";
-		if(opts.events.deactivate) events+=opts.events.deactivate+".gS focusout.gS ";
-		if(!opts.handle) opts.events.activate="gSactivate";
-		
-		context.bind(events+opts.events.activate+".gS", activateDeactivateEvent); // focusin for Keyboard accessability;
-		
+////	Activate and Deactivate events
+		event=!opts.events.activate ? 
+			"":
+			opts.events.activate+".gS focusin.gS ";
+		event+=!opts.events.deactivate ? 
+			"":
+			opts.events.deactivate==opts.events.activate? 
+				"focusout.gS ":
+				opts.events.deactivate+".gS focusout.gS ";
+		if(!opts.handle) event=opts.events.activate="gSactivate";
+		context.bind(event, activateDeactivateEvent); // focusin for Keyboard accessability;
+////	/Activate and Deactivate events
+
 ////	First Initialisation
 
 		if($("."+opts.classes.active, context).length)
