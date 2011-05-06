@@ -13,38 +13,43 @@
 		<script type="text/javascript">
 			(function($) {
 				$(document).ready(function() {
-					var postActivate=function(e){
-							console.log($(this));
-							console.log("///////////////////////");
+					var preActivate=function(e){
 							var slide=$(e.target);
 								ai=slide.index();
-								console.log($(".vertical").length);
-								$(".vertical").each(function(){
-									var slide = $(this).children().eq(ai);
-									if(!slide.hasClass("active")) $.gS.activate(slide);								
-								});
-								
-							return false;
+							$(".vertical").each(function(){
+								var slide = $(this).children().eq(ai);
+								if(!slide.hasClass("active")) $.gS.activate(slide);								
+							});
+						},
+						preDeactivate= function () {
+							$(".vertical").each(function(){
+								$.gS.deactivate($(".active",this));								
+							});
+							
+						
 						},
 						config= {
-							cache:true,
+							cache:false,
 							events: {
 								activate:"click",
-								deactivate:false
+								deactivate:"click"
 							},
 							limits: {
-								min:20
+								min:0
 							},
 						};
 					
 					
- 					$(".horizontal").greenishSlides($.extend(config,{	
- 						vertical:false
+ 					$(".horizontal").greenishSlides($.extend({},config,{	
+ 						vertical:false,
+ 						handle:".vertical"
+ 						
 					}));
-					$(".vertical").greenishSlides($.extend(config,{
+					$(".vertical").greenishSlides($.extend({},config,{
 						vertical:true,
 						hooks:{
-							preActivateEvent:postActivate
+							preActivateEvent:preActivate,
+							preDeactivateEvent:preDeactivate
 						}
 					}));	
 				});
@@ -55,156 +60,156 @@
 		<ul class="horizontal">
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
 				</ul>
 			</li>
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
 				</ul>
 			</li>
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
 				</ul>
 			</li>
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
 				</ul>
 			</li>
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
 				</ul>
 			</li>
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
 				</ul>
 			</li>
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
 				</ul>
 			</li>
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
 				</ul>
 			</li>
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
 				</ul>
 			</li>
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
 				</ul>
 			</li>
 			<li>		
 				<ul class="vertical">
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
-						<li><div class="liLiner"></div></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
 				</ul>
 			</li>
 		</ul>

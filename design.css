@@ -11,13 +11,14 @@ body {
 	margin:0;
 	padding:0;
 }
+li {
+	outline:1px solid black;
+}
 .vertical li{
 	text-align:center;
-	background-color:#ee00ee;
 /*	min-width:10px; */
 }
 
 .gSSlide .active {
-	background-color:#ff0000 !important;
 }
 
