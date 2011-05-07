@@ -21,11 +21,47 @@
  */
 ;(function($) {
 ////////////////////////////////////////////////////////////////////////////////
-$.fn.greenishSlides = function (opts){
-	return $(this).each(function () {
-		$.gS._init($(this), opts);
-	});
+$.fn.greenishSlides = function (method){
+	var context=$(this),
+		data, call, args;
+	if(typeof(method) === 'object' || !method) {
+		args=arguments;
+		call="_init";
+	}
+	else if($.gS[method]) {
+		args=Array.prototype.slice.call(arguments,1);
+		call=method;
+	}
+	else $.error(method+"doesn't exist");
 	
+	for(i=0; i<context.length; i++) {
+		data=$(context[i]).data("greenishSlidesData")
+   		if(data && call=="_init") {
+   			$.gS.opts(data, method);
+   			continue;
+   		}
+  		data = data || {
+				context : $(context[i]),
+				css : {},
+				dcss: {},
+				limits:{},
+				slides:[],
+				ai:-1,
+				active:$(),
+			};
+		if(call=="_init") {
+			data.opts=method=="_init"?Array.prototype.slice.call(arguments,1):method;
+			args=[data];
+		}
+		else args=[data].concat(args);
+		$(context[i]).data("greenishSlidesData",data);
+		
+		console.log(args);
+		console.log(call);
+		
+		$.gS[call].apply(this, args);	
+	};
+	return this;
 };
 $.gS = $().greenishSlides;
 $.extend($.gS, {
@@ -80,28 +116,29 @@ $.extend($.gS, {
 		cache:true
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	_init : function (context, opts) {
-		context=$(context);
+	_init : function (data) {	
+		context=data.context;
 ////	Extends defaults into opts.
-		opts=$.gS.opts(context, opts, true);
+		opts=$.gS.opts(data, data.opts, true);
 
 //		binding hooks to make them available.
-		for(hooks in opts.hooks) context.bind(hooks,opts.hooks[hooks]);
-		context.trigger("preInit"); // hook
 				
 		var gS=$.gS,
+			context=data.context,
+////		Extends defaults into opts.
+			opts=gS.opts(data, data.opts, true),
 			slides = context.css(gS.css.context).children().addClass(opts.classes.slide).css(gS.css.gSSlide),
 			activateDeactivateEvent=function (e, triggeredSlide) {
 				var target=$(e.target);
 				target= triggeredSlide ? [target,target] : eventSlide(e);
-				console.log(target);
+				//console.log(target);
 				if((e.type == "focusin" || e.type==opts.events.activate) && target && !target[0].hasClass(opts.classes.active)) {
 					target[0].trigger("preActivateEvent");
-					gS.activate(target[0]);
+					target[0].greenishSlides("activate");
 				}
 				else if(!opts.stayOpen && (e.type == "focusout" || e.type==opts.events.deactivate) && target && target[0].hasClass(opts.classes.active) && target[1].has(e.relatedTarget).length <=0 && target[1] != e.relatedTarget) {
 					target[0].trigger("preDeactivateEvent");
-					gS.deactivate(target[0]);
+					target[0].greenishSlides("deactivate");
 				}
 			},
 			eventSlide= function(e) {
@@ -112,7 +149,8 @@ $.extend($.gS, {
 			},
 			event;
 
-
+		for(hooks in opts.hooks) context.bind(hooks,opts.hooks[hooks]);
+		context.trigger("preInit"); // hook
 		
 		gS.timing("init" , "Start");
 		
@@ -164,17 +202,18 @@ $.extend($.gS, {
 				slides.eq(opts.active).removeClass(opts.classes.active).trigger(opts.events.activate, true):
 				$(opts.active, context).eq(0).removeClass(opts.classes.active).trigger(opts.events.activate, true);
 		}
-		else gS.update(context);
+		else gS.update(data);
 		context.trigger("postInit"); // hook
 		
 		gS.timing("init" , "Done");
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	activate : function (slide) {
+	activate : function (data) {
 		$.gS.timing("activation", "Start", true);
 		var gS=$.gS,
-			context=slide.parent(),
-			opts=gS.opts(context),
+			slide=$(this),
+			context=data.context,
+			opts=data.opts,
 			deactivated;
 		!slide.is("."+opts.classes.slide+", ."+opts.classes.slide+opts.handle)?
 			slide=$("."+opts.classes.slide).has($(slide)):
@@ -189,15 +228,18 @@ $.extend($.gS, {
 			slide.trigger("postDeactivate"); // hook
 		}
 		slide.addClass(opts.classes.active)
+		data.active=slide;
+		data.ai=slide.index();
 		slide.trigger("preActivate"); // hook
-
-		gS.update(slide.parent());
+		
+		gS.update(data);
  	},
 ////////////////////////////////////////////////////////////////////////////////
- 	deactivate : function (slide) {
+ 	deactivate : function (data) {
 		var gS=$.gS,
-			context=slide.parent(),
-			opts=this.opts(context);
+			slide=$(this),
+			context=data.context,
+			opts=data.opts,
 		!slide.is("."+opts.classes.slide+", ."+opts.classes.slide+opts.handle)?
 			slide=$("."+opts.classes.slide).has($(slide)):
 			slide=$(slide);
@@ -206,34 +248,37 @@ $.extend($.gS, {
 		slide.removeClass(opts.classes.active).addClass("gSdeactivated");
 		slide.trigger("preDeactivate"); // hook
 		
-		gS.update(slide.parent());
+		gS.update(data);
  	}, 	
 ////////////////////////////////////////////////////////////////////////////////
-	prev : function (context, fromSlide) {
+	prev : function (data, fromSlide) {
 		var gS=$.gS,
-			opts=gS.opts(context),
+			context=data.context,
+			opts=data.opts,
 			slide,
-			slideId=gS._step(context, -1, fromSlide);
-		if(slideId === undefined) slideId=$(context).children().length-1;
+			slideId=gS._step(data, -1, fromSlide);
+		if(slideId === undefined) slideId=context.children().length-1;
 		slideId=context.trigger("prev", slideId);
-		slide=$(context).children().eq(slideId);
+		slide=context.children().eq(slideId);
 		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.trigger(opts.events.activate, true);
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	next : function (context, fromSlide) {
+	next : function (data, fromSlide) {
 		var gS=$.gS,
-			opts=gS.opts(context),
+			context=data.context,
+			opts=data.opts,
 			slide,
-			slideId=gS._step(context, 1, fromSlide)
+			slideId=gS._step(data, 1, fromSlide);
 		if(slideId === undefined) slideId=0;
 		slideId=context.trigger("next", slideId);
-		slide=$(context).children().eq(slideId);
+		slide=context.children().eq(slideId);
 		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.trigger(opts.events.activate, true);
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	_step : function (context, number, fromSlide) {
+	_step : function (data, number, fromSlide) {
 		var gS=$.gS,
-			opts=gS.opts(context),
+			context=data.context,
+			opts=data.opts,
 			slides=$(context).children(),
 			next;
 		fromSlide=fromSlide || slides.filter("."+opts.classes.slide+"."+opts.classes.active);
@@ -249,17 +294,16 @@ $.extend($.gS, {
 		return next;
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	opts : function (context, opts, save) {
-		var data=$(context).data("opts");
-		opts=$.extend(true,{},this.defaults, data||{}, opts||{});
-		if(save) $(context).data("opts", opts);
+	opts : function (data, opts, save) {
+		opts=$.extend(true,{},this.defaults, data.opts||{}, opts||{});
+		if(save) data.opts=opts;
 		return opts;
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	_cssFloat : function (context, value) {
+	_cssFloat : function (data, value) {
 		var mins={"minWidth":true,"min-width":true,"minHeight":true,"min-height":true},
 			min=mins[value];
-		value=$(context).css(value);
+		value=data.context.css(value);
 		if(min && value=="0px") return undefined;
 		value=parseFloat(value.replace(["px","%"],""));
 		return (!isNaN(value) ? value : undefined);
@@ -269,92 +313,93 @@ $.extend($.gS, {
 		return word.charAt(0).toUpperCase() + word.slice(1);
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	clearCache : function (context) {
-		$(context).removeData("cache");
+	clearCache : function (data) {
+		data.dcss={};
+		data.limits={};
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	_getCSS : function (context, data, i, ai) {
+	_getCSS : function (data, i) {
 		var gS = $.gS,
-			opts=gS.opts(context),
-
-			slide= data[i],
+			opts=data.opts,
+			context=data.context
+			slide= data.slides[i],
+			ai=data.ai,
+			css=data.css[i]=data.css[i]||{}
 			posAct = slide.obj.hasClass("posAct"),
 			alignLoT= ai==i && slide.obj.hasClass(opts.LoT);
 		
-		slide.css=slide.css||{};
-		slide.css[opts.WoH]=data[i].obj[opts.WoH]();
+		css[opts.WoH]=slide.obj[opts.WoH]();
 		slide.active=(i==ai?true:false);
 		
 		if(opts.resizable && slide.active) {
 			alignLoT ?
-				slide=gS._positioning(context,  slide, opts.LoT, true):
-				slide=gS._positioning(context,  slide, opts.RoB, true);
+				gS._positioning(data, i, opts.LoT, true):
+				gS._positioning(data, i, opts.RoB, true);
 		}
-		else if((i<ai) || ai<0 || (slide.active && alignLoT)){
+		else if(i<ai || ai<0 || (slide.active && alignLoT)){
 			if(!slide.obj.hasClass(opts.LoT) || posAct) 
-				slide=gS._positioning(context,  slide, opts.LoT);
+				gS._positioning(data, i, opts.LoT);
 
 			slide.align=opts.LoT;
-			slide.css[opts.LoT]=gS._cssFloat(slide.obj, opts.LoT);
+			css[opts.LoT]=gS._cssFloat(data, opts.LoT);
 		}
 		else {
 			if(!slide.obj.hasClass(opts.RoB) || posAct)  
-				slide=gS._positioning(context, slide, opts.RoB);
+				gS._positioning(data, i, opts.RoB);
 			
 			slide.align=opts.RoB;
-			slide.css[opts.RoB]=gS._cssFloat(slide.obj, opts.RoB);
+			css[opts.RoB]=gS._cssFloat(data, opts.RoB);
 		}
-		return data;
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	_positioning : function (context, data, bind, active) {
+	_positioning : function (data, i, bind, active) {
 		var gS=$.gS,
-			opts=gS.opts(context),
-			p = data.obj.position(),
+			opts=data.opts,
+			context=data.context,
+			slide=data.slides[i],
+			p = slide.obj.position(),
 			from = bind==opts.LoT ? opts.RoB : opts.LoT,
-			cS = $(context)["inner"+gS._capitalize(opts.WoH)](),
-			oS = data.obj["outer"+gS._capitalize(opts.WoH)](),
+			cS = context["inner"+gS._capitalize(opts.WoH)](),
+			oS = slide.obj["outer"+gS._capitalize(opts.WoH)](),
 			marginLoT="margin-"+opts.LoT,
-			marginRoB="margin-"+opts.RoB;
+			marginRoB="margin-"+opts.RoB,
+			css;
 
 		if(active) {
 			css={zIndex:0, position:"relative"};
 			css[opts.WoH]="auto";
-			data.css[marginLoT]=css[marginLoT]=p[opts.LoT];
-			data.css[marginRoB]=css[marginRoB]=cS-p[opts.LoT]-oS;
+			data.css[i][marginLoT]=css[marginLoT]=p[opts.LoT];
+			data.css[i][marginRoB]=css[marginRoB]=cS-p[opts.LoT]-oS;
 			css[bind]=0;
-			data.obj.addClass("posAct");
-			data.align=bind;
+			slide.obj.addClass("posAct");
+			slide.align=bind;
 		}
 		else {
 			css={zIndex:1, position:"absolute"};
-			css[bind]=gS._cssFloat(data.obj,"margin-"+bind);
-			if(!css[bind] && !gS._cssFloat(data.obj,"margin-"+from)) 
+			css[bind]=gS._cssFloat(data,"margin-"+bind);
+			if(!css[bind] && !gS._cssFloat(data,"margin-"+from)) 
 				bind==opts.LoT ? 
 					css[bind]=p[opts.LoT]:
 					css[bind]=cS-p[opts.LoT]-oS;
 			css[marginLoT]=0;
 			css[marginRoB]=0;
-			data.css[opts.WoH]=css[opts.WoH]=oS;
-			data.css[bind]=css[bind];
-			data.css[from]="auto";
-			data.obj.removeClass("posAct");
+			data.css[i][opts.WoH]=css[opts.WoH]=oS;
+			data.css[i][bind]=css[bind];
+			data.css[i][from]="auto";
+			slide.obj.removeClass("posAct");
 		}
 		css[from]="auto";
-		data.obj.removeClass(from).addClass(bind).css(css);
-
-
-
-		return data;
+		slide.obj.removeClass(from).addClass(bind).css(css);
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	_getLimits : function (context, data, i) {
+	_getLimits : function (data, i) {
 //		console.log("limits"+i);
 		var gS = $.gS,
-			opts=gS.opts(context),
-			slide= data[i],
-			cssMin = slide.css["min-"+opts.WoH] || gS._cssFloat(slide.obj,"min-"+opts.WoH),
-			cssMax = slide.css["max-"+opts.WoH] || gS._cssFloat(slide.obj,"max-"+opts.WoH),
+			opts=data.opts,
+			context=data.context,
+			slide= data.slides[i],
+			cssMin = data.css[i]["min-"+opts.WoH] || gS._cssFloat(data,"min-"+opts.WoH),
+			cssMax = data.css[i]["max-"+opts.WoH] || gS._cssFloat(data,"max-"+opts.WoH),
 			limits={
 				max:!isNaN(cssMax) ? 
 					cssMax : 
@@ -377,30 +422,31 @@ $.extend($.gS, {
 		return limits;
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	_getDCss : function (context, data, ai) {
+	_getDCss : function (data) {
 		var gS = $.gS,
-			opts=gS.opts(context),
+			opts=data.opts,
+			context=data.context,
+			ai=data.ai,
 			skip={},
-			count=data.length,
-			fullSize=cS=$(context)[opts.WoH](),
+			count=data.slides.length,
+			fullSize=cS=context[opts.WoH](),
 			newSize,
 			hitMax,
 			i,c,
 			dcss={};
 //		Calculate Width
-		for(i=c=0; slide=data[i]; i++) {
-			if(!slide.active) c+=slide.limits.min || 0;
+		for(i=c=0; slide=data.slides[i]; i++) {
+			if(!slide.active) c+=data.limits[i].min || 0;
 			dcss[i]={};
 		}
-		if(ai>=0 && (isNaN(data[ai].limits.max) || data[ai].limits.max>cS-c)) 
-			for(i=0; i < data.length; i++)  
+		if(ai>=0 && (isNaN(data.limits[ai].max) || data.limits[ai].max>cS-c)) 
+			for(i=0; i < count; i++)  
 				i==ai?
 					dcss[i][opts.WoH] = cS-c:
-					dcss[i][opts.WoH] = data[i].limits.min || 0;
+					dcss[i][opts.WoH] = data.limits[i].min || 0;
 		else {
 			newSize=fullSize/count;
-			for(i=0; limit = data[i]; i++) {
-				limit=limit.limits;
+			for(i=0; limit=data.limits[i]; i++) {
 				hitMax=(limit.max<newSize);
 				if(!skip[i] && (limit.min>newSize || hitMax || i==ai)){
 					skip[i]=true;
@@ -412,12 +458,12 @@ $.extend($.gS, {
 					i=-1;
 				}
 			}
-			for(i=0; i < data.length; i++) 
+			for(i=0; i < data.slides.length; i++) 
 				if(!skip[i]) dcss[i][opts.WoH]=newSize;
 		}
 		
 //		Caculate position.		
-		for(i=c=0; slide=data[i]; i++) {
+		for(i=c=0; slide=data.slides[i]; i++) {
 			c+= dcss[i][opts.WoH];
 
 			if(opts.resizable && i==ai) {			
@@ -433,62 +479,46 @@ $.extend($.gS, {
 		
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	_getData : function (context) {
+	_getData : function (data) {
 		$.gS.timing("update" , "Start",true);
 		var gS=$.gS,
-			opts=gS.opts(context),
-			slides=$(context).children(),
-			active = slides.filter("."+opts.classes.slide+"."+opts.classes.active),
-			ai=active.index(),
+			context=data.context,
+			opts=data.opts,
+			slides=context.children(),
+			active = data.active,
+			ai=data.ai,
 			i,
-			cache=context.data("cache") || {},			
-			dcss=cache.dcss || {},
-			limits=cache.limits || {},
-			data=[];
+			dcss=data.dcss=opts.cache ? data.dcss : {},
+			limits=data.limits= opts.cache ? data.limits : {},
+			anim=[];
 
-//		Get Data
+//		Get anim
 		for(i=slides.length-1; i >=0 ; i--) {
-			data[i]= data[i] || {
-				obj:slides.eq(i)
-			};
+			data.slides[i] = data.slides[i] || {	
+					obj:slides.eq(i)
+				}
 			
-			data=gS._getCSS(context, data, i, ai);
-			!opts.cache || !limits[i] ?
-				data[i].limits=limits[i]=gS._getLimits(context, data, i):
-				data[i].limits=limits[i];
+			gS._getCSS(data, i);
+			data.limits[i]=data.limits[i] || gS._getLimits(data,i);
 		};
 
-		if(!opts.cache || !dcss[ai]) dcss[ai] = gS._getDCss(context, data, ai);
-		
-		if(opts.cache) context.data("cache", {
-				dcss:dcss,
-				limits:limits
-			});	
-		
-		return {
-			dcss:dcss[ai],
-			data:data,
-			opts:opts,
-			cS: $(context)[opts.WoH]()		
-		};
-		
+		data.dcss[ai] = data.dcss[ai] || gS._getDCss(data);
+		data.cS = context[opts.WoH]();
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	update : function (context, opts) {
-		context=$(context).stop();
+	update : function (data, opts) {
 		var gS=$.gS,
-			slides=$(context).children(),
-			active,
-			ai,
+			context=data.context.stop(),
+			slides=context.children(),
+			active=data.active,
+			ai=data.ai,
 			postAnimation,
 			data;
-		opts=gS.opts(context, opts);	
-		active = slides.filter("."+opts.classes.slide+"."+opts.classes.active);
+		opts=gS.opts(data, opts);	
 
 //		Get and store Data for the animation function
-		data=gS._getData(context);
-		context.data("animation", data);	
-	
+		gS._getData(data);
+		
 //		Set hooks for either Activation or Deactivation.
 		if(active.length <=0) {
 			active.trigger("preDeactivateAnimation", data); // hook
@@ -523,19 +553,18 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	_animationStep : function (state, obj) {
 		$.gS.timing("step","start",true)
-		var info= $(obj.elem).dequeue("gSanimationStep").data("animation"); // hook: custom queue that runs once on every step of the animation (MAKE IT FAST!)
-		if(!info) {
+		var data= $(obj.elem).dequeue("gSanimationStep").data("greenishSlidesData"); // hook: custom queue that runs once on every step of the animation (MAKE IT FAST!)
+		if(!data) {
 			$(this).stop();
 			return;
 		};
-		var	opts=info.opts,
-			data=info.data,
-			dcss=info.dcss,
+		var	opts=data.opts,
+			dcss=data.dcss[data.ai],
+			ai=data.ai,
 			css={},
 			slide, k, i,
-			ai,
 			calc=function(i, key) {
-				return Math.round(data[i].css[key]+((dcss[i][key]-data[i].css[key])*(state[i] || state)));
+				return Math.round(data.css[i][key]+((dcss[i][key]-data.css[i][key])*(state[i] || state)));
 			},
 			getPosition = function(i, align) {
 				return css[i] ? css[i][align]+css[i][opts.WoH] : 0;
@@ -543,21 +572,20 @@ $.extend($.gS, {
 		state/=100;
 		
 //		Set Position
-		for(i=data.length-1; slide=data[i]; i--) {
+		for(i=data.slides.length-1; slide=data.slides[i]; i--) {
 			css[i]={};
 			if(!slide.active) {
-				slide.css[slide.align] = slide.css[slide.align] || 0;
+				data.css[i][slide.align] = data.css[i][slide.align] || 0;
 				css[i][slide.align]=calc(i, slide.align);
 			}
-			else ai=i;
 		};
 //		Set Width to fill up space
-		for(i=data.length-1; slide=data[i]; i--) if(!slide.active) {
+		for(i=data.slides.length-1; slide=data.slides[i]; i--) if(!slide.active) {
 			k= (slide.align == opts.LoT ? i+1:i-1);
-			if(data[k]) !data[k].active? 
+			if(data.slides[k]) !data.slides[k].active? 
 				css[i][opts.WoH] = css[k][slide.align]-css[i][slide.align]:
 				css[i][opts.WoH] = calc(i,opts.WoH);
-			else css[i][opts.WoH]= info.cS-css[i][slide.align];
+			else css[i][opts.WoH]= data.cS-css[i][slide.align];
 			
 			slide.obj.css(css[i]);		
 		}
@@ -570,14 +598,14 @@ $.extend($.gS, {
 			else {
 				if(data[ai].align == opts.LoT) {
 					css[ai][opts.LoT]=getPosition(ai-1 ,opts.LoT);
-					css[ai][opts.WoH]=info.cS-css[ai][opts.LoT]-getPosition(ai+1,opts.RoB);
+					css[ai][opts.WoH]=data.cS-css[ai][opts.LoT]-getPosition(ai+1,opts.RoB);
 				}
 				else {
 					css[ai][opts.RoB]=getPosition(ai+1 ,opts.RoB);
-					css[ai][opts.WoH]=info.cS-css[ai][opts.RoB]-getPosition(ai-1,opts.LoT);
+					css[ai][opts.WoH]=data.cS-css[ai][opts.RoB]-getPosition(ai-1,opts.LoT);
 				}
 			}
-			data[ai].obj.css(css[ai]);
+			data.slides[ai].obj.css(css[ai]);
 		}
 		$.gS.timing("step","end",true);
 	},
