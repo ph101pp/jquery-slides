@@ -37,13 +37,13 @@ $.fn.greenishSlides = function (method){
 	for(i=0; i<context.length; i++) {
 		data=$(context[i]).data("greenishSlidesData") || $(context[i]).parent().data("greenishSlidesData");
    		if(data && call=="_init") {
-   			$.gS.opts(data, method);
+   			$.gS.opts(data, method, true);
    			continue;
    		}
    		data = data || {
 				context : $(context[i]),
-				css : {},
-				dcss: {},
+				css:{},
+				dcss:{},
 				limits:{},
 				slides:[],
 				ai:-1,
@@ -66,7 +66,7 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	timer :{},
 	timing : function (key, comment, hide) {
-		
+		return;
 		var timer,time;
 		comment=comment||"";
 		timer = new Date()
@@ -300,10 +300,10 @@ $.extend($.gS, {
 		return opts;
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	_cssFloat : function (slide, value) {
+	_cssFloat : function (obj, value) {
 		var mins={"minWidth":true,"min-width":true,"minHeight":true,"min-height":true},
 			min=mins[value];
-		value=slide.css(value);
+		value=obj.css(value);
 		if(min && value=="0px") return undefined;
 		value=parseFloat(value.replace(["px","%"],""));
 		return (!isNaN(value) ? value : undefined);
