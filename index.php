@@ -18,12 +18,12 @@
 								ai=slide.index();
 							$(".vertical").each(function(){
 								var slide = $(this).children().eq(ai);
-								if(!slide.hasClass("active")) $.gS.activate(slide);								
+								if(!slide.hasClass("active")) slide.greenishSlides("activate");								
 							});
 						},
 						preDeactivate= function () {
 							$(".vertical").each(function(){
-								$.gS.deactivate($(".active",this));								
+								$(".active",this).greenishSlides("deactivate");								
 							});
 							
 						

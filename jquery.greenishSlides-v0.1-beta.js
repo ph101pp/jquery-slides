@@ -35,12 +35,12 @@ $.fn.greenishSlides = function (method){
 	else $.error(method+"doesn't exist");
 	
 	for(i=0; i<context.length; i++) {
-		data=$(context[i]).data("greenishSlidesData")
+		data=$(context[i]).data("greenishSlidesData") || $(context[i]).parent().data("greenishSlidesData");
    		if(data && call=="_init") {
    			$.gS.opts(data, method);
    			continue;
    		}
-  		data = data || {
+   		data = data || {
 				context : $(context[i]),
 				css : {},
 				dcss: {},
@@ -55,10 +55,7 @@ $.fn.greenishSlides = function (method){
 		}
 		else args=[data].concat(args);
 		$(context[i]).data("greenishSlidesData",data);
-		
-		console.log(args);
-		console.log(call);
-		
+
 		$.gS[call].apply(this, args);	
 	};
 	return this;
@@ -69,7 +66,7 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	timer :{},
 	timing : function (key, comment, hide) {
-		return;
+		
 		var timer,time;
 		comment=comment||"";
 		timer = new Date()
@@ -131,7 +128,6 @@ $.extend($.gS, {
 			activateDeactivateEvent=function (e, triggeredSlide) {
 				var target=$(e.target);
 				target= triggeredSlide ? [target,target] : eventSlide(e);
-				//console.log(target);
 				if((e.type == "focusin" || e.type==opts.events.activate) && target && !target[0].hasClass(opts.classes.active)) {
 					target[0].trigger("preActivateEvent");
 					target[0].greenishSlides("activate");
@@ -167,15 +163,14 @@ $.extend($.gS, {
 
 ////	Keyboard and Swipe events.		
 		if(opts.keyEvents) $(document).bind("keydown", function(e) {
-			console.log("keyEvent");
-			if(e.which == 39 || e.which == 40) gS.next(context);
-			else if(e.which == 37 || e.which == 38) gS.prev(context);
+			if(e.which == 39 || e.which == 40) context.greenishSlides("next");
+			else if(e.which == 37 || e.which == 38) context.greenishSlides("prev");
 		});
 		
 		if(opts.swipeEvents && context.swipe) context.swipe({
 			threshold: opts.swipeThreshold,
-			swipeLeft: function(){$.gS.next(context);},
-			swipeRight: function(){$.gS.prev(context);}
+			swipeLeft: function(){context.greenishSlides("next")},
+			swipeRight: function(){context.greenishSlides("prev")}
 		});
 ////	/Keyboard and Swipe events.
 
@@ -215,6 +210,8 @@ $.extend($.gS, {
 			context=data.context,
 			opts=data.opts,
 			deactivated;
+			
+		
 		!slide.is("."+opts.classes.slide+", ."+opts.classes.slide+opts.handle)?
 			slide=$("."+opts.classes.slide).has($(slide)):
 			slide=$(slide);
@@ -230,6 +227,7 @@ $.extend($.gS, {
 		slide.addClass(opts.classes.active)
 		data.active=slide;
 		data.ai=slide.index();
+		
 		slide.trigger("preActivate"); // hook
 		
 		gS.update(data);
@@ -247,7 +245,9 @@ $.extend($.gS, {
 		if(!slide.hasClass(opts.classes.active)) return;
 		slide.removeClass(opts.classes.active).addClass("gSdeactivated");
 		slide.trigger("preDeactivate"); // hook
-		
+		data.active=$();
+		data.ai="-1";
+
 		gS.update(data);
  	}, 	
 ////////////////////////////////////////////////////////////////////////////////
@@ -258,9 +258,9 @@ $.extend($.gS, {
 			slide,
 			slideId=gS._step(data, -1, fromSlide);
 		if(slideId === undefined) slideId=context.children().length-1;
-		slideId=context.trigger("prev", slideId);
+		//slideId=context.trigger("prev", slideId);
 		slide=context.children().eq(slideId);
-		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.trigger(opts.events.activate, true);
+		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.greenishSlides("activate");
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	next : function (data, fromSlide) {
@@ -270,16 +270,16 @@ $.extend($.gS, {
 			slide,
 			slideId=gS._step(data, 1, fromSlide);
 		if(slideId === undefined) slideId=0;
-		slideId=context.trigger("next", slideId);
+		//slideId=context.trigger("next", slideId);
 		slide=context.children().eq(slideId);
-		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.trigger(opts.events.activate, true);
+		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.greenishSlides("activate");
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	_step : function (data, number, fromSlide) {
 		var gS=$.gS,
 			context=data.context,
 			opts=data.opts,
-			slides=$(context).children(),
+			slides=context.children(),
 			next;
 		fromSlide=fromSlide || slides.filter("."+opts.classes.slide+"."+opts.classes.active);
 		if(!slides.filter(fromSlide).length) return undefined;
@@ -300,10 +300,10 @@ $.extend($.gS, {
 		return opts;
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	_cssFloat : function (data, value) {
+	_cssFloat : function (slide, value) {
 		var mins={"minWidth":true,"min-width":true,"minHeight":true,"min-height":true},
 			min=mins[value];
-		value=data.context.css(value);
+		value=slide.css(value);
 		if(min && value=="0px") return undefined;
 		value=parseFloat(value.replace(["px","%"],""));
 		return (!isNaN(value) ? value : undefined);
@@ -341,14 +341,14 @@ $.extend($.gS, {
 				gS._positioning(data, i, opts.LoT);
 
 			slide.align=opts.LoT;
-			css[opts.LoT]=gS._cssFloat(data, opts.LoT);
+			css[opts.LoT]=gS._cssFloat(slide.obj, opts.LoT);
 		}
 		else {
 			if(!slide.obj.hasClass(opts.RoB) || posAct)  
 				gS._positioning(data, i, opts.RoB);
 			
 			slide.align=opts.RoB;
-			css[opts.RoB]=gS._cssFloat(data, opts.RoB);
+			css[opts.RoB]=gS._cssFloat(slide.obj, opts.RoB);
 		}
 	},
 ////////////////////////////////////////////////////////////////////////////////
@@ -376,15 +376,14 @@ $.extend($.gS, {
 		}
 		else {
 			css={zIndex:1, position:"absolute"};
-			css[bind]=gS._cssFloat(data,"margin-"+bind);
-			if(!css[bind] && !gS._cssFloat(data,"margin-"+from)) 
+			css[bind]=gS._cssFloat(slide.obj,"margin-"+bind);
+			if(!css[bind] && !gS._cssFloat(slide.obj,"margin-"+from)) 
 				bind==opts.LoT ? 
 					css[bind]=p[opts.LoT]:
 					css[bind]=cS-p[opts.LoT]-oS;
 			css[marginLoT]=0;
 			css[marginRoB]=0;
 			data.css[i][opts.WoH]=css[opts.WoH]=oS;
-			data.css[i][bind]=css[bind];
 			data.css[i][from]="auto";
 			slide.obj.removeClass("posAct");
 		}
@@ -398,8 +397,8 @@ $.extend($.gS, {
 			opts=data.opts,
 			context=data.context,
 			slide= data.slides[i],
-			cssMin = data.css[i]["min-"+opts.WoH] || gS._cssFloat(data,"min-"+opts.WoH),
-			cssMax = data.css[i]["max-"+opts.WoH] || gS._cssFloat(data,"max-"+opts.WoH),
+			cssMin = data.css[i]["min-"+opts.WoH] || gS._cssFloat(slide.obj,"min-"+opts.WoH),
+			cssMax = data.css[i]["max-"+opts.WoH] || gS._cssFloat(slide.obj,"max-"+opts.WoH),
 			limits={
 				max:!isNaN(cssMax) ? 
 					cssMax : 
@@ -429,7 +428,7 @@ $.extend($.gS, {
 			ai=data.ai,
 			skip={},
 			count=data.slides.length,
-			fullSize=cS=context[opts.WoH](),
+			fullSize=cS=data.cS,
 			newSize,
 			hitMax,
 			i,c,
@@ -489,10 +488,10 @@ $.extend($.gS, {
 			ai=data.ai,
 			i,
 			dcss=data.dcss=opts.cache ? data.dcss : {},
-			limits=data.limits= opts.cache ? data.limits : {},
-			anim=[];
-
-//		Get anim
+			limits=data.limits= opts.cache ? data.limits : {};
+			data.cS = opts.cache && data.cS ? data.cS : context[opts.WoH]();
+ 
+//		Get data
 		for(i=slides.length-1; i >=0 ; i--) {
 			data.slides[i] = data.slides[i] || {	
 					obj:slides.eq(i)
@@ -503,7 +502,6 @@ $.extend($.gS, {
 		};
 
 		data.dcss[ai] = data.dcss[ai] || gS._getDCss(data);
-		data.cS = context[opts.WoH]();
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	update : function (data, opts) {
@@ -596,7 +594,7 @@ $.extend($.gS, {
 				css[ai]["margin-"+opts.RoB]=getPosition(ai+1 , opts.RoB);
 			}
 			else {
-				if(data[ai].align == opts.LoT) {
+				if(data.slides[ai].align == opts.LoT) {
 					css[ai][opts.LoT]=getPosition(ai-1 ,opts.LoT);
 					css[ai][opts.WoH]=data.cS-css[ai][opts.LoT]-getPosition(ai+1,opts.RoB);
 				}
