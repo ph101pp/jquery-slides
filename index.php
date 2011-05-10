@@ -7,210 +7,67 @@
 		<script type="text/javascript" src="jquery-1.5.1.min.js"></script>
 		<script type="text/javascript" src="jquery.greenishSlides-v0.1-beta.js"></script>
 
-		<script type="text/javascript" src="jquery-ui-1.8.11.custom.min.js"></script>
-		<script type="text/javascript" src="jquery.easing.1.3.js"></script>
 <!--		<script type="text/javascript" src="jquery.jswipe-0.1.2.js"></script>-->
 		<script type="text/javascript">
 			(function($) {
 				$(document).ready(function() {
-					var preActivate=function(e){
-							var slide=$(e.target);
-								ai=slide.index();
-							$(".vertical").each(function(){
-								var slide = $(this).children().eq(ai);
-								if(!slide.hasClass("active")) slide.greenishSlides("activate");								
-							});
-						},
-						preDeactivate= function () {
-							$(".vertical").each(function(){
-								$(".active",this).greenishSlides("deactivate");								
-							});
-							
-						
-						},
-						config= {
-							cache:false,
-							events: {
-								activate:"click",
-								deactivate:"click"
-							},
-							limits: {
-								min:0
-							},
-						};
-					
-					
- 					$(".horizontal").greenishSlides($.extend({},config,{	
+ 					$(".horizontal").greenishSlides({	
  						vertical:false,
- 						handle:".vertical"
  						
-					}));
-					$(".vertical").greenishSlides($.extend({},config,{
-						vertical:true,
-						hooks:{
-							preActivateEvent:preActivate,
-							preDeactivateEvent:preDeactivate
-						}
-					}));	
+ 						hooks:{
+ 							preActivate:function(data){console.log(data.ai); return data;}
+ 						}
+					})
 				});
 			})(jQuery);
 		</script>		
 	</head>
 	<body>
 		<ul class="horizontal">
-			<li>		
-				<ul class="vertical">
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-				</ul>
+			<li>	
+				<img src="//placekitten.com/400/400">
 			</li>
-			<li>		
-				<ul class="vertical">
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-				</ul>
+			<li>	
+				<img src="//placekitten.com/400/400">
 			</li>
-			<li>		
-				<ul class="vertical">
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-				</ul>
+			<li>	
+				<img src="//placekitten.com/400/400">
 			</li>
-			<li>		
-				<ul class="vertical">
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-				</ul>
+			<li>	
+				<img src="//placekitten.com/400/400">
 			</li>
-			<li>		
-				<ul class="vertical">
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-				</ul>
+			<li>	
+				<img src="//placekitten.com/400/400">
 			</li>
-			<li>		
-				<ul class="vertical">
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-				</ul>
+			<li>	
+				<img src="//placekitten.com/400/400">
 			</li>
-			<li>		
-				<ul class="vertical">
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-				</ul>
+			<li>	
+				<img src="//placekitten.com/400/400">
 			</li>
-			<li>		
-				<ul class="vertical">
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-				</ul>
+			<li>	
+				<img src="//placekitten.com/400/400">
 			</li>
-			<li>		
-				<ul class="vertical">
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-				</ul>
+			<li>	
+				<img src="//placekitten.com/400/400">
 			</li>
-			<li>		
-				<ul class="vertical">
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-				</ul>
+			<li>	
+				<img src="//placekitten.com/400/400">
 			</li>
-			<li>		
-				<ul class="vertical">
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-				</ul>
+			<li>	
+				<img src="//placekitten.com/400/400">
+			</li>
+			<li>	
+				<img src="//placekitten.com/400/400">
+			</li>
+			<li>	
+				<img src="//placekitten.com/400/400">
+			</li>
+			<li>	
+				<img src="//placekitten.com/400/400">
+			</li>
+			<li>	
+				<img src="//placekitten.com/400/400">
 			</li>
 		</ul>
 	</body>

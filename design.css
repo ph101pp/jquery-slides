@@ -2,6 +2,8 @@
 body {
 	margin:0;
 	padding:0;
+	background-color:black;
+	overflow:hidden;
 }
 
 .horizontal, .vertical{
@@ -12,7 +14,7 @@ body {
 	padding:0;
 }
 li {
-	outline:1px solid black;
+	outline:1px solid white;
 }
 .vertical li{
 	text-align:center;

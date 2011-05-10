@@ -45,6 +45,7 @@ $.fn.greenishSlides = function (method){
 				css:{},
 				dcss:{},
 				limits:{},
+				hooks:[],
 				slides:[],
 				ai:-1,
 				active:$(),
@@ -56,7 +57,8 @@ $.fn.greenishSlides = function (method){
 		else args=[data].concat(args);
 		$(context[i]).data("greenishSlidesData",data);
 
-		$.gS[call].apply(this, args);	
+		if(call=="triggerHook") return $.gS[call].apply(this, args);
+		else $.gS[call].apply(this, args);
 	};
 	return this;
 };
@@ -129,11 +131,11 @@ $.extend($.gS, {
 				var target=$(e.target);
 				target= triggeredSlide ? [target,target] : eventSlide(e);
 				if((e.type == "focusin" || e.type==opts.events.activate) && target && !target[0].hasClass(opts.classes.active)) {
-					target[0].trigger("preActivateEvent");
+					target[0].greenishSlides("triggerHook","preActivateEvent"); // hook
 					target[0].greenishSlides("activate");
 				}
 				else if(!opts.stayOpen && (e.type == "focusout" || e.type==opts.events.deactivate) && target && target[0].hasClass(opts.classes.active) && target[1].has(e.relatedTarget).length <=0 && target[1] != e.relatedTarget) {
-					target[0].trigger("preDeactivateEvent");
+					target[0].greenishSlides("triggerHook","preDeactivateEvent");
 					target[0].greenishSlides("deactivate");
 				}
 			},
@@ -145,8 +147,8 @@ $.extend($.gS, {
 			},
 			event;
 
-		for(hooks in opts.hooks) context.bind(hooks,opts.hooks[hooks]);
-		context.trigger("preInit"); // hook
+		for(hooks in opts.hooks) gS.bindHook(data,hooks,opts.hooks[hooks]);
+		context.greenishSlides("triggerHook","preInit"); // hook
 		
 		gS.timing("init" , "Start");
 		
@@ -198,7 +200,7 @@ $.extend($.gS, {
 				$(opts.active, context).eq(0).removeClass(opts.classes.active).trigger(opts.events.activate, true);
 		}
 		else gS.update(data);
-		context.trigger("postInit"); // hook
+		context.greenishSlides("triggerHook","postInit"); // hook
 		
 		gS.timing("init" , "Done");
 	},
@@ -222,13 +224,13 @@ $.extend($.gS, {
 		deactivated =slide.siblings(".gSdeactivated");
 		if(deactivated.length > 0) {
 			deactivated.removeClass("gSdeactivated");
-			slide.trigger("postDeactivate"); // hook
+			slide.greenishSlides("triggerHook","postDeactivate"); // hook
 		}
 		slide.addClass(opts.classes.active)
 		data.active=slide;
 		data.ai=slide.index();
 		
-		slide.trigger("preActivate"); // hook
+		slide.greenishSlides("triggerHook","preActivate"); // hook
 		
 		gS.update(data);
  	},
@@ -244,7 +246,7 @@ $.extend($.gS, {
 
 		if(!slide.hasClass(opts.classes.active)) return;
 		slide.removeClass(opts.classes.active).addClass("gSdeactivated");
-		slide.trigger("preDeactivate"); // hook
+		slide.greenishSlides("triggerHook","preDeactivate");// hook
 		data.active=$();
 		data.ai="-1";
 
@@ -258,7 +260,7 @@ $.extend($.gS, {
 			slide,
 			slideId=gS._step(data, -1, fromSlide);
 		if(slideId === undefined) slideId=context.children().length-1;
-		//slideId=context.trigger("prev", slideId);
+		slideId=context.greenishSlides("triggerHook","prev",slideId); //hook
 		slide=context.children().eq(slideId);
 		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.greenishSlides("activate");
 	},
@@ -270,7 +272,7 @@ $.extend($.gS, {
 			slide,
 			slideId=gS._step(data, 1, fromSlide);
 		if(slideId === undefined) slideId=0;
-		//slideId=context.trigger("next", slideId);
+		slideId=context.greenishSlides("triggerHook","next",slideId);
 		slide=context.children().eq(slideId);
 		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.greenishSlides("activate");
 	},
@@ -292,6 +294,18 @@ $.extend($.gS, {
 				next = slides.length-1;
 				
 		return next;
+	},
+////////////////////////////////////////////////////////////////////////////////
+	bindHook : function (data, hook, func) {
+		func=typeof(func)=="function"?[func]:func;
+		data.hooks[hook]=data.hooks[hook]||[];
+		for(var key in func) data.hooks[hook].push(func[key]);
+	},
+////////////////////////////////////////////////////////////////////////////////
+	triggerHook : function (data, hook, param) {
+		if(data.hooks[hook] && data.hooks[hook].length <= 0) return param;
+		for(var key in data.hooks[hook]) param=data.hooks[hook][key].apply(this, [data,param]);	
+		return param;
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	opts : function (data, opts, save) {
@@ -519,21 +533,21 @@ $.extend($.gS, {
 		
 //		Set hooks for either Activation or Deactivation.
 		if(active.length <=0) {
-			active.trigger("preDeactivateAnimation", data); // hook
+			active.greenishSlides("triggerHook","preDeactivateAnimation"); // hook
 			postAnimation = function () {
 				var deactive=$(this).find("."+opts.classes.slide+".gSdeactivated");
 				if(deactive.length>0) {
-					deactive.trigger("postDeactivate"); // hook
+					deactive.greenishSlides("triggerHook","postDeactivate"); // hook
 					deactive.removeClass("gSdeactivated");
 				}
 			}
 		}
 		else {  
-			active.trigger("preActivateAnimation", data); // hook
+			active.greenishSlides("triggerHook","preActivateAnimation"); // hook
 			postAnimation = function () {
 				var active=$(this).find("."+opts.classes.slide+"."+opts.classes.active);
 				if(active.length>0) {
-					active.trigger("postActivate"); // hook
+					active.greenishSlides("triggerHook","postActivate"); // hook
 				}
 			}
 		}
