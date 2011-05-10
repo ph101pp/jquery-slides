@@ -239,7 +239,7 @@ $.extend($.gS, {
 		var gS=$.gS,
 			slide=$(this),
 			context=data.context,
-			opts=data.opts,
+			opts=data.opts;
 		!slide.is("."+opts.classes.slide+", ."+opts.classes.slide+opts.handle)?
 			slide=$("."+opts.classes.slide).has($(slide)):
 			slide=$(slide);
