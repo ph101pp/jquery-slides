@@ -95,8 +95,8 @@ $.extend($.gS, {
 			activate:"click",
 			deactivate:"click"
 		},
-		keyEvents:true,
-		swipeEvents:true,
+		keyEvents:false,
+		swipeEvents:false,
 		swipeThreshold: {
 			x: 30,
 			y: 10
@@ -112,7 +112,7 @@ $.extend($.gS, {
 		},
 		handle:".gSSlide",
 //		queue:false
-		cache:true
+		cache:false
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	_init : function (data) {	

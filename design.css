@@ -15,12 +15,12 @@ body {
 }
 li {
 	outline:1px solid white;
-}
-.vertical li{
+	background-color:#440000;
 	text-align:center;
 /*	min-width:10px; */
 }
 
 .gSSlide .active {
+
 }
 
