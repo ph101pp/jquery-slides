@@ -350,12 +350,12 @@ $.extend($.gS, {
 				gS._positioning(data, i, opts.LoT, true):
 				gS._positioning(data, i, opts.RoB, true);
 		}
-		else if(i<ai || ai<0 || (slide.active && alignLoT)){
+		else if(true || i<ai || ai<0 || (slide.active && alignLoT)){
 			if(!slide.obj.hasClass(opts.LoT) || posAct) 
 				gS._positioning(data, i, opts.LoT);
 
 			slide.align=opts.LoT;
-			css[opts.LoT]=gS._cssFloat(slide.obj, opts.LoT);
+			css[opts.LoT]=slide.obj.position()[opts.LoT];
 		}
 		else {
 			if(!slide.obj.hasClass(opts.RoB) || posAct)  
@@ -483,7 +483,7 @@ $.extend($.gS, {
 				dcss[i]["margin-"+opts.LoT]= c-dcss[i][opts.WoH];
 				dcss[i]["margin-"+opts.RoB]= cS-c;
 			}
-			else if((i<ai) || ai<0 || (slide.obj.hasClass(opts.LoT) && ai==i))
+			else if(true || (i<ai) || ai<0 || (slide.obj.hasClass(opts.LoT) && ai==i))
 				dcss[i][opts.LoT]= c-dcss[i][opts.WoH];
 			else 
 				dcss[i][opts.RoB]= cS-c;
@@ -574,38 +574,52 @@ $.extend($.gS, {
 			dcss=data.dcss[data.ai],
 			ai=data.ai,
 			css={},
+			newcss={},
 			slide, k, i,
 			calc=function(i, key) {
 				return Math.round(data.css[i][key]+((dcss[i][key]-data.css[i][key])*(state[i] || state)));
 			},
 			getPosition = function(i, align) {
 				return css[i] ? css[i][align]+css[i][opts.WoH] : 0;
+			},
+			percent=function(value) {
+				if(state!=1 || !opts.percentage) return value;
+				return (100*value/data.cS)+"%";
 			};
 		state/=100;
-		
 //		Set Position
 		for(i=data.slides.length-1; slide=data.slides[i]; i--) {
 			css[i]={};
-			if(!slide.active) {
+			newcss[i]={}
+			
+			if(true || !slide.active) {
 				data.css[i][slide.align] = data.css[i][slide.align] || 0;
 				css[i][slide.align]=calc(i, slide.align);
+				newcss[i][slide.align]=percent(calc(i, slide.align));
 			}
+			
 		};
+		console.log(data);
 //		Set Width to fill up space
-		for(i=data.slides.length-1; slide=data.slides[i]; i--) if(!slide.active) {
+		for(i=data.slides.length-1; slide=data.slides[i]; i--) if(true || !slide.active) {
 			k= (slide.align == opts.LoT ? i+1:i-1);
-			if(data.slides[k]) !data.slides[k].active? 
+			if(data.slides[k]) false && !data.slides[k].active? 
 				css[i][opts.WoH] = css[k][slide.align]-css[i][slide.align]:
 				css[i][opts.WoH] = calc(i,opts.WoH);
 			else css[i][opts.WoH]= data.cS-css[i][slide.align];
 			
-			slide.obj.css(css[i]);		
+			newcss[i][opts.WoH]=percent(css[i][opts.WoH]);
+			
+			slide.obj.css(newcss[i]);		
 		}
 //		Set Active
-		if(css[ai]) {
+		if(false && css[ai]) {
 			if(opts.resizable) {
 				css[ai]["margin-"+opts.LoT]=getPosition(ai-1 , opts.LoT);
 				css[ai]["margin-"+opts.RoB]=getPosition(ai+1 , opts.RoB);
+				
+				newcss[ai]["margin-"+opts.LoT]=percent(css[ai]["margin-"+opts.LoT]);
+				newcss[ai]["margin-"+opts.RoB]=percent(css[ai]["margin-"+opts.RoB]);
 			}
 			else {
 				if(data.slides[ai].align == opts.LoT) {
@@ -616,8 +630,10 @@ $.extend($.gS, {
 					css[ai][opts.RoB]=getPosition(ai+1 ,opts.RoB);
 					css[ai][opts.WoH]=data.cS-css[ai][opts.RoB]-getPosition(ai-1,opts.LoT);
 				}
+				newcss[ai][opts.LoT]=percent(css[ai][opts.LoT]);
+				newcss[ai][opts.WoH]=percent(css[ai][opts.WoH]);
 			}
-			data.slides[ai].obj.css(css[ai]);
+			data.slides[ai].obj.css(newcss[ai]);
 		}
 		$.gS.timing("step","end",true);
 	},

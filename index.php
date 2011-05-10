@@ -11,63 +11,99 @@
 		<script type="text/javascript">
 			(function($) {
 				$(document).ready(function() {
- 					$(".horizontal").greenishSlides({	
+					var preActivate=function(){
+							var slide=$(this);
+								ai=slide.index();
+							$(".vertical").each(function(){
+								var slide = $(this).children().eq(ai);
+								if(!slide.hasClass("active")) slide.greenishSlides("activate");
+							});
+						},
+						preDeactivate= function () {
+							$(".vertical").each(function(){
+								$(".active",this).greenishSlides("deactivate");
+							});
+						},
+						config= {
+							cache:false,
+							percentage:true,
+							events: {
+								activate:"click",
+								deactivate:"click"
+							},
+							limits: {
+								min:0
+							},
+						};
+					
+ 					$(".horizontal").greenishSlides($.extend({},config,{	
  						vertical:false,
- 						
- 						hooks:{
- 							preActivate:function(data){console.log(data.ai); return data;}
- 						}
-					})
+ 						handle:".vertical"
+					}));
+					$(".vertical").greenishSlides($.extend({},config,{
+						vertical:true,
+						hooks:{
+							preActivateEvent:preActivate,
+							preDeactivateEvent:preDeactivate
+						}
+					}));	
 				});
 			})(jQuery);
 		</script>		
 	</head>
 	<body>
+	
+	<?php 
+require_once("randomFlickr/randomFlickr.class.php");
+$x = new randomFlickr($user);
+$x->setBadgeUrl("http://www.flickr.com/photos/");
+?>
+
 		<ul class="horizontal">
-			<li>	
-				<img src="//placekitten.com/400/400">
+			<li>		
+				<ul class="vertical">
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+				</ul>
 			</li>
-			<li>	
-				<img src="//placekitten.com/400/400">
+			<li>		
+				<ul class="vertical">
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+				</ul>
 			</li>
-			<li>	
-				<img src="//placekitten.com/400/400">
+			<li>		
+				<ul class="vertical">
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+				</ul>
 			</li>
-			<li>	
-				<img src="//placekitten.com/400/400">
+			<li>		
+				<ul class="vertical">
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+				</ul>
 			</li>
-			<li>	
-				<img src="//placekitten.com/400/400">
-			</li>
-			<li>	
-				<img src="//placekitten.com/400/400">
-			</li>
-			<li>	
-				<img src="//placekitten.com/400/400">
-			</li>
-			<li>	
-				<img src="//placekitten.com/400/400">
-			</li>
-			<li>	
-				<img src="//placekitten.com/400/400">
-			</li>
-			<li>	
-				<img src="//placekitten.com/400/400">
-			</li>
-			<li>	
-				<img src="//placekitten.com/400/400">
-			</li>
-			<li>	
-				<img src="//placekitten.com/400/400">
-			</li>
-			<li>	
-				<img src="//placekitten.com/400/400">
-			</li>
-			<li>	
-				<img src="//placekitten.com/400/400">
-			</li>
-			<li>	
-				<img src="//placekitten.com/400/400">
+			<li>		
+				<ul class="vertical">
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+						<li style="background-image:url(<?php $x->fetch(); echo $x->sSrc; ?>); background-position:center; background-size:cover"></li>
+				</ul>
 			</li>
 		</ul>
 	</body>
