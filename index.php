@@ -12,7 +12,7 @@
 				$(document).ready(function() {
 					$(".anything").greenishSlides({
 						vertical:true,
-						
+						resizable:true,
 						limits:{
 							"-1":{
 								min:100
@@ -28,7 +28,7 @@
 	</head>
 	<body>
 		<ul class="anything">
-			<li></li>
+			<li><img src="//placekitten.com/300/300" alt=""></li>
 			<li></li>
 			<li></li>
 			<li></li>

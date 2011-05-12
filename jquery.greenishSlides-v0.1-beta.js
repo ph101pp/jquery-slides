@@ -375,33 +375,25 @@ $.extend($.gS, {
 			from = bind==opts.LoT ? opts.RoB : opts.LoT,
 			cS = context["inner"+gS._capitalize(opts.WoH)](),
 			oS = slide.obj["outer"+gS._capitalize(opts.WoH)](),
-			marginLoT="margin-"+opts.LoT,
-			marginRoB="margin-"+opts.RoB,
-			css;
+			posLoT=p[opts.LoT],
+			posRoB=cS-p[opts.LoT]-oS,
+			css={position:"absolute"};
 
 		if(active) {
-			css={zIndex:0, position:"relative"};
+			css.zIndex=0;
 			css[opts.WoH]="auto";
-			data.css[i][marginLoT]=css[marginLoT]=p[opts.LoT];
-			data.css[i][marginRoB]=css[marginRoB]=cS-p[opts.LoT]-oS;
-			css[bind]=0;
+			data.css[i][opts.LoT]=css[opts.LoT]=posLoT;
+			data.css[i][opts.RoB]=css[opts.RoB]=posRoB;
 			slide.obj.addClass("posAct");
 			slide.align=bind;
 		}
 		else {
-			css={zIndex:1, position:"absolute"};
-			css[bind]=gS._cssFloat(slide.obj,"margin-"+bind);
-			if(!css[bind] && !gS._cssFloat(slide.obj,"margin-"+from)) 
-				bind==opts.LoT ? 
-					css[bind]=p[opts.LoT]:
-					css[bind]=cS-p[opts.LoT]-oS;
-			css[marginLoT]=0;
-			css[marginRoB]=0;
+			css.zIndex=1;
 			data.css[i][opts.WoH]=css[opts.WoH]=oS;
-			data.css[i][from]="auto";
+			css[bind]= bind==opts.LoT ? posLoT : posRoB;
+			css[from]=data.css[i][from]="auto";
 			slide.obj.removeClass("posAct");
 		}
-		css[from]="auto";
 		slide.obj.removeClass(from).addClass(bind).css(css);
 	},
 ////////////////////////////////////////////////////////////////////////////////
@@ -435,8 +427,6 @@ $.extend($.gS, {
 								opts.limits.min : 
 								undefined
 			};
-			console.log(data);
-			console.log(data.slides.length,i);
 		if(cssMin && cssMin > limits.max) limits.max=cssMin;
 		if(cssMax && cssMax < limits.min) limits.min=cssMax;
 		return limits;
@@ -487,8 +477,8 @@ $.extend($.gS, {
 			c+= dcss[i][opts.WoH];
 
 			if(opts.resizable && i==ai) {			
-				dcss[i]["margin-"+opts.LoT]= c-dcss[i][opts.WoH];
-				dcss[i]["margin-"+opts.RoB]= cS-c;
+				dcss[i][opts.LoT]= c-dcss[i][opts.WoH];
+				dcss[i][opts.RoB]= cS-c;
 			}
 			else if((i<ai) || ai<0 || (slide.obj.hasClass(opts.LoT) && ai==i))
 				dcss[i][opts.LoT]= c-dcss[i][opts.WoH];
@@ -559,7 +549,8 @@ $.extend($.gS, {
 			}
 		}
 		
-//		Start Animation for Slides		
+//		Start Animation for Slides	
+console.log(data);
 		context
 			.dequeue("gSpreAnimation") // hook: custom queue that runs before the animation
 			.css({textIndent:0})
@@ -611,8 +602,8 @@ $.extend($.gS, {
 //		Set Active
 		if(css[ai]) {
 			if(opts.resizable) {
-				css[ai]["margin-"+opts.LoT]=getPosition(ai-1 , opts.LoT);
-				css[ai]["margin-"+opts.RoB]=getPosition(ai+1 , opts.RoB);
+				css[ai][opts.LoT]=getPosition(ai-1 , opts.LoT);
+				css[ai][opts.RoB]=getPosition(ai+1 , opts.RoB);
 			}
 			else {
 				if(data.slides[ai].align == opts.LoT) {
