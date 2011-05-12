@@ -411,6 +411,7 @@ $.extend($.gS, {
 			opts=data.opts,
 			context=data.context,
 			slide= data.slides[i],
+			k="-"+(data.slides.length-i),
 			cssMin = data.css[i]["min-"+opts.WoH] || gS._cssFloat(slide.obj,"min-"+opts.WoH),
 			cssMax = data.css[i]["max-"+opts.WoH] || gS._cssFloat(slide.obj,"max-"+opts.WoH),
 			limits={
@@ -418,18 +419,24 @@ $.extend($.gS, {
 					cssMax : 
 					opts.limits[i] && !isNaN(opts.limits[i].max) ? 
 						opts.limits[i].max :
-						!isNaN(opts.limits.max) ? 
-							opts.limits.max : 
-							undefined,
+						opts.limits[k] && !isNaN(opts.limits[k].max) ? 
+							opts.limits[k].max :
+							!isNaN(opts.limits.max) ? 
+								opts.limits.max : 
+								undefined,
 				
 				min:!isNaN(cssMin) ? 
 					cssMin :
 					opts.limits[i] && !isNaN(opts.limits[i].min) ? 
 						opts.limits[i].min :
-						!isNaN(opts.limits.min) ? 
-							opts.limits.min : 
-							undefined
+						opts.limits[k] && !isNaN(opts.limits[k].min) ? 
+							opts.limits[k].min :
+							!isNaN(opts.limits.min) ? 
+								opts.limits.min : 
+								undefined
 			};
+			console.log(data);
+			console.log(data.slides.length,i);
 		if(cssMin && cssMin > limits.max) limits.max=cssMin;
 		if(cssMax && cssMax < limits.min) limits.min=cssMax;
 		return limits;

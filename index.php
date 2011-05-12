@@ -10,11 +10,33 @@
 		<script type="text/javascript">
 			(function($) {
 				$(document).ready(function() {
+					$(".anything").greenishSlides({
+						vertical:true,
+						
+						limits:{
+							"-1":{
+								min:100
+							}
+						
+						}
+					
+					
+					});
 				});
 			})(jQuery);
 		</script>		
 	</head>
 	<body>
-
+		<ul class="anything">
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+		</ul>
 	</body>
 </html>
