@@ -17,7 +17,10 @@
 							"-1":{
 								min:100
 							}
-						
+						},
+						hooks:{
+							preActivateAnimation: function(){
+							}
 						}
 					
 					

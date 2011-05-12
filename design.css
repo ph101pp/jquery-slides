@@ -4,20 +4,21 @@ body {
 	padding:0;
 	background-color:black;
 	overflow:hidden;
-}
-
-ul{
 	position:absolute;
 	height:100%;
 	width:100%;
-	margin:0;
-	padding:0;
+}
+
+ul{
+	position:relative;
+	height:400px;
+	margin:10px;
+	border:10px solid #ffffff;
 }
 li {
 	outline:1px solid white;
 	background-color:#440000;
 	text-align:center;
-/*	min-width:10px; */
 }
 
 .gSSlide .active {

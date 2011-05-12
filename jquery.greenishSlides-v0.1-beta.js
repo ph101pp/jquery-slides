@@ -57,8 +57,14 @@ $.fn.greenishSlides = function (method){
 		else args=[data].concat(args);
 		$(context[i]).data("greenishSlidesData",data);
 
+	
 		if(call=="triggerHook") return $.gS[call].apply(this, args);
-		else $.gS[call].apply(this, args);
+		else try { 
+				$.gS[call].apply(this, args);
+			}
+			catch(err){
+				if(err!="triggerHook") throw err;
+			};
 	};
 	return this;
 };
@@ -121,35 +127,17 @@ $.extend($.gS, {
 		opts=$.gS.opts(data, data.opts, true);
 
 //		binding hooks to make them available.
+		for(hooks in opts.hooks) $.gS.bindHook(data,hooks,opts.hooks[hooks]);
+		data.context.greenishSlides("triggerHook","preInit"); // hook
+		
 				
 		var gS=$.gS,
 			context=data.context,
 ////		Extends defaults into opts.
 			opts=gS.opts(data, data.opts, true),
 			slides = context.css(gS.css.context).children().addClass(opts.classes.slide).css(gS.css.gSSlide),
-			activateDeactivateEvent=function (e, triggeredSlide) {
-				var target=$(e.target);
-				target= triggeredSlide ? [target,target] : eventSlide(e);
-				if((e.type == "focusin" || e.type==opts.events.activate) && target && !target[0].hasClass(opts.classes.active)) {
-					target[0].greenishSlides("triggerHook","preActivateEvent"); // hook
-					target[0].greenishSlides("activate");
-				}
-				else if(!opts.stayOpen && (e.type == "focusout" || e.type==opts.events.deactivate) && target && target[0].hasClass(opts.classes.active) && target[1].has(e.relatedTarget).length <=0 && target[1] != e.relatedTarget) {
-					target[0].greenishSlides("triggerHook","preDeactivateEvent");
-					target[0].greenishSlides("deactivate");
-				}
-			},
-			eventSlide= function(e) {
-				var target=$(e.target),
-					handle=target.is(opts.handle) ? target : $(opts.handle, context).has(target).eq(0),
-					slide = handle.hasClass(opts.classes.slide) ? handle : context.children().has(handle);
-					return slide.length ? [slide, handle] : false;					
-			},
 			event;
 
-		for(hooks in opts.hooks) gS.bindHook(data,hooks,opts.hooks[hooks]);
-		context.greenishSlides("triggerHook","preInit"); // hook
-		
 		gS.timing("init" , "Start");
 		
 ////	Sets css and classes
@@ -187,7 +175,7 @@ $.extend($.gS, {
 				"focusout.gS ":
 				opts.events.deactivate+".gS focusout.gS ";
 		if(!opts.handle) event=opts.events.activate="gSactivate";
-		context.bind(event, activateDeactivateEvent); // focusin for Keyboard accessability;
+		context.bind(event, function(e) {context.greenishSlides("event",e)}); // focusin for Keyboard accessability;
 ////	/Activate and Deactivate events
 
 ////	First Initialisation
@@ -203,6 +191,27 @@ $.extend($.gS, {
 		context.greenishSlides("triggerHook","postInit"); // hook
 		
 		gS.timing("init" , "Done");
+	},
+////////////////////////////////////////////////////////////////////////////////
+	event: function (data, e, triggeredSlide) {
+		var target=$(e.target),
+			opts=data.opts,
+			context=data.context,
+			handle, slide;
+		if(triggeredSlide) target=[target,target];
+		else {
+			handle =target.is(opts.handle) ? target : $(opts.handle, context).has(target).eq(0),
+			slide = handle.hasClass(opts.classes.slide) ? handle : context.children().has(handle);
+			target= slide.length ? [slide, handle] : false;
+		}
+		if((e.type == "focusin" || e.type==opts.events.activate) && target && !target[0].hasClass(opts.classes.active)) {
+			target[0].greenishSlides("triggerHook","preActivateEvent"); // hook
+			target[0].greenishSlides("activate");
+		}
+		else if(!opts.stayOpen && (e.type == "focusout" || e.type==opts.events.deactivate) && target && target[0].hasClass(opts.classes.active) && target[1].has(e.relatedTarget).length <=0 && target[1] != e.relatedTarget) {
+			target[0].greenishSlides("triggerHook","preDeactivateEvent");
+			target[0].greenishSlides("deactivate");
+		}
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	activate : function (data) {
@@ -304,7 +313,9 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	triggerHook : function (data, hook, param) {
 		if(data.hooks[hook] && data.hooks[hook].length <= 0) return param;
-		for(var key in data.hooks[hook]) param=data.hooks[hook][key].apply(this, [data,param]);	
+		for(var key in data.hooks[hook]) 
+			if(param=data.hooks[hook][key].apply(this, [data,param]) !== false) continue;
+			else throw "triggerHook";
 		return param;
 	},
 ////////////////////////////////////////////////////////////////////////////////
@@ -342,7 +353,7 @@ $.extend($.gS, {
 			posAct = slide.obj.hasClass("posAct"),
 			alignLoT= ai==i && slide.obj.hasClass(opts.LoT);
 		
-		css[opts.WoH]=slide.obj[opts.WoH]();
+		css[opts.WoH]=slide.obj["outer"+gS._capitalize(opts.WoH)](true);
 		slide.active=(i==ai?true:false);
 		
 		if(opts.resizable && slide.active) {
@@ -353,16 +364,18 @@ $.extend($.gS, {
 		else if(i<ai || ai<0 || (slide.active && alignLoT)){
 			if(!slide.obj.hasClass(opts.LoT) || posAct) 
 				gS._positioning(data, i, opts.LoT);
-
-			slide.align=opts.LoT;
-			css[opts.LoT]=gS._cssFloat(slide.obj, opts.LoT);
+			else {
+				slide.align=opts.LoT;
+				css[opts.LoT]=gS._cssFloat(slide.obj, opts.LoT);
+			}
 		}
 		else {
 			if(!slide.obj.hasClass(opts.RoB) || posAct)  
 				gS._positioning(data, i, opts.RoB);
-			
-			slide.align=opts.RoB;
-			css[opts.RoB]=gS._cssFloat(slide.obj, opts.RoB);
+			else {
+				slide.align=opts.RoB;
+				css[opts.RoB]=gS._cssFloat(slide.obj, opts.RoB);
+			}
 		}
 	},
 ////////////////////////////////////////////////////////////////////////////////
@@ -373,11 +386,11 @@ $.extend($.gS, {
 			slide=data.slides[i],
 			p = slide.obj.position(),
 			from = bind==opts.LoT ? opts.RoB : opts.LoT,
-			cS = context["inner"+gS._capitalize(opts.WoH)](),
-			oS = slide.obj["outer"+gS._capitalize(opts.WoH)](),
+			cS = data.cS,
+			oS = slide.obj["outer"+gS._capitalize(opts.WoH)](true),
 			posLoT=p[opts.LoT],
 			posRoB=cS-p[opts.LoT]-oS,
-			css={position:"absolute"};
+			css={};
 
 		if(active) {
 			css.zIndex=0;
@@ -385,20 +398,20 @@ $.extend($.gS, {
 			data.css[i][opts.LoT]=css[opts.LoT]=posLoT;
 			data.css[i][opts.RoB]=css[opts.RoB]=posRoB;
 			slide.obj.addClass("posAct");
-			slide.align=bind;
 		}
 		else {
 			css.zIndex=1;
 			data.css[i][opts.WoH]=css[opts.WoH]=oS;
-			css[bind]= bind==opts.LoT ? posLoT : posRoB;
+			data.css[i][bind] = css[bind]= bind==opts.LoT ? posLoT : posRoB;
 			css[from]=data.css[i][from]="auto";
 			slide.obj.removeClass("posAct");
 		}
+
+		slide.align=bind;
 		slide.obj.removeClass(from).addClass(bind).css(css);
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	_getLimits : function (data, i) {
-//		console.log("limits"+i);
 		var gS = $.gS,
 			opts=data.opts,
 			context=data.context,
@@ -500,7 +513,7 @@ $.extend($.gS, {
 			i,
 			dcss=data.dcss=opts.cache ? data.dcss : {},
 			limits=data.limits= opts.cache ? data.limits : {};
-			data.cS = opts.cache && data.cS ? data.cS : context[opts.WoH]();
+			data.cS = opts.cache && data.cS ? data.cS : context["inner"+gS._capitalize(opts.WoH)]();
  
 //		Get data
 		for(i=slides.length-1; i >=0 ; i--) {
@@ -531,26 +544,14 @@ $.extend($.gS, {
 //		Set hooks for either Activation or Deactivation.
 		if(active.length <=0) {
 			active.greenishSlides("triggerHook","preDeactivateAnimation"); // hook
-			postAnimation = function () {
-				var deactive=$(this).find("."+opts.classes.slide+".gSdeactivated");
-				if(deactive.length>0) {
-					deactive.greenishSlides("triggerHook","postDeactivate"); // hook
-					deactive.removeClass("gSdeactivated");
-				}
-			}
+			postAnimation = function () {context.greenishSlides("postDeactivate")}; // hook
 		}
 		else {  
 			active.greenishSlides("triggerHook","preActivateAnimation"); // hook
-			postAnimation = function () {
-				var active=$(this).find("."+opts.classes.slide+"."+opts.classes.active);
-				if(active.length>0) {
-					active.greenishSlides("triggerHook","postActivate"); // hook
-				}
-			}
+			postAnimation = function () {context.greenishSlides("postActivate")}; // hook
 		}
 		
 //		Start Animation for Slides	
-console.log(data);
 		context
 			.dequeue("gSpreAnimation") // hook: custom queue that runs before the animation
 			.css({textIndent:0})
@@ -561,13 +562,31 @@ console.log(data);
 	
 	},
 ////////////////////////////////////////////////////////////////////////////////
+	postActivate : function (data) {
+		if(data.ai>0) {
+			data.active.greenishSlides("triggerHook","postActivate"); // hook
+		}
+	},
+////////////////////////////////////////////////////////////////////////////////
+	postDeactivate : function (data) {
+		var deactive=$(this).find("."+data.opts.classes.slide+".gSdeactivated");
+		if(deactive.length>0) {
+			deactive.greenishSlides("triggerHook","postDeactivate"); // hook
+			deactive.removeClass("gSdeactivated");
+		}
+	},
+////////////////////////////////////////////////////////////////////////////////
 	_animationStep : function (state, obj) {
 		$.gS.timing("step","start",true)
 		var data= $(obj.elem).dequeue("gSanimationStep").data("greenishSlidesData"); // hook: custom queue that runs once on every step of the animation (MAKE IT FAST!)
-		if(!data) {
+		try{
+			if(!data) throw data;
+			$.gS.triggerHook(data, "step");
+		}
+		catch(err){
 			$(this).stop();
 			return;
-		};
+		}
 		var	opts=data.opts,
 			dcss=data.dcss[data.ai],
 			ai=data.ai,
@@ -637,9 +656,7 @@ console.log(data);
 		context : {
 			zoom:1,
 			listStyle:"none",
-			margin:0,
 			padding:0,
-			border:0
 		},
 		gSSlide : {
 			position:"absolute",
@@ -651,12 +668,10 @@ console.log(data);
 			textIndent:0
 		},
 		gSHorizontal:{
-			marginBottom:"-100%",
 			height:"100%",
 			top:0
 		},
 		gSVertical:{
-			marginRight:"-100%",
 			width:"100%",
 			left:0
 		}
