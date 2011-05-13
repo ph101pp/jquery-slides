@@ -11,12 +11,9 @@
 			(function($) {
 				$(document).ready(function() {
 					$(".anything").greenishSlides({
-						vertical:true,
+						vertical:false,
 						resizable:true,
 						limits:{
-							"-1":{
-								min:100
-							}
 						},
 						hooks:{
 							preActivateAnimation: function(){

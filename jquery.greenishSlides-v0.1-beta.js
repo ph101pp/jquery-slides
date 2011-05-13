@@ -356,27 +356,26 @@ $.extend($.gS, {
 		css[opts.WoH]=slide.obj["outer"+gS._capitalize(opts.WoH)](true);
 		slide.active=(i==ai?true:false);
 		
-		if(opts.resizable && slide.active) {
-			alignLoT ?
-				gS._positioning(data, i, opts.LoT, true):
-				gS._positioning(data, i, opts.RoB, true);
-		}
-		else if(i<ai || ai<0 || (slide.active && alignLoT)){
+		//left
+		if(!opts.resizable || !data.limited || i<ai || ai<0)
 			if(!slide.obj.hasClass(opts.LoT) || posAct) 
 				gS._positioning(data, i, opts.LoT);
 			else {
 				slide.align=opts.LoT;
-				css[opts.LoT]=gS._cssFloat(slide.obj, opts.LoT);
+				css[opts.LoT]=slide.obj.position()[opts.LoT];
 			}
-		}
-		else {
+		//right
+		else if(!slide.active)
 			if(!slide.obj.hasClass(opts.RoB) || posAct)  
 				gS._positioning(data, i, opts.RoB);
 			else {
 				slide.align=opts.RoB;
 				css[opts.RoB]=gS._cssFloat(slide.obj, opts.RoB);
 			}
-		}
+		//active
+		else alignLoT ?
+				gS._positioning(data, i, opts.LoT, true):
+				gS._positioning(data, i, opts.RoB, true);
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	_positioning : function (data, i, bind, active) {
@@ -417,8 +416,8 @@ $.extend($.gS, {
 			context=data.context,
 			slide= data.slides[i],
 			k="-"+(data.slides.length-i),
-			cssMin = data.css[i]["min-"+opts.WoH] || gS._cssFloat(slide.obj,"min-"+opts.WoH),
-			cssMax = data.css[i]["max-"+opts.WoH] || gS._cssFloat(slide.obj,"max-"+opts.WoH),
+			cssMin = gS._cssFloat(slide.obj,"min-"+opts.WoH),
+			cssMax = gS._cssFloat(slide.obj,"max-"+opts.WoH),
 			limits={
 				max:!isNaN(cssMax) ? 
 					cssMax : 
@@ -442,6 +441,7 @@ $.extend($.gS, {
 			};
 		if(cssMin && cssMin > limits.max) limits.max=cssMin;
 		if(cssMax && cssMax < limits.min) limits.min=cssMax;
+		if(limits.min || limits.max) data.limited=true;
 		return limits;
 	},
 ////////////////////////////////////////////////////////////////////////////////
@@ -489,14 +489,14 @@ $.extend($.gS, {
 		for(i=c=0; slide=data.slides[i]; i++) {
 			c+= dcss[i][opts.WoH];
 
-			if(opts.resizable && i==ai) {			
+			if(!opts.resizable || !data.limited || i<ai || ai<0)
+				dcss[i][opts.LoT]= c-dcss[i][opts.WoH];
+			else if(i!=ai) 
+				dcss[i][opts.RoB]= cS-c;
+			else {			
 				dcss[i][opts.LoT]= c-dcss[i][opts.WoH];
 				dcss[i][opts.RoB]= cS-c;
 			}
-			else if((i<ai) || ai<0 || (slide.obj.hasClass(opts.LoT) && ai==i))
-				dcss[i][opts.LoT]= c-dcss[i][opts.WoH];
-			else 
-				dcss[i][opts.RoB]= cS-c;
 		}
 		return dcss;
 		
@@ -513,16 +513,15 @@ $.extend($.gS, {
 			i,
 			dcss=data.dcss=opts.cache ? data.dcss : {},
 			limits=data.limits= opts.cache ? data.limits : {};
+			data.limited= opts.cache ? data.limited : false;
 			data.cS = opts.cache && data.cS ? data.cS : context["inner"+gS._capitalize(opts.WoH)]();
- 
 //		Get data
 		for(i=slides.length-1; i >=0 ; i--) {
 			data.slides[i] = data.slides[i] || {	
 					obj:slides.eq(i)
 				}
-			
-			gS._getCSS(data, i);
 			data.limits[i]=data.limits[i] || gS._getLimits(data,i);
+			gS._getCSS(data, i);
 		};
 
 		data.dcss[ai] = data.dcss[ai] || gS._getDCss(data);
@@ -591,50 +590,47 @@ $.extend($.gS, {
 			dcss=data.dcss[data.ai],
 			ai=data.ai,
 			css={},
+			newCss={},
 			slide, k, i,
+			slideAlignNot= data.slides[ai] && data.slides[ai].align == opts.LoT ? opts.RoB : opts.LoT;
 			calc=function(i, key) {
-				return Math.round(data.css[i][key]+((dcss[i][key]-data.css[i][key])*(state[i] || state)));
+				return Math.round(data.css[i][key]+((dcss[i][key]-data.css[i][key])*state));
 			},
 			getPosition = function(i, align) {
 				return css[i] ? css[i][align]+css[i][opts.WoH] : 0;
+			},
+			percent=function(value) {
+				if(state!=1 || !opts.resizable || data.limited || true) return value;
+				return (100*value/data.cS)+"%";
 			};
 		state/=100;
 		
 //		Set Position
 		for(i=data.slides.length-1; slide=data.slides[i]; i--) {
 			css[i]={};
-			if(!slide.active) {
-				data.css[i][slide.align] = data.css[i][slide.align] || 0;
-				css[i][slide.align]=calc(i, slide.align);
+			newCss[i]={};
+			data.css[i][slide.align] = data.css[i][slide.align] || 0;
+			css[i][slide.align]=calc(i, slide.align);
+			if(slide.active && opts.resizable && data.limited) {
+				newCss[i][slideAlignNot]=css[i][slideAlignNot]=calc(i, slideAlignNot);
 			}
+			
+			newCss[i][slide.align]=css[i][slide.align];
 		};
 //		Set Width to fill up space
-		for(i=data.slides.length-1; slide=data.slides[i]; i--) if(!slide.active) {
-			k= (slide.align == opts.LoT ? i+1:i-1);
-			if(data.slides[k]) !data.slides[k].active? 
-				css[i][opts.WoH] = css[k][slide.align]-css[i][slide.align]:
-				css[i][opts.WoH] = calc(i,opts.WoH);
-			else css[i][opts.WoH]= data.cS-css[i][slide.align];
+		for(i=data.slides.length-1; slide=data.slides[i]; i--) {
 			
-			slide.obj.css(css[i]);		
-		}
-//		Set Active
-		if(css[ai]) {
-			if(opts.resizable) {
-				css[ai][opts.LoT]=getPosition(ai-1 , opts.LoT);
-				css[ai][opts.RoB]=getPosition(ai+1 , opts.RoB);
-			}
+			if(slide.active && opts.resizable && data.limited)
+				css[i][opts.WoH]=data.cS-css[i][slide.align]-css[i][slideAlignNot];
 			else {
-				if(data.slides[ai].align == opts.LoT) {
-					css[ai][opts.LoT]=getPosition(ai-1 ,opts.LoT);
-					css[ai][opts.WoH]=data.cS-css[ai][opts.LoT]-getPosition(ai+1,opts.RoB);
-				}
-				else {
-					css[ai][opts.RoB]=getPosition(ai+1 ,opts.RoB);
-					css[ai][opts.WoH]=data.cS-css[ai][opts.RoB]-getPosition(ai-1,opts.LoT);
-				}
+				k= (slide.align == opts.LoT ? i+1:i-1);
+				data.slides[k] ?
+					css[i][opts.WoH]=css[k][slide.align]-css[i][slide.align]:
+					css[i][opts.WoH]=data.cS-css[i][slide.align];
+				newCss[i][opts.WoH]=percent(css[i][opts.WoH]);
 			}
-			data.slides[ai].obj.css(css[ai]);
+			
+			slide.obj.css(newCss[i]);		
 		}
 		$.gS.timing("step","end",true);
 	},
