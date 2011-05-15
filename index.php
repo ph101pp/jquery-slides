@@ -13,6 +13,8 @@
 					$(".anything").greenishSlides({
 						vertical:false,
 						resizable:true,
+						keyEvents:true,
+						handle:"div",
 						limits:{
 						},
 						hooks:{
@@ -28,7 +30,7 @@
 	</head>
 	<body>
 		<ul class="anything">
-			<li><img src="//placekitten.com/300/300" alt=""></li>
+			<li><div><img src="//placekitten.com/300/300" alt=""></div></li>
 			<li></li>
 			<li></li>
 			<li></li>
