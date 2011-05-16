@@ -112,9 +112,10 @@ $.extend($.gS, {
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	_init : function (data) {	
-		context=data.context;
+		var context=data.context,
 ////	Extends defaults into opts.
-		opts=$.gS.opts(data, data.opts, true);
+			opts=$.gS.opts(data, data.opts, true),
+			hooks;
 
 //		binding hooks to make them available.
 		for(hooks in opts.hooks) $.gS.bindHook(data,hooks,opts.hooks[hooks]);
@@ -334,10 +335,10 @@ $.extend($.gS, {
 	_getCSS : function (data, i) {
 		var gS = $.gS,
 			opts=data.opts,
-			context=data.context
+			context=data.context,
 			slide= data.slides[i],
 			ai=data.ai,
-			css=data.css[i]=data.css[i]||{}
+			css=data.css[i]=data.css[i]||{},
 			posAct = slide.obj.hasClass("posAct"),
 			alignLoT= ai==i && slide.obj.hasClass(opts.LoT);
 		
@@ -440,11 +441,13 @@ $.extend($.gS, {
 			ai=data.ai,
 			skip={},
 			count=data.slides.length,
-			fullSize=cS=data.cS,
+			cS=data.cS,
+			fullSize=cS,
 			newSize,
 			hitMax,
-			i,c,
+			i,c,slide,limit,
 			dcss={};
+		
 //		Calculate Width
 		for(i=c=0; slide=data.slides[i]; i++) {
 			if(!slide.active) c+=data.limits[i].min || 0;
@@ -580,7 +583,7 @@ $.extend($.gS, {
 			css={},
 			newCss={},
 			slide, k, i,
-			slideAlignNot= data.slides[ai] && data.slides[ai].align == opts.LoT ? opts.RoB : opts.LoT;
+			slideAlignNot= data.slides[ai] && data.slides[ai].align == opts.LoT ? opts.RoB : opts.LoT,
 			calc=function(i, key) {
 				return Math.round(data.css[i][key]+((dcss[i][key]-data.css[i][key])*state));
 			},
