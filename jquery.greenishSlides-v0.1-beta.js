@@ -530,9 +530,9 @@ $.extend($.gS, {
 
 //		Get and store Data for the animation function
 		gS._getData(data);
-		
+
 //		Set hooks for either Activation or Deactivation.
-		if(active.length <=0) {
+		if(ai < 0) {
 			active.greenishSlides("_triggerHook","preDeactivateAnimation"); // hook
 			postAnimation = function () {context.greenishSlides("postDeactivate")}; // hook
 		}
@@ -553,7 +553,7 @@ $.extend($.gS, {
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	postActivate : function (data) {
-		if(data.ai>0) {
+		if(data.ai>=0) {
 			data.active.greenishSlides("_triggerHook","postActivate"); // hook
 		}
 	},
