@@ -217,13 +217,13 @@ $.extend($.gS, {
 			slide=$(slide);
 
 		if(slide.hasClass(opts.classes.active)) return;
-		slide.siblings("."+opts.classes.active).removeClass(opts.classes.active).addClass("gSdeactivated");
 		
 		deactivated =slide.siblings(".gSdeactivated");
 		if(deactivated.length > 0) {
 			deactivated.removeClass("gSdeactivated");
 			slide.greenishSlides("_triggerHook","postDeactivate"); // hook
 		}
+		slide.siblings("."+opts.classes.active).removeClass(opts.classes.active).addClass("gSdeactivated");
 		slide.addClass(opts.classes.active)
 		data.active=slide;
 		data.ai=slide.index();
