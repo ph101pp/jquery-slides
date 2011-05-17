@@ -15,7 +15,16 @@
 						resizable:true,
 						keyEvents:true,
 						limits:{
+							min:10,
+							1:{
+								min:15,
+								max:200
+							},
+							"-1":{
+								min:30
+							}
 						},
+					
 						hooks:{
 							preActivateAnimation: function(){
 							}
