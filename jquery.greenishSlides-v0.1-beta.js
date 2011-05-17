@@ -426,7 +426,7 @@ $.extend($.gS, {
 			};
 		if(cssMin && cssMin > limits.max) limits.max=cssMin;
 		if(cssMax && cssMax < limits.min) limits.min=cssMax;
-		if(true || limits.min || limits.max) data.limited=true; //preparation for positioning relative.
+		if(limits.min || limits.max) data.limited=true; //preparation for positioning relative.
 		return limits;
 	},
 ////////////////////////////////////////////////////////////////////////////////
@@ -587,9 +587,12 @@ $.extend($.gS, {
 			getPosition = function(i, align) {
 				return css[i] ? css[i][align]+css[i][opts.WoH] : 0;
 			},
-			percent=function(value) {
-				if(state!=1 || !opts.resizable || data.limited || true) return value;
-				return (100*value/data.cS)+"%";
+			percent=function(value, adjust) {
+				if(state!=1 || !opts.resizable || data.limited) return value;
+				
+				return adjust ?
+					(0.01+(100*value/data.cS))+"%":
+					(100*value/data.cS)+"%";
 			};
 		state/=100;
 		
@@ -603,7 +606,7 @@ $.extend($.gS, {
 				newCss[i][slideAlignNot]=css[i][slideAlignNot]=calc(i, slideAlignNot);
 			}
 			
-			newCss[i][slide.align]=css[i][slide.align];
+			newCss[i][slide.align]=percent(css[i][slide.align]);
 		};
 //		Set Width to fill up space
 		for(i=data.slides.length-1; slide=data.slides[i]; i--) {
@@ -615,7 +618,9 @@ $.extend($.gS, {
 				data.slides[k] ?
 					css[i][opts.WoH]=css[k][slide.align]-css[i][slide.align]:
 					css[i][opts.WoH]=data.cS-css[i][slide.align];
-				newCss[i][opts.WoH]=percent(css[i][opts.WoH]);
+				 i==data.slides.length-1 ?
+				 	newCss[i][opts.WoH]=percent(css[i][opts.WoH], true):
+				 	newCss[i][opts.WoH]=percent(css[i][opts.WoH]);
 			}
 			
 			slide.obj.css(newCss[i]);		

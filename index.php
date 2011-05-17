@@ -14,7 +14,6 @@
 						vertical:false,
 						resizable:true,
 						keyEvents:true,
-						handle:"div",
 						limits:{
 						},
 						hooks:{
