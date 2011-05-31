@@ -1,5 +1,5 @@
 /*! 
- * greenishSlides: jQuery Slideshow plugin - v0.1 - beta (4/6/2011)
+ * greenishSlides: jQuery Slideshow plugin - v0.2 - beta (5/13/2011)
  * http://www.philippadrian.com
  * 
  * Copyright (c) 2011 Philipp C. Adrian
@@ -9,11 +9,11 @@
  
  /*
  */
-;(function($) {
+(function($) {
 ////////////////////////////////////////////////////////////////////////////////
 $.fn.greenishSlides = function (method){
 	var context=$(this),
-		data, call, args;
+		data, call, args, i;
 	if(typeof(method) === 'object' || !method) {
 		args=arguments;
 		call="_init";
@@ -26,11 +26,11 @@ $.fn.greenishSlides = function (method){
 	
 	for(i=0; i<context.length; i++) {
 		data=$(context[i]).data("greenishSlidesData") || $(context[i]).parent().data("greenishSlidesData");
-   		if(data && call=="_init") {
-   			$.gS.opts(data, method, true);
-   			continue;
-   		}
-   		data = data || {
+		if(data && call=="_init") {
+			$.gS.opts(data, method, true);
+			continue;
+		}
+		data = data || {
 				context : $(context[i]),
 				css:{},
 				dcss:{},
@@ -38,7 +38,7 @@ $.fn.greenishSlides = function (method){
 				hooks:[],
 				slides:[],
 				ai:-1,
-				active:$(),
+				active:$()
 			};
 		if(call=="_init") {
 			data.opts=method=="_init"?Array.prototype.slice.call(arguments,1):method;
@@ -54,8 +54,8 @@ $.fn.greenishSlides = function (method){
 			}
 			catch(err){
 				if(err!="hookReturnedFalse") throw err;
-			};
-	};
+			}
+	}
 	return this;
 };
 $.gS = $().greenishSlides;
@@ -67,7 +67,7 @@ $.extend($.gS, {
 	//	return;
 		var timer,time;
 		comment=comment||"";
-		timer = new Date()
+		timer = new Date();
 		$.gS.timer[key] = $.gS.timer[key]|| new Date();
 				
 		time = timer - $.gS.timer[key];
@@ -113,20 +113,18 @@ $.extend($.gS, {
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	_init : function (data) {	
-		var context=data.context,
-////	Extends defaults into opts.
-			opts=$.gS.opts(data, data.opts, true),
-			hooks;
-
-//		binding hooks to make them available.
-		for(hooks in opts.hooks) $.gS.bindHook(data,hooks,opts.hooks[hooks]);
-		data.context.greenishSlides("_triggerHook","preInit"); // hook
-		
-				
 		var gS=$.gS,
 			context=data.context,
-			slides = context.css(gS.css.context).children().addClass(opts.classes.slide).css(gS.css.gSSlide),
-			event;
+////	Extends defaults into opts.
+			opts=gS.opts(data, data.opts, true),
+			hooks, slides, event;
+
+//		binding hooks to make them available.
+		for(hooks in opts.hooks) gS.bindHook(data,hooks,opts.hooks[hooks]);
+		context.greenishSlides("_triggerHook","preInit"); // hook
+		
+				
+		slides = context.css(gS.css.context).children().addClass(opts.classes.slide).css(gS.css.gSSlide);
 
 		gS.timing("init" , "Start");
 		
@@ -149,8 +147,8 @@ $.extend($.gS, {
 		
 		if(opts.swipeEvents && context.swipe) context.swipe({
 			threshold: opts.swipeThreshold,
-			swipeLeft: function(){context.greenishSlides("next")},
-			swipeRight: function(){context.greenishSlides("prev")}
+			swipeLeft: function(){context.greenishSlides("next");},
+			swipeRight: function(){context.greenishSlides("prev");}
 		});
 ////	/Keyboard and Swipe events.
 
@@ -165,7 +163,7 @@ $.extend($.gS, {
 				"focusout.gS ":
 				opts.events.deactivate+".gS focusout.gS ";
 		if(!opts.handle) event=opts.events.activate="gSactivate";
-		context.bind(event, function(e) {context.greenishSlides("event",e)}); // focusin for Keyboard accessability;
+		context.bind(event, function(e) {context.greenishSlides("event",e);}); // focusin for Keyboard accessability;
 ////	/Activate and Deactivate events
 
 ////	First Initialisation
@@ -190,7 +188,7 @@ $.extend($.gS, {
 			handle, slide;
 		if(triggeredSlide) target=[target,target];
 		else {
-			handle =target.is(opts.handle) ? target : $(opts.handle, context).has(target).eq(0),
+			handle =target.is(opts.handle) ? target : $(opts.handle, context).has(target).eq(0);
 			slide = handle.hasClass(opts.classes.slide) ? handle : context.children().has(handle);
 			target= slide.length ? [slide, handle] : false;
 		}
@@ -220,16 +218,16 @@ $.extend($.gS, {
 		if(slide.hasClass(opts.classes.active)) return;
 		
 		slide.siblings("."+opts.classes.active).removeClass(opts.classes.active).addClass(opts.classes.deactivating);
-		slide.addClass(opts.classes.active)
+		slide.addClass(opts.classes.active);
 		data.active=slide;
 		data.ai=slide.index();
 		
 		slide.greenishSlides("_triggerHook","preActivate"); // hook
 		
 		gS.update(data);
- 	},
+	},
 ////////////////////////////////////////////////////////////////////////////////
- 	deactivate : function (data) {
+	deactivate : function (data) {
 		var gS=$.gS,
 			slide=$(this),
 			context=data.context,
@@ -245,7 +243,7 @@ $.extend($.gS, {
 		data.ai="-1";
 
 		gS.update(data);
- 	}, 	
+	}, 
 ////////////////////////////////////////////////////////////////////////////////
 	prev : function (data, fromSlide) {
 		var gS=$.gS,
@@ -413,7 +411,7 @@ $.extend($.gS, {
 		if(!isNaN(opts.limits.max)) max.push(opts.limits.max); 
 		
 		limits.max=max.length ? 
-			max.sort(function(a,b){return (a-b)})[0]:
+			max.sort(function(a,b){return (a-b);})[0]:
 			undefined;
 
 		if(!isNaN(cssMin)) min.push(cssMin); 
@@ -422,7 +420,7 @@ $.extend($.gS, {
 		if(!isNaN(opts.limits.min)) min.push(opts.limits.min); 
 		
 		limits.min=min.length ? 
-			min.sort(function(a,b){return (b-a)})[0]:
+			min.sort(function(a,b){return (b-a);})[0]:
 			undefined;
 		
 		if(cssMin && cssMin > limits.max) limits.max=cssMin;
@@ -507,10 +505,10 @@ $.extend($.gS, {
 		for(i=slides.length-1; i >=0 ; i--) {
 			data.slides[i] = data.slides[i] || {	
 					obj:slides.eq(i)
-				}
+				};
 			data.limits[i]=data.limits[i] || gS._getLimits(data,i);
 			gS._getCSS(data, i);
-		};
+		}
 
 		data.dcss[ai] = data.dcss[ai] || gS._getDCss(data);
 	},
@@ -521,8 +519,7 @@ $.extend($.gS, {
 			slides=context.children(),
 			active=data.active,
 			ai=data.ai,
-			postAnimation,
-			data;
+			postAnimation;
 		opts=gS.opts(data, opts);	
 
 //		Get and store Data for the animation function
@@ -531,11 +528,11 @@ $.extend($.gS, {
 //		Set hooks for either Activation or Deactivation.
 		if(ai < 0) {
 			active.greenishSlides("_triggerHook","preDeactivateAnimation"); // hook
-			postAnimation = function () {context.greenishSlides("postDeactivate")}; // hook
+			postAnimation = function () {context.greenishSlides("postDeactivate");}; // hook
 		}
 		else {  
 			active.greenishSlides("_triggerHook","preActivateAnimation"); // hook
-			postAnimation = function () {context.greenishSlides("postActivate")}; // hook
+			postAnimation = function () {context.greenishSlides("postActivate");}; // hook
 		}
 		
 //		Start Animation for Slides	
@@ -565,8 +562,8 @@ $.extend($.gS, {
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	_animationStep : function (state, obj) {
-		$.gS.timing("step","start",true)
-		var data= $(obj.elem).dequeue("gSanimationStep").data("greenishSlidesData"); // hook: custom queue that runs once on every step of the animation (MAKE IT FAST!)
+		$.gS.timing("step","start",true);
+		var data = $(obj.elem).dequeue("gSanimationStep").data("greenishSlidesData"); // hook: custom queue that runs once on every step of the animation (MAKE IT FAST!)
 		try{
 			if(!data) throw data;
 			$.gS._triggerHook(data, "step");
@@ -608,7 +605,7 @@ $.extend($.gS, {
 			}
 			
 			newCss[i][slide.align]=percent(css[i][slide.align]);
-		};
+		}
 //		Set Width to fill up space
 		for(i=data.slides.length-1; slide=data.slides[i]; i--) {
 			
@@ -619,10 +616,10 @@ $.extend($.gS, {
 				data.slides[k] ?
 					css[i][opts.WoH]=css[k][slide.align]-css[i][slide.align]:
 					css[i][opts.WoH]=data.cS-css[i][slide.align];
-				 i==data.slides.length-1 ?
-				 	newCss[i][opts.WoH]=percent(css[i][opts.WoH], true):
-				 	newCss[i][opts.WoH]=percent(css[i][opts.WoH]);
-			}
+				i==data.slides.length-1 ?
+					newCss[i][opts.WoH]=percent(css[i][opts.WoH], true):
+					newCss[i][opts.WoH]=percent(css[i][opts.WoH]);
+				}
 			
 			slide.obj.css(newCss[i]);		
 		}
@@ -640,13 +637,13 @@ $.extend($.gS, {
 			LoT:"top",
 			RoB:"bottom"
 		}
-	},	
+	},
 ////////////////////////////////////////////////////////////////////////////////
 	css :{
 		context : {
 			zoom:1,
 			listStyle:"none",
-			padding:0,
+			padding:0
 		},
 		gSSlide : {
 			position:"absolute",
