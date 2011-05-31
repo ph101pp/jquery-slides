@@ -60,24 +60,6 @@ $.fn.greenishSlides = function (method){
 };
 $.gS = $().greenishSlides;
 $.extend($.gS, {
-
-////////////////////////////////////////////////////////////////////////////////
-	timer :{},
-	timing : function (key, comment, hide) {
-	//	return;
-		var timer,time;
-		comment=comment||"";
-		timer = new Date();
-		$.gS.timer[key] = $.gS.timer[key]|| new Date();
-				
-		time = timer - $.gS.timer[key];
-		
-		$.gS.timer[key]=timer;
-		if(true && !hide) {
-			console.log(key+":"+comment+"////////////////////");
-			console.log("Time: "+time+"ms");
-		}
-	},
 ////////////////////////////////////////////////////////////////////////////////
 	defaults : {
 		stayOpen: false,
@@ -126,8 +108,6 @@ $.extend($.gS, {
 				
 		slides = context.css(gS.css.context).children().addClass(opts.classes.slide).css(gS.css.gSSlide);
 
-		gS.timing("init" , "Start");
-		
 ////	Sets css and classes
 		if(opts.vertical) {
 			slides.addClass(opts.classes.vertical).css(gS.css.gSVertical);
@@ -178,7 +158,6 @@ $.extend($.gS, {
 		else gS.update(data);
 		context.greenishSlides("_triggerHook","postInit"); // hook
 		
-		gS.timing("init" , "Done");
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	event: function (data, e, triggeredSlide) {
@@ -203,7 +182,6 @@ $.extend($.gS, {
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	activate : function (data) {
-		$.gS.timing("activation", "Start", true);
 		var gS=$.gS,
 			slide=$(this),
 			context=data.context,
@@ -489,7 +467,6 @@ $.extend($.gS, {
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	_getData : function (data) {
-		$.gS.timing("update" , "Start",true);
 		var gS=$.gS,
 			context=data.context,
 			opts=data.opts,
@@ -542,7 +519,6 @@ $.extend($.gS, {
 			.animate({textIndent:100}, {duration:opts.transitionSpeed, easing:opts.easing, complete:postAnimation , step:gS._animationStep})
 			.dequeue("gSpostAnimation"); // hook: custom queue that runs after the animation
 		
-		$.gS.timing("activation" , "done");
 	
 	},
 ////////////////////////////////////////////////////////////////////////////////
@@ -562,7 +538,6 @@ $.extend($.gS, {
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	_animationStep : function (state, obj) {
-		$.gS.timing("step","start",true);
 		var data = $(obj.elem).dequeue("gSanimationStep").data("greenishSlidesData"); // hook: custom queue that runs once on every step of the animation (MAKE IT FAST!)
 		try{
 			if(!data) throw data;
@@ -623,7 +598,6 @@ $.extend($.gS, {
 			
 			slide.obj.css(newCss[i]);		
 		}
-		$.gS.timing("step","end",true);
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	orientation :{
