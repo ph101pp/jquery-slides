@@ -475,17 +475,9 @@ $.extend($.gS, {
 			i,
 			dcss=data.dcss=opts.cache ? data.dcss : {},
 			limits=data.limits= opts.cache ? data.limits : {};
-			data.limited= opts.cache ? data.limited : false;
-			
-//			Get container Size.
-			data.cS = opts.cache && data.cS ? data.cS : (function(){
-				var wrapper=context
-						.wrapInner("<div style=\"height:100%; width:100%; position:absolute;\"/>")
-						.children(),
-					cS = wrapper["inner"+gS._capitalize(opts.WoH)](true);
-				slides.unwrap();
-				return cS;
-			})();
+		data.limited= opts.cache ? data.limited : false;
+		data.cS = opts.cache && data.cS ? data.cS : context["inner"+gS._capitalize(opts.WoH)](true);
+
 //		Get data
 		for(i=slides.length-1; i >=0 ; i--) {
 			data.slides[i] = data.slides[i] || {	
