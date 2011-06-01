@@ -382,19 +382,19 @@ $.extend($.gS, {
 			max=[],
 			limits={};
 
-		if(!isNaN(cssMax)) max.push(cssMax); 
-		if(opts.limits[i] && !isNaN(opts.limits[i].max)) max.push(opts.limits[i].max); 
-		if(opts.limits[k] && !isNaN(opts.limits[k].max)) max.push(opts.limits[k].max); 
-		if(!isNaN(opts.limits.max)) max.push(opts.limits.max); 
+		!isNaN(cssMax) && max.push(cssMax); 
+		opts.limits[i] && !isNaN(opts.limits[i].max) && max.push(opts.limits[i].max); 
+		opts.limits[k] && !isNaN(opts.limits[k].max) && max.push(opts.limits[k].max); 
+		!isNaN(opts.limits.max) && max.push(opts.limits.max); 
 		
 		limits.max=max.length ? 
 			max.sort(function(a,b){return (a-b);})[0]:
 			undefined;
 
-		if(!isNaN(cssMin)) min.push(cssMin); 
-		if(opts.limits[i] && !isNaN(opts.limits[i].min)) min.push(opts.limits[i].min); 
-		if(opts.limits[k] && !isNaN(opts.limits[k].min)) min.push(opts.limits[k].min); 
-		if(!isNaN(opts.limits.min)) min.push(opts.limits.min); 
+		!isNaN(cssMin) && min.push(cssMin); 
+		opts.limits[i] && !isNaN(opts.limits[i].min) && min.push(opts.limits[i].min); 
+		opts.limits[k] && !isNaN(opts.limits[k].min) && min.push(opts.limits[k].min); 
+		!isNaN(opts.limits.min) && min.push(opts.limits.min); 
 		
 		limits.min=min.length ? 
 			min.sort(function(a,b){return (b-a);})[0]:
@@ -591,7 +591,7 @@ $.extend($.gS, {
 				i==data.slides.length-1 ?
 					newCss[i][opts.WoH]=trimValue(css[i][opts.WoH], true):
 					newCss[i][opts.WoH]=trimValue(css[i][opts.WoH]);
-				}
+			}
 			
 			slide.obj.css(newCss[i]);		
 		}
