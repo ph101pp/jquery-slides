@@ -110,7 +110,8 @@ $.extend($.gS, {
 		for(hooks in opts.hooks) gS.bindHook(data,hooks,opts.hooks[hooks]);
 		context.greenishSlides("_triggerHook","preInit"); // hook
 				
-		slides = context.css(gS.css.context).children().addClass(opts.classes.slide).css(gS.css.gSSlide);
+		slides = context.css(gS.css.context).addClass("greenishSlides")
+			.children().addClass(opts.classes.slide).css(gS.css.gSSlide);
 
 ////	Sets css and classes
 		if(opts.vertical) {
