@@ -316,23 +316,27 @@ $.extend($.gS, {
 		
 		css[opts.WoH]=slide.obj["outer"+gS._capitalize(opts.WoH)](true);
 		slide.active=(i==ai?true:false);
+		console.log(opts.resizable, data.limited, i, ai);
+		
 		
 		//left
-		if(!opts.resizable || !data.limited || i<ai || ai<0)
-			if(!slide.obj.hasClass(opts.LoT) || posAct) 
+		if(!opts.resizable || !data.limited || i<ai || ai<0) {
+			if(!slide.obj.hasClass(opts.LoT) || posAct)
 				gS._positioning(data, i, opts.LoT);
 			else {
 				slide.align=opts.LoT;
 				css[opts.LoT]=slide.obj.position()[opts.LoT];
 			}
+		}
 		//right
-		else if(!slide.active)
-			if(!slide.obj.hasClass(opts.RoB) || posAct)  
+		else if(!slide.active) {
+			if(!slide.obj.hasClass(opts.RoB) || posAct) 
 				gS._positioning(data, i, opts.RoB);
 			else {
 				slide.align=opts.RoB;
 				css[opts.RoB]=gS._cssFloat(slide.obj, opts.RoB);
 			}
+		}
 		//active
 		else alignLoT ?
 				gS._positioning(data, i, opts.LoT, true):
@@ -479,15 +483,19 @@ $.extend($.gS, {
 		data.limited= opts.cache ? data.limited : false;
 		data.cS = opts.cache && data.cS ? data.cS : context["inner"+gS._capitalize(opts.WoH)](true);
 
-//		Get data
+//		Get slide objects
+		if(slides.length != data.slides.length)
+			for(i=slides.length-1; i >=0 ; i--) 
+				data.slides[i] = data.slides[i] || {	
+						obj:slides.eq(i)
+					};
+//		Get Data
 		for(i=slides.length-1; i >=0 ; i--) {
-			data.slides[i] = data.slides[i] || {	
-					obj:slides.eq(i)
-				};
 			data.limits[i]=data.limits[i] || gS._getLimits(data,i);
+		}
+		for(i=slides.length-1; i >=0 ; i--) {
 			gS._getCSS(data, i);
 		}
-
 		data.dcss[ai] = data.dcss[ai] || gS._getDCss(data);
 	},
 ////////////////////////////////////////////////////////////////////////////////
@@ -512,7 +520,6 @@ $.extend($.gS, {
 			active.greenishSlides("_triggerHook","preActivateAnimation"); // hook
 			postAnimation = function () {context.greenishSlides("_postActivate");}; // hook
 		}
-		
 //		Start Animation for Slides	
 		context
 			.dequeue("gSpreAnimation") // hook: custom queue that runs before the animation
@@ -567,7 +574,6 @@ $.extend($.gS, {
 					(100*value/data.cS)+"%";
 			};
 		state/=100;
-		
 //		Set Position
 		for(i=data.slides.length-1; slide=data.slides[i]; i--) {
 			css[i]={};
@@ -576,9 +582,10 @@ $.extend($.gS, {
 			css[i][slide.align]=calc(i, slide.align);
 			if(slide.active && opts.resizable && data.limited)
 				newCss[i][slideAlignNot]=css[i][slideAlignNot]=calc(i, slideAlignNot);
-			
+
 			newCss[i][slide.align]=trimValue(css[i][slide.align]);
 		}
+
 //		Set Width to fill up space
 		for(i=data.slides.length-1; slide=data.slides[i]; i--) {
 			

@@ -12,16 +12,13 @@
 				$(document).ready(function() {
 					$(".anything").greenishSlides({
 						vertical:false,
+						stayOpen:true,
 						resizable:true,
 						keyEvents:true,
 						limits:{
-							min:10,
-							1:{
-								min:15,
-								max:200
-							},
-							"-1":{
-								min:30
+							0:{
+								min:20,
+								max:20
 							}
 						},
 					
