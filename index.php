@@ -53,9 +53,9 @@
 	</head>
 	<body>
 	
-	<?php 
+<?php 
 require_once("randomFlickr/randomFlickr.class.php");
-$x = new randomFlickr($user);
+$x = new randomFlickr();
 $x->setBadgeUrl("http://www.flickr.com/photos/");
 ?>
 
