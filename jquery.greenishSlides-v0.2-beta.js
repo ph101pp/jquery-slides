@@ -11,7 +11,7 @@
  */
 (function($) {
 ////////////////////////////////////////////////////////////////////////////////
-$.fn.greenishSlides = function (method){
+$.gS=$.fn.greenishSlides = function (method){
 	var context=$(this),
 		data, call, args, i;
 	if(typeof(method) === 'object' || !method) {
@@ -58,7 +58,6 @@ $.fn.greenishSlides = function (method){
 	}
 	return this;
 };
-$.gS = $().greenishSlides;
 $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	defaults : {
@@ -68,7 +67,7 @@ $.extend($.gS, {
 		vertical:false,
 		circle : false,
 		transitionSpeed: 400,
-		easing: "swing",
+		easing:"swing",
 		events: {
 			activate:"click",
 			deactivate:"click"
