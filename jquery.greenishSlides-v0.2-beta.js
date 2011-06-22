@@ -390,7 +390,7 @@ $.extend($.gS, {
 		opts.limits[i] && !isNaN(opts.limits[i].max) && max.push(opts.limits[i].max); 
 		opts.limits[k] && !isNaN(opts.limits[k].max) && max.push(opts.limits[k].max); 
 		!isNaN(opts.limits.max) && max.push(opts.limits.max); 
-		
+
 		limits.max=max.length ? 
 			max.sort(function(a,b){return (a-b);})[0]:
 			undefined;
@@ -399,11 +399,11 @@ $.extend($.gS, {
 		opts.limits[i] && !isNaN(opts.limits[i].min) && min.push(opts.limits[i].min); 
 		opts.limits[k] && !isNaN(opts.limits[k].min) && min.push(opts.limits[k].min); 
 		!isNaN(opts.limits.min) && min.push(opts.limits.min); 
-		
+
 		limits.min=min.length ? 
 			min.sort(function(a,b){return (b-a);})[0]:
 			undefined;
-		
+
 		if(cssMin && cssMin > limits.max) limits.max=cssMin;
 		if(cssMax && cssMax < limits.min) limits.min=cssMax;
 		if(limits.min || limits.max) data.limited=true;
@@ -505,6 +505,7 @@ $.extend($.gS, {
 			active=data.active,
 			ai=data.ai,
 			postAnimation;
+		active.greenishSlides("_triggerHook","update"); // hook
 		opts=gS.opts(data, opts);	
 
 //		Get and store Data for the animation function
