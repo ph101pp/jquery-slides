@@ -4,7 +4,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 		<title>greenishSlides</title>
 		<link rel="stylesheet" type="text/css" href="design.css">
-		<script type="text/javascript" src="jquery-1.5.1.min.js"></script>
+		<script type="text/javascript" src="jquery-1.6.min.js"></script>
 		<script type="text/javascript" src="jquery.greenishSlides-v0.2-beta.js"></script>
 
 		<script type="text/javascript">
