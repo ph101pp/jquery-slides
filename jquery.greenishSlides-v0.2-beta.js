@@ -480,7 +480,7 @@ $.extend($.gS, {
 			dcss=data.dcss=opts.cache ? data.dcss : {},
 			limits=data.limits= opts.cache ? data.limits : {};
 		data.limited= opts.cache ? data.limited : false;
-		data.cS = opts.cache && data.cS ? data.cS : context["inner"+gS._capitalize(opts.WoH)](true);
+		data.cS = opts.cache && data.cS ? data.cS : context["inner"+gS._capitalize(opts.WoH)]();
 
 //		Get slide objects
 		if(slides.length != data.slides.length)
