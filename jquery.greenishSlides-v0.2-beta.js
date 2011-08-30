@@ -123,10 +123,17 @@ $.extend($.gS, {
 		}
 ////	/Sets css and classes
 ////	Keyboard and Swipe events.		
-		if(opts.keyEvents) $(document).bind("keydown", function(e) {
-			if(e.which == 39 || e.which == 40) context.greenishSlides("next");
-			else if(e.which == 37 || e.which == 38) context.greenishSlides("prev");
-		});
+		if(opts.keyEvents) {
+			opts.vertical?
+				$(document).bind("keydown", function(e) {
+					if(e.which == 40) context.greenishSlides("next");
+					else if(e.which == 38) context.greenishSlides("prev");
+				}):
+				$(document).bind("keydown", function(e) {
+					if(e.which == 39) context.greenishSlides("next");
+					else if(e.which == 37) context.greenishSlides("prev");
+				});
+		}
 		
 		if(opts.swipeEvents && context.swipe) context.swipe({
 			threshold: opts.swipeThreshold,
