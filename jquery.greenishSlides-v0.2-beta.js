@@ -322,7 +322,6 @@ $.extend($.gS, {
 		
 		css[opts.WoH]=slide.obj["outer"+gS._capitalize(opts.WoH)](true);
 		slide.active=(i==ai?true:false);
-		console.log(opts.resizable, data.limited, i, ai);
 		
 		
 		//left
@@ -551,65 +550,66 @@ $.extend($.gS, {
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	_animationStep : function (state, obj) {
-		var data = $(obj.elem).dequeue("gSanimationStep").data("greenishSlidesData"); // hook: custom queue that runs once on every step of the animation (MAKE IT FAST!)
 		try{
+			var data = $(obj.elem).dequeue("gSanimationStep").data("greenishSlidesData"); // hook: custom queue that runs once on every step of the animation (MAKE IT FAST!)
 			if(!data) throw data;
+			var opts=data.opts,
+				dcss=data.dcss[data.ai],
+				ai=data.ai,
+				css={},
+				newCss=[],
+				slide, k, i,
+				slideAlignNot= data.slides[ai] && data.slides[ai].align == opts.LoT ? opts.RoB : opts.LoT,
+				calc=function(i, key) {
+					return Math.round(data.css[i][key]+((dcss[i][key]-data.css[i][key])*state));
+				},
+				getPosition = function(i, align) {
+					return css[i] ? css[i][align]+css[i][opts.WoH] : 0;
+				},
+				trimValue=function(value, adjust) {
+					if(state!=1 || !opts.resizable || data.limited) return value;
+					
+					return adjust ?
+						(0.01+(100*value/data.cS))+"%":
+						(100*value/data.cS)+"%";
+				};
+			state/=100;
+//			Set Position
+			for(i=data.slides.length-1; slide=data.slides[i]; i--) {
+				css[i]={};
+				newCss[i]={};
+				data.css[i][slide.align] = data.css[i][slide.align] || 0;
+				css[i][slide.align]=calc(i, slide.align);
+				if(slide.active && opts.resizable && data.limited)
+					newCss[i][slideAlignNot]=css[i][slideAlignNot]=calc(i, slideAlignNot);
+	
+				newCss[i][slide.align]=trimValue(css[i][slide.align]);
+			}
+	
+//			Set Width to fill up space
+			for(i=data.slides.length-1; slide=data.slides[i]; i--) {
+				
+				if(slide.active && opts.resizable && data.limited)
+					css[i][opts.WoH]=data.cS-css[i][slide.align]-css[i][slideAlignNot];
+				else {
+					k=(slide.align == opts.LoT ? i+1:i-1);
+					data.slides[k] ?
+						css[i][opts.WoH]=css[k][slide.align]-css[i][slide.align]:
+						css[i][opts.WoH]=data.cS-css[i][slide.align];
+					i==data.slides.length-1 ?
+						newCss[i][opts.WoH]=trimValue(css[i][opts.WoH], true):
+						newCss[i][opts.WoH]=trimValue(css[i][opts.WoH]);
+				}
+			}
+			
+			data.actualCSS=newCss;
 			$.gS._triggerHook(data, "step");
 		}
 		catch(err){
 			$(this).stop();
 			return;
 		}
-		var	opts=data.opts,
-			dcss=data.dcss[data.ai],
-			ai=data.ai,
-			css={},
-			newCss={},
-			slide, k, i,
-			slideAlignNot= data.slides[ai] && data.slides[ai].align == opts.LoT ? opts.RoB : opts.LoT,
-			calc=function(i, key) {
-				return Math.round(data.css[i][key]+((dcss[i][key]-data.css[i][key])*state));
-			},
-			getPosition = function(i, align) {
-				return css[i] ? css[i][align]+css[i][opts.WoH] : 0;
-			},
-			trimValue=function(value, adjust) {
-				if(state!=1 || !opts.resizable || data.limited) return value;
-				
-				return adjust ?
-					(0.01+(100*value/data.cS))+"%":
-					(100*value/data.cS)+"%";
-			};
-		state/=100;
-//		Set Position
-		for(i=data.slides.length-1; slide=data.slides[i]; i--) {
-			css[i]={};
-			newCss[i]={};
-			data.css[i][slide.align] = data.css[i][slide.align] || 0;
-			css[i][slide.align]=calc(i, slide.align);
-			if(slide.active && opts.resizable && data.limited)
-				newCss[i][slideAlignNot]=css[i][slideAlignNot]=calc(i, slideAlignNot);
-
-			newCss[i][slide.align]=trimValue(css[i][slide.align]);
-		}
-
-//		Set Width to fill up space
-		for(i=data.slides.length-1; slide=data.slides[i]; i--) {
-			
-			if(slide.active && opts.resizable && data.limited)
-				css[i][opts.WoH]=data.cS-css[i][slide.align]-css[i][slideAlignNot];
-			else {
-				k=(slide.align == opts.LoT ? i+1:i-1);
-				data.slides[k] ?
-					css[i][opts.WoH]=css[k][slide.align]-css[i][slide.align]:
-					css[i][opts.WoH]=data.cS-css[i][slide.align];
-				i==data.slides.length-1 ?
-					newCss[i][opts.WoH]=trimValue(css[i][opts.WoH], true):
-					newCss[i][opts.WoH]=trimValue(css[i][opts.WoH]);
-			}
-			
-			slide.obj.css(newCss[i]);		
-		}
+		for(i=data.slides.length-1; slide=data.slides[i]; i--) slide.obj.css(newCss[i]);		
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	orientation :{
