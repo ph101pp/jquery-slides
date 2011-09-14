@@ -628,7 +628,7 @@ $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	css :{
 		context : {
-			listStyle:"none",
+			listStyle:"none"
 		},
 		gSSlide : {
 			position:"absolute",
