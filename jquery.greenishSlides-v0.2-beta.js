@@ -153,6 +153,7 @@ $.extend($.gS, {
 		if(!opts.handle) event=opts.events.activate="gSactivate";
 		context.bind(event, function(e) {context.greenishSlides("_event",e);}); // focusin/focusout for Keyboard accessability;
 ////	/Activate and Deactivate events
+		context.greenishSlides("_triggerHook","init"); // hook
 
 ////	First Initialisation
 		if($("."+opts.classes.active, context).length)
