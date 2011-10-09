@@ -87,11 +87,14 @@ $.extend($.gS, {
 			horizontal:"gSHorizontal",
 			slide:"gSSlide",
 			deactivating:"gSdeactivating",
-			positionActive:"positionActive",
+			positionActive:"positionActive"
+/* 
 			positionTop:"top",
 			positionRight:"right",
 			positionBottom:"bottom",
 			positionLeft:"left"
+
+ */
 		},
 		handle:".gSSlide",
 		cache:false
@@ -195,7 +198,6 @@ $.extend($.gS, {
 			opts=data.opts,
 			deactivated;
 			
-		
 		!slide.is("."+opts.classes.slide+", ."+opts.classes.slide+opts.handle)?
 			slide=$("."+opts.classes.slide).has($(slide)):
 			slide=$(slide);
@@ -209,7 +211,7 @@ $.extend($.gS, {
 		
 		slide.greenishSlides("_triggerHook","preActivate"); // hook
 		
-		gS.update(data);
+		gS.update(data, {}, "activate");
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	deactivate : function (data) {
@@ -227,7 +229,7 @@ $.extend($.gS, {
 		data.active=$();
 		data.ai="-1";
 
-		gS.update(data);
+		gS.update(data, {}, "deactivate");
 	}, 
 ////////////////////////////////////////////////////////////////////////////////
 	prev : function (data, fromSlide) {
@@ -463,10 +465,12 @@ $.extend($.gS, {
 		for(i=c=0; slide=data.slides[i]; i++) {
 			c+= dcss[i][opts.WoH];
 
-			if(!opts.resizable || !data.limited || i<ai || ai<0)
+			if(!opts.resizable || !data.limited || i<ai || ai<0) {
 				dcss[i][opts.LoT]= c-dcss[i][opts.WoH];
-			else if(i!=ai) 
+			}
+			else if(i!=ai) {
 				dcss[i][opts.RoB]= cS-c;
+			}
 			else {			
 				dcss[i][opts.LoT]= c-dcss[i][opts.WoH];
 				dcss[i][opts.RoB]= cS-c;
@@ -505,7 +509,7 @@ $.extend($.gS, {
 		data.dcss[ai] = data.dcss[ai] || gS._getDCss(data);
 	},
 ////////////////////////////////////////////////////////////////////////////////
-	update : function (data, opts) {
+	update : function (data, opts, action) {
 		var gS=$.gS,
 			context=data.context.stop(),
 			slides=context.children(),
@@ -517,15 +521,19 @@ $.extend($.gS, {
 
 //		Get and store Data for the animation function
 		gS._getData(data);
-
+		
 //		Set hooks for either Activation or Deactivation.
-		if(ai < 0) {
+		if(action == "deactivate") {
 			active.greenishSlides("_triggerHook","preDeactivateAnimation"); // hook
 			postAnimation = function () {context.greenishSlides("_postDeactivate");}; // hook
 		}
-		else {  
+		else if(action == "activate") {  
 			active.greenishSlides("_triggerHook","preActivateAnimation"); // hook
 			postAnimation = function () {context.greenishSlides("_postActivate");}; // hook
+		}
+		else {
+			active.greenishSlides("_triggerHook","preUpdateAnimation"); // hook
+			postAnimation = function () {active.greenishSlides("_triggerHook","postUpdate");}; // hook		
 		}
 //		Start Animation for Slides	
 		context
