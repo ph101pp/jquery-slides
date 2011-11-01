@@ -120,6 +120,11 @@ $.extend($.gS, {
 			$.extend(opts, gS.orientation.horizontal);
 		}
 ////	/Sets css and classes
+////	Resize event
+		if(opts.resizable) $(window).bind("resize", function(){
+			context.greenishSlides("update");
+		});
+////	/Resize event
 ////	Keyboard events.		
 		if(opts.keyEvents) {
 			opts.vertical?
