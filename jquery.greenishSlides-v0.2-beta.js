@@ -317,38 +317,41 @@ $.extend($.gS, {
 		var gS = $.gS,
 			opts=data.opts,
 			context=data.context,
-			slide= data.slides[i],
 			ai=data.ai,
+			slide, css, posAct, alignLoT;
+
+		for(i=0; slide=data.slides[i]; i++) {
 			css=data.css[i]=data.css[i]||{},
 			posAct = slide.obj.hasClass(opts.classes.positionActive),
 			alignLoT= ai==i && slide.obj.hasClass(opts.LoT);
 		
-		css[opts.WoH]=slide.obj["outer"+gS._capitalize(opts.WoH)](true);
-		slide.active=(i==ai?true:false);
-		
-		
-		//left
-		if(!opts.resizable || !data.limited || i<ai || ai<0) {
-			if(!slide.obj.hasClass(opts.LoT) || posAct)
-				gS._positioning(data, i, opts.LoT);
-			else {
-				slide.align=opts.LoT;
-				css[opts.LoT]=slide.obj.position()[opts.LoT];
+			css[opts.WoH]=slide.obj["outer"+gS._capitalize(opts.WoH)](true);
+			slide.active=(i==ai?true:false);
+			
+			
+			//left
+			if(!opts.resizable || !data.limited || i<ai || ai<0) {
+				if(!slide.obj.hasClass(opts.LoT) || posAct)
+					gS._positioning(data, i, opts.LoT);
+				else {
+					slide.align=opts.LoT;
+					css[opts.LoT]=slide.obj.position()[opts.LoT];
+				}
 			}
-		}
-		//right
-		else if(!slide.active) {
-			if(!slide.obj.hasClass(opts.RoB) || posAct) 
-				gS._positioning(data, i, opts.RoB);
-			else {
-				slide.align=opts.RoB;
-				css[opts.RoB]=gS._cssFloat(slide.obj, opts.RoB);
+			//right
+			else if(!slide.active) {
+				if(!slide.obj.hasClass(opts.RoB) || posAct) 
+					gS._positioning(data, i, opts.RoB);
+				else {
+					slide.align=opts.RoB;
+					css[opts.RoB]=gS._cssFloat(slide.obj, opts.RoB);
+				}
 			}
+			//active
+			else alignLoT ?
+					gS._positioning(data, i, opts.LoT, true):
+					gS._positioning(data, i, opts.RoB, true);
 		}
-		//active
-		else alignLoT ?
-				gS._positioning(data, i, opts.LoT, true):
-				gS._positioning(data, i, opts.RoB, true);
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	_positioning : function (data, i, bind, active) {
@@ -387,36 +390,39 @@ $.extend($.gS, {
 		var gS = $.gS,
 			opts=data.opts,
 			context=data.context,
-			slide= data.slides[i],
-			k="-"+(data.slides.length-i),
-			cssMin = gS._cssFloat(slide.obj,"min-"+opts.WoH),
-			cssMax = gS._cssFloat(slide.obj,"max-"+opts.WoH),
-			min=[],
-			max=[],
-			limits={};
-
-		!isNaN(cssMax) && max.push(cssMax); 
-		opts.limits[i] && !isNaN(opts.limits[i].max) && max.push(opts.limits[i].max); 
-		opts.limits[k] && !isNaN(opts.limits[k].max) && max.push(opts.limits[k].max); 
-		!isNaN(opts.limits.max) && max.push(opts.limits.max); 
-
-		limits.max=max.length ? 
-			max.sort(function(a,b){return (a-b);})[0]:
-			undefined;
-
-		!isNaN(cssMin) && min.push(cssMin); 
-		opts.limits[i] && !isNaN(opts.limits[i].min) && min.push(opts.limits[i].min); 
-		opts.limits[k] && !isNaN(opts.limits[k].min) && min.push(opts.limits[k].min); 
-		!isNaN(opts.limits.min) && min.push(opts.limits.min); 
-
-		limits.min=min.length ? 
-			min.sort(function(a,b){return (b-a);})[0]:
-			undefined;
-
-		if(cssMin && cssMin > limits.max) limits.max=cssMin;
-		if(cssMax && cssMax < limits.min) limits.min=cssMax;
-		if(limits.min || limits.max) data.limited=true;
-		return limits;
+			slide, k, min, max, limits;
+		
+		for(i=0; slide=data.slides[i]; i++) 
+			if(!data.limits[i]) {
+				data.limits[i]={};
+				cssMin = gS._cssFloat(slide.obj,"min-"+opts.WoH);
+				cssMax = gS._cssFloat(slide.obj,"max-"+opts.WoH);
+				k="-"+(data.slides.length-i);
+				min=[];
+				max=[];
+				
+				!isNaN(cssMax) && max.push(cssMax); 
+				opts.limits[i] && !isNaN(opts.limits[i].max) && max.push(opts.limits[i].max); 
+				opts.limits[k] && !isNaN(opts.limits[k].max) && max.push(opts.limits[k].max); 
+				!isNaN(opts.limits.max) && max.push(opts.limits.max); 
+		
+				data.limits[i].max=max.length ? 
+					max.sort(function(a,b){return (a-b);})[0]:
+					undefined;
+		
+				!isNaN(cssMin) && min.push(cssMin); 
+				opts.limits[i] && !isNaN(opts.limits[i].min) && min.push(opts.limits[i].min); 
+				opts.limits[k] && !isNaN(opts.limits[k].min) && min.push(opts.limits[k].min); 
+				!isNaN(opts.limits.min) && min.push(opts.limits.min); 
+		
+				data.limits[i].min=min.length ? 
+					min.sort(function(a,b){return (b-a);})[0]:
+					undefined;
+		
+				if(cssMin && cssMin > data.limits[i].max) data.limits[i].max=cssMin;
+				if(cssMax && cssMax < data.limits[i].min) data.limits[i].min=cssMax;
+				if(data.limits[i].min || data.limits[i].max) data.limited=true;
+			}	
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	_getDCss : function (data) {
@@ -487,25 +493,24 @@ $.extend($.gS, {
 			slides=context.children(),
 			active = data.active,
 			ai=data.ai,
-			i,
-			dcss=data.dcss=opts.cache ? data.dcss : {},
-			limits=data.limits= opts.cache ? data.limits : {};
+			i;
+			
+		data.dcss=opts.cache ? data.dcss : {};
+		data.limits= opts.cache ? data.limits : {};
 		data.limited= opts.cache ? data.limited : false;
 		data.cS = opts.cache && data.cS ? data.cS : context["inner"+gS._capitalize(opts.WoH)]();
 
-//		Get slide objects
+//		Get/Update slide objects
 		if(slides.length != data.slides.length)
 			for(i=slides.length-1; i >=0 ; i--) 
 				data.slides[i] = data.slides[i] || {	
 						obj:slides.eq(i)
 					};
-//		Get Data
-		for(i=slides.length-1; i >=0 ; i--) {
-			data.limits[i]=data.limits[i] || gS._getLimits(data,i);
-		}
-		for(i=slides.length-1; i >=0 ; i--) {
-			gS._getCSS(data, i);
-		}
+//		Get Limits if defined for each slide
+		gS._getLimits(data);
+//		Get current css values for each slide
+		gS._getCSS(data);
+//		Get new css values for each slide		
 		data.dcss[ai] = data.dcss[ai] || gS._getDCss(data);
 	},
 ////////////////////////////////////////////////////////////////////////////////
