@@ -73,11 +73,6 @@ $.extend($.gS, {
 			deactivate:"click"
 		},
 		keyEvents:false,
-		swipeEvents:false,
-		swipeThreshold: {
-			x: 30,
-			y: 10
-		},
 		hooks : {},
 		limits : {},
 		active:false,
@@ -125,7 +120,7 @@ $.extend($.gS, {
 			$.extend(opts, gS.orientation.horizontal);
 		}
 ////	/Sets css and classes
-////	Keyboard and Swipe events.		
+////	Keyboard events.		
 		if(opts.keyEvents) {
 			opts.vertical?
 				$(document).bind("keydown", function(e) {
@@ -137,13 +132,7 @@ $.extend($.gS, {
 					else if(e.which == 37) context.greenishSlides("prev");
 				});
 		}
-		
-		if(opts.swipeEvents && context.swipe) context.swipe({
-			threshold: opts.swipeThreshold,
-			swipeLeft: function(){context.greenishSlides("next");},
-			swipeRight: function(){context.greenishSlides("prev");}
-		});
-////	/Keyboard and Swipe events.
+////	/Keyboard events.
 ////	Activate and Deactivate events
 		event=!opts.events.activate ? 
 			"":
