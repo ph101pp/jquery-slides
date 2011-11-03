@@ -58,6 +58,7 @@ $.gS=$.fn.greenishSlides = function (method){
 	}
 	return this;
 };
+////////////////////////////////////////////////////////////////////////////////
 $.extend($.gS, {
 ////////////////////////////////////////////////////////////////////////////////
 	defaults : {
@@ -276,7 +277,7 @@ $.extend($.gS, {
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	_triggerHook : function (data, hook, param) {
-		if(data.hooks[hook] && data.hooks[hook].length <= 0) return param;
+		if(!data.hooks[hook] || data.hooks[hook].length <= 0) return param;
 		for(var key in data.hooks[hook]) 
 			if((param=data.hooks[hook][key].apply(this, [data,param])) !== false) continue;
 			else throw "hookReturnedFalse";
@@ -543,9 +544,8 @@ $.extend($.gS, {
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	_postActivate : function (data) {
-		if(data.ai>=0) {
+		if(data.ai>=0)
 			data.active.greenishSlides("_triggerHook","postActivate"); // hook
-		}
 		$.gS._postDeactivate(data);
 	},
 ////////////////////////////////////////////////////////////////////////////////
@@ -583,7 +583,7 @@ $.extend($.gS, {
 				};
 			state/=100;
 //			Set Position
-			for(i=data.slides.length-1; slide=data.slides[i]; i--) {
+			for(i=0; slide=data.slides[i]; i++) {
 				css[i]={};
 				newCss[i]={};
 				data.css[i][slide.align] = data.css[i][slide.align] || 0;
@@ -595,8 +595,7 @@ $.extend($.gS, {
 			}
 	
 //			Set Width to fill up space
-			for(i=data.slides.length-1; slide=data.slides[i]; i--) {
-				
+			for(i=0; slide=data.slides[i]; i++)
 				if(slide.active && opts.resizable && data.limited)
 					css[i][opts.WoH]=data.cS-css[i][slide.align]-css[i][slideAlignNot];
 				else {
@@ -608,7 +607,6 @@ $.extend($.gS, {
 						newCss[i][opts.WoH]=trimValue(css[i][opts.WoH], true):
 						newCss[i][opts.WoH]=trimValue(css[i][opts.WoH]);
 				}
-			}
 			
 			data.actualCSS=newCss;
 			$.gS._triggerHook(data, "step");
@@ -617,7 +615,7 @@ $.extend($.gS, {
 			$(this).stop();
 			return;
 		}
-		for(i=data.slides.length-1; slide=data.slides[i]; i--) slide.obj.css(newCss[i]);		
+		for(i=0; slide=data.slides[i]; i++) slide.obj.css(newCss[i]);		
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	orientation :{
@@ -657,6 +655,7 @@ $.extend($.gS, {
 	}
 ////////////////////////////////////////////////////////////////////////////////
 });
+////////////////////////////////////////////////////////////////////////////////
 })(jQuery);
 
 

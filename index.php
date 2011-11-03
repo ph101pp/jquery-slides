@@ -11,12 +11,16 @@
 			(function($) {
 				$(document).ready(function() {
 					$(".anything").greenishSlides({
-						vertical:false,
+						vertical:true,
 						stayOpen:true,
 						resizable:true,
-						keyEvents:true,
+						keyEvents:false,
 						limits:{
 							0:{
+								min:20,
+								max:20
+							},
+							"-1":{
 								min:20,
 								max:20
 							}
