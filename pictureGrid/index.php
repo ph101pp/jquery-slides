@@ -14,7 +14,7 @@
 				$(document).ready(function() {
 					$(".pictureGrid").pictureGrid({
 						resizable:true,
-						limidts:{
+						limits:{
 							min:10
 						}
 					});

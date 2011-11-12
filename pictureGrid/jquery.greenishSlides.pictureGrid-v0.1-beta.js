@@ -7,8 +7,6 @@
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses. 
  */
  
- /*
- */
 (function($) {
 ////////////////////////////////////////////////////////////////////////////////
 $.fn.pictureGrid = function (opts){
