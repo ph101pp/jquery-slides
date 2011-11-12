@@ -12,7 +12,12 @@
 		<script type="text/javascript">
 			(function($) {
 				$(document).ready(function() {
-					$(".pictureGrid").pictureGrid();
+					$(".pictureGrid").pictureGrid({
+						resizable:true,
+						limidts:{
+							min:10
+						}
+					});
 				});
 			})(jQuery);
 		</script>		

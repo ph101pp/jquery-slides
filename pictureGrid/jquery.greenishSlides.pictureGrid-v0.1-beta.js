@@ -1,5 +1,5 @@
 /*! 
- * greenishSlides: jQuery Slideshow plugin - v0.2 - beta (5/13/2011)
+ * pictureGrid: Extension for the greenishSlides jQuery Slideshow plugin - v0.2 - beta (5/13/2011)
  * http://www.philippadrian.com
  * 
  * Copyright (c) 2011 Philipp C. Adrian
@@ -16,26 +16,24 @@ $.fn.pictureGrid = function (opts){
 		that=$().pictureGrid,
 		thisContext,
 		i,k,
-		slides, slide, handle;
+		slides, slide;
 		
-	if(typeof(method) === 'object') 
+	if(typeof(opts) === 'object') 
 		opts=$.extend(true,{},that.defaults, opts||{});
 	else opts=that.defaults;	
-	
-	
+
 	for(i=0; i<context.length; i++) {
 		thisContext=$(context[i]).addClass("pictureGrid");
 		
 		thisContext.greenishSlides($.extend({},opts,{	
 			vertical:false,
-			hasndle:"."+opts.classes.vertical
+			handle:"."+opts.classes.pGInner
 		}));
 		
-/* 
 		slides=$(context[i]).data("greenishSlidesData").slides;
 		
 		for(k=0; slide=slides[k]; k++) {
-			slide.obj.children().eq(0).addClass(opts.classes.vertical).greenishSlides($.extend({},opts,{
+			slide.obj.children().eq(0).addClass(opts.classes.pGInner).greenishSlides($.extend({},opts,{
 				vertical:true,
 				hooks:{
 					preActivateEvent:that.preActivate,
@@ -43,22 +41,8 @@ $.fn.pictureGrid = function (opts){
 				}
 			}));
 		}
- */
-
-		
-		
-
-		$("."+opts.classes.vertical, thisContext).greenishSlides($.extend({},opts,{
-			vertical:true,
-			hooks:{
-				preActivateEvent:that.preActivate,
-				preDeacjtivateEvent:that.preDeactivate
-			}
-		}));
-
-
-
 	}
+ 
 };
 $.extend($().pictureGrid, {
 ////////////////////////////////////////////////////////////////////////////////
@@ -69,21 +53,25 @@ $.extend($().pictureGrid, {
 			deactivate:"click"
 		},
 		classes: {
-			vertical:"vertical"
+			pGInner:"pGInner",
+			pGActive:"pGActive"
 		}
 	},
+////////////////////////////////////////////////////////////////////////////////
 	preActivate:function(data){
-		console.log("preActivate");
 		var slide=$(this);
 			ai=slide.index();
-		$("."+data.opts.classes.vertical).each(function(){
+			$("."+data.opts.classes.pGActive).removeClass(data.opts.classes.pGActive);
+			slide.addClass(data.opts.classes.pGActive);
+		$("."+data.opts.classes.pGInner).each(function(){
 			var slide = $(this).children().eq(ai);
 			if(!slide.hasClass("active")) slide.greenishSlides("activate");
 		});
 	},
-	preDeactivate:function (data) {
-		console.log("preDeactivate");
-		$("."+data.opts.classes.vertical).each(function(){
+////////////////////////////////////////////////////////////////////////////////
+	preDeactivate:function(data) {
+		$("."+data.opts.classes.pGActive).removeClass(data.opts.classes.pGActive);
+		$("."+data.opts.classes.pGInner).each(function(){
 			$(".active",this).greenishSlides("deactivate");
 		});
 	}
