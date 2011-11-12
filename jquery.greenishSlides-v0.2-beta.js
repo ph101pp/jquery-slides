@@ -414,11 +414,19 @@ $.extend($.gS, {
 				if(data.limits[i].min || data.limits[i].max) data.limited=true;
 			}
 ////	Resize event
-		if(opts.resizable) data.limited ? 
-			$(window).bind("greenishSlides.resize", function(){
-				context.greenishSlides("update");
-			}):
-			$(window).unbind("greenishSlides.resize");
+		if(opts.resizable) 
+			if(data.limited) { 
+				if(!data.resizeEventSet) {
+					$(window).bind("resize.greenishSlides", function(){
+						context.greenishSlides("update");
+					});
+					data.resizeEventSet=true;	
+				}
+			}
+			else if(data.resizeEventSet) {
+				$(window).unbind("resize.greenishSlides");
+				data.resizeEventSet=false;	
+			}
 ////	/Resize event
 
 	},
