@@ -48,9 +48,9 @@ $.gS=$.fn.greenishSlides = function (method){
 		$(context[i]).data("greenishSlidesData",data);
 
 	
-		if(call=="_triggerHook") return $.gS[call].apply(this, args);
+		if(call=="_triggerHook") return $.gS[call].apply(context[i], args);
 		else try { 
-				$.gS[call].apply(this, args);
+				$.gS[call].apply(context[i], args);
 			}
 			catch(err){
 				if(err!="hookReturnedFalse") throw err;
@@ -121,11 +121,6 @@ $.extend($.gS, {
 			$.extend(opts, gS.orientation.horizontal);
 		}
 ////	/Sets css and classes
-////	Resize event
-		if(opts.resizable) $(window).bind("resize", function(){
-			context.greenishSlides("update");
-		});
-////	/Resize event
 ////	Keyboard events.		
 		if(opts.keyEvents) {
 			opts.vertical?
@@ -417,7 +412,15 @@ $.extend($.gS, {
 				if(cssMin && cssMin > data.limits[i].max) data.limits[i].max=cssMin;
 				if(cssMax && cssMax < data.limits[i].min) data.limits[i].min=cssMax;
 				if(data.limits[i].min || data.limits[i].max) data.limited=true;
-			}	
+			}
+////	Resize event
+		if(opts.resizable) data.limited ? 
+			$(window).bind("greenishSlides.resize", function(){
+				context.greenishSlides("update");
+			}):
+			$(window).unbind("greenishSlides.resize");
+////	/Resize event
+
 	},
 ////////////////////////////////////////////////////////////////////////////////
 	_getDCss : function (data) {
@@ -490,6 +493,7 @@ $.extend($.gS, {
 			ai=data.ai,
 			i;
 			
+//		load caches if necessary
 		data.dcss=opts.cache ? data.dcss : {};
 		data.limits= opts.cache ? data.limits : {};
 		data.limited= opts.cache ? data.limited : false;
