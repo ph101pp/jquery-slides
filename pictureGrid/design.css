@@ -1,0 +1,27 @@
+
+body {
+	margin:0;
+	padding:0;
+	background-color:black;
+	overflow:hidden;
+}
+
+ul{
+	position:absolute;
+	height:100%;
+	width:100%;
+	margin:0;
+	padding:0;
+}
+li {
+	outline:1px solid white;
+	background-color:#000000;
+}
+.vertical li{
+	text-align:center;
+/*	min-width:10px; */
+}
+
+.gSSlide .active {
+}
+
