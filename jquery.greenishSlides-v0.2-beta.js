@@ -6,11 +6,11 @@
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses. 
  */
- 
- /*
- */
 (function($) {
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+	Creates the data object that holds all data about the greenishSlide and calls 
+	the passed method or the _init method.
+*/
 $.gS=$.fn.greenishSlides = function (method){
 	var context=$(this),
 		data, call, args, i;
@@ -47,7 +47,7 @@ $.gS=$.fn.greenishSlides = function (method){
 		else args=[data].concat(args);
 		$(context[i]).data("greenishSlidesData",data);
 
-	
+//		Call method and catch "hookReturnedFalse" error from Hook. 
 		if(call=="_triggerHook") return $.gS[call].apply(context[i], args);
 		else try { 
 				$.gS[call].apply(context[i], args);
@@ -60,7 +60,10 @@ $.gS=$.fn.greenishSlides = function (method){
 };
 ////////////////////////////////////////////////////////////////////////////////
 $.extend($.gS, {
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+	object		defaults 
+	Contains all the default settings that will be used if nothing else is defined.
+*/
 	defaults : {
 		stayOpen: false,
 //		fillSpace: true,
@@ -96,7 +99,10 @@ $.extend($.gS, {
 		cache:false
 //		queue:false
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+
+
+*/
 	_init : function (data) {	
 		var gS=$.gS,
 			context=data.context,
@@ -168,7 +174,8 @@ $.extend($.gS, {
 		else gS.update(data);
 		context.greenishSlides("_triggerHook","postInit"); // hook
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+*/
 	_event: function (data, e, triggeredSlide) {
 		var target=$(e.target),
 			opts=data.opts,
@@ -189,7 +196,8 @@ $.extend($.gS, {
 			target[0].greenishSlides("deactivate");
 		}
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+*/
 	activate : function (data) {
 		var gS=$.gS,
 			slide=$(this),
@@ -212,7 +220,8 @@ $.extend($.gS, {
 		
 		gS.update(data, {}, "activate");
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+*/
 	deactivate : function (data) {
 		var gS=$.gS,
 			slide=$(this),
@@ -230,7 +239,8 @@ $.extend($.gS, {
 
 		gS.update(data, {}, "deactivate");
 	}, 
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+*/
 	prev : function (data, fromSlide) {
 		var gS=$.gS,
 			context=data.context,
@@ -242,7 +252,8 @@ $.extend($.gS, {
 		slide=context.children().eq(slideId);
 		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.greenishSlides("activate");
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+*/
 	next : function (data, fromSlide) {
 		var gS=$.gS,
 			context=data.context,
@@ -254,7 +265,8 @@ $.extend($.gS, {
 		slide=context.children().eq(slideId);
 		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.greenishSlides("activate");
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+*/
 	_step : function (data, number, fromSlide) {
 		var gS=$.gS,
 			context=data.context,
@@ -273,13 +285,15 @@ $.extend($.gS, {
 				
 		return next;
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+*/
 	bindHook : function (data, hook, func) {
 		func=typeof(func)=="function"?[func]:func;
 		data.hooks[hook]=data.hooks[hook]||[];
 		for(var key in func) data.hooks[hook].push(func[key]);
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+*/
 	_triggerHook : function (data, hook, param) {
 		if(!data.hooks[hook] || data.hooks[hook].length <= 0) return param;
 		for(var key in data.hooks[hook]) 
@@ -287,13 +301,15 @@ $.extend($.gS, {
 			else throw "hookReturnedFalse";
 		return param;
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+*/
 	opts : function (data, opts, save) {
 		opts=$.extend(true,{},this.defaults, data.opts||{}, opts||{});
 		if(save) data.opts=opts;
 		return opts;
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+*/
 	_cssFloat : function (obj, value) {
 		var mins={"minWidth":true,"min-width":true,"minHeight":true,"min-height":true},
 			min=mins[value];
@@ -302,16 +318,20 @@ $.extend($.gS, {
 		value=parseFloat(value.replace(["px","%"],""));
 		return (!isNaN(value) ? value : undefined);
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+*/
 	_capitalize : function (word) {
 		return word.charAt(0).toUpperCase() + word.slice(1);
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+*/
 	clearCache : function (data) {
 		data.dcss={};
 		data.limits={};
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+	Sets the new _positioning for each slide and gets the css values of the current state
+*/
 	_getCSS : function (data, i) {
 		var gS = $.gS,
 			opts=data.opts,
@@ -351,7 +371,10 @@ $.extend($.gS, {
 					gS._positioning(data, i, opts.RoB, true);
 		}
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+	Changes the origin/positioning of a slide to "active" or "left/top" or "right/bottom".
+	This has no visual effect on the slide.
+*/
 	_positioning : function (data, i, bind, active) {
 		var gS=$.gS,
 			opts=data.opts,
@@ -383,7 +406,9 @@ $.extend($.gS, {
 		slide.align=bind;
 		slide.obj.removeClass(from).addClass(bind).css(css);
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+	Calculates the minWidth/minHeight and maxWidth/maxHeight for each slide.
+*/
 	_getLimits : function (data, i) {
 		var gS = $.gS,
 			opts=data.opts,
@@ -438,7 +463,9 @@ $.extend($.gS, {
 ////	/Resize event
 
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+	Calculates the NEW css values for each Slide.
+*/
 	_getDCss : function (data) {
 		var gS = $.gS,
 			opts=data.opts,
@@ -499,7 +526,11 @@ $.extend($.gS, {
 		return dcss;
 		
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+	generates all data that is needed to animate the slides. 
+	and stores it in the data object
+	Checks chache and calls other "getter" funcitons
+*/
 	_getData : function (data) {
 		var gS=$.gS,
 			context=data.context,
@@ -528,7 +559,8 @@ $.extend($.gS, {
 //		Get new css values for each slide		
 		data.dcss[ai] = data.dcss[ai] || gS._getDCss(data);
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+*/
 	update : function (data, opts, action) {
 		var gS=$.gS,
 			context=data.context.stop(),
@@ -562,13 +594,15 @@ $.extend($.gS, {
 			.animate({textIndent:100}, {duration:opts.transitionSpeed, easing:opts.easing, complete:postAnimation , step:gS._animationStep})
 			.dequeue("gSpostAnimation"); // hook: custom queue that runs after the animation
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+*/
 	_postActivate : function (data) {
 		if(data.ai>=0)
 			data.active.greenishSlides("_triggerHook","postActivate"); // hook
 		$.gS._postDeactivate(data);
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+*/
 	_postDeactivate : function (data) {
 		var deactive=data.context.find("."+data.opts.classes.slide+"."+data.opts.classes.deactivating);
 		if(deactive.length>0) {
@@ -576,7 +610,8 @@ $.extend($.gS, {
 			deactive.removeClass(data.opts.classes.deactivating);
 		}
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+*/
 	_animationStep : function (state, obj) {
 		try{
 			var data = $(obj.elem).dequeue("gSanimationStep").data("greenishSlidesData"); // hook: custom queue that runs once on every step of the animation (MAKE IT FAST!)
@@ -629,7 +664,7 @@ $.extend($.gS, {
 				}
 			
 			data.actualCSS=newCss;
-			$.gS._triggerHook(data, "step");
+			$.gS._triggerHook(data, "step"); // _triggerHook needs try/catch wrapper to run properly.
 		}
 		catch(err){
 			$(this).stop();
@@ -637,7 +672,8 @@ $.extend($.gS, {
 		}
 		for(i=0; slide=data.slides[i]; i++) slide.obj.css(newCss[i]);		
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+*/
 	orientation :{
 		horizontal :{
 			WoH:"width",
@@ -650,7 +686,8 @@ $.extend($.gS, {
 			RoB:"bottom"
 		}
 	},
-////////////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////////////
+*/
 	css :{
 		context : {
 			listStyle:"none"
