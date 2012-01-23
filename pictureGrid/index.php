@@ -7,16 +7,11 @@
 		<script type="text/javascript" src="../jquery-1.6.min.js"></script>
 		<script type="text/javascript" src="../jquery.greenishSlides-v0.2-beta.js"></script>
 		<script type="text/javascript" src="jquery.greenishSlides.pictureGrid-v0.1-beta.js"></script>
-
-<!--		<script type="text/javascript" src="jquery.jswipe-0.1.2.js"></script>-->
 		<script type="text/javascript">
 			(function($) {
 				$(document).ready(function() {
 					$(".pictureGrid").pictureGrid({
 						resizable:true,
-						limits:{
-							min:10
-						}
 					});
 				});
 			})(jQuery);

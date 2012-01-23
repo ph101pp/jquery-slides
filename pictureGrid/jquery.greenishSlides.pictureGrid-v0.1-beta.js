@@ -1,5 +1,5 @@
 /*! 
- * pictureGrid: Extension for the greenishSlides jQuery Slideshow plugin - v0.2 - beta (5/13/2011)
+ * pictureGrid: Extension for the greenishSlides jQuery plugin - v0.2 - beta (5/13/2011)
  * http://www.philippadrian.com
  * 
  * Copyright (c) 2011 Philipp C. Adrian
@@ -31,7 +31,7 @@ $.fn.pictureGrid = function (opts){
 		slides=$(context[i]).data("greenishSlidesData").slides;
 		
 		for(k=0; slide=slides[k]; k++) {
-			slide.obj.children().eq(0).addClass(opts.classes.pGInner).greenishSlides($.extend({},opts,{
+			slide.obj.children().eq(0).addClass(opts.classes.pGInner).css(that.css.pGInner).greenishSlides($.extend({},opts,{
 				vertical:true,
 				hooks:{
 					preActivateEvent:that.preActivate,
@@ -40,8 +40,8 @@ $.fn.pictureGrid = function (opts){
 			}));
 		}
 	}
- 
 };
+////////////////////////////////////////////////////////////////////////////////
 $.extend($().pictureGrid, {
 ////////////////////////////////////////////////////////////////////////////////
 	defaults : {
@@ -72,6 +72,16 @@ $.extend($().pictureGrid, {
 		$("."+data.opts.classes.pGInner).each(function(){
 			$(".active",this).greenishSlides("deactivate");
 		});
+	},
+////////////////////////////////////////////////////////////////////////////////
+	css : {
+		pGInner: {
+			position:"absolute",
+			width:"100%",
+			height:"100%",
+			margin:"0px",
+			padding:"0px"
+		}
 	}
 ////////////////////////////////////////////////////////////////////////////////
 });
