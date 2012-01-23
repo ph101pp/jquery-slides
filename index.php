@@ -11,27 +11,26 @@
 			(function($) {
 				$(document).ready(function() {
 					$(".anything").greenishSlides({
-						vertical:true,
-						stayOpen:true,
+						vertical:false,
+						stayOpen:false,
 						resizable:true,
-						keyEvents:false,
-						limits:{
-							0:{
-								min:20,
-								max:20
-							},
-							"-1":{
-								min:20,
-								max:20
-							}
+						circle:false,
+						keyEvents:true,
+						active:-2,
+						events:false,
+						bla:{
+							activate:"mouseover",
+							deactivate:"mouseout"
 						},
-					
-						hooks:{
-							preActivateAnimation: function(){
-							}
+						limits:{
+								0:{
+									min:30,
+									max:30
+								}
 						}
-					
-					
+						
+						
+						
 					});
 				});
 			})(jQuery);

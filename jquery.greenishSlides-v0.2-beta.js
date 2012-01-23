@@ -135,17 +135,26 @@ $.extend($.gS, {
 		}
 ////	/Keyboard events.
 ////	Activate and Deactivate events
-		event=!opts.events.activate ? 
-			"":
-			opts.events.activate+".gS focusin.gS ";
-		event+=!opts.events.deactivate ? 
-			"":
-			opts.events.deactivate==opts.events.activate? 
-				"focusout.gS ":
-				opts.events.deactivate+".gS focusout.gS ";
-		if(!opts.handle) event=opts.events.activate="gSactivate";
+		if(!opts.handle || !opts.events) {
+			opts.events={
+				activate:"gSactivate",
+				deactivate:false
+			}
+			event=opts.events.activate;
+		}
+		else {
+			event=!opts.events.activate ? 
+				"":
+				opts.events.activate+".gS focusin.gS ";
+			event+=!opts.events.deactivate ? 
+				"":
+				opts.events.deactivate==opts.events.activate? 
+					"focusout.gS ":
+					opts.events.deactivate+".gS focusout.gS ";
+		}
 		context.bind(event, function(e) {context.greenishSlides("_event",e);}); // focusin/focusout for Keyboard accessability;
 ////	/Activate and Deactivate events
+
 		context.greenishSlides("_triggerHook","init"); // hook
 
 ////	First Initialisation
@@ -317,7 +326,6 @@ $.extend($.gS, {
 		
 			css[opts.WoH]=slide.obj["outer"+gS._capitalize(opts.WoH)](true);
 			slide.active=(i==ai?true:false);
-			
 			
 			//left
 			if(!opts.resizable || !data.limited || i<ai || ai<0) {
