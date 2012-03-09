@@ -81,12 +81,12 @@ $.extend($.gS, {
 		limits : {},
 		active:false,
 		classes:{
-			active:"active",
-			vertical:"gSVertical",
-			horizontal:"gSHorizontal",
-			slide:"gSSlide",
-			deactivating:"gSdeactivating",
-			positionActive:"positionActive"
+			active:"gsActive",
+			vertical:"gsVertical",
+			horizontal:"gsHorizontal",
+			slide:"gsSlide",
+			deactivating:"gsDeactivating",
+			positionActive:"gsPositionActive"
 /* 
 			positionTop:"top",
 			positionRight:"right",
@@ -95,7 +95,7 @@ $.extend($.gS, {
 
  */
 		},
-		handle:".gSSlide",
+		handle:".gsSlide",
 		cache:false
 //		queue:false
 	},
@@ -163,6 +163,7 @@ $.extend($.gS, {
 		context.greenishSlides("_triggerHook","init"); // hook
 
 ////	First Initialisation
+		if(opts.classes.active === true) opts.classes.active=0;
 		if($("."+opts.classes.active, context).length)
 			$("."+opts.classes.active, context).eq(0).removeClass(opts.classes.active).trigger(opts.events.activate, true);
 		else if(opts.active !== false) {
