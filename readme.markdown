@@ -43,8 +43,8 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	
 	``` html
 	<ul class="myElement greenishSlides">
-		<li class="gsSlide gsHorizontal/gsVertical [active] [positionActive] [top/left] [bottom/right] [gsDeactivating]"></li>
-		<li class="gsSlide gsHorizontal/gsVertical [active] [positionActive] [top/left] [bottom/right] [gsDeactivating]"></li>
+		<li class="gsSlide gsHorizontal/gsVertical [gsActive] [gsPositionActive] [top/left] [bottom/right] [gsDeactivating]"></li>
+		<li class="gsSlide gsHorizontal/gsVertical [gsActive] [gsPositionActive] [top/left] [bottom/right] [gsDeactivating]"></li>
 	</ul>
 	```
 	
