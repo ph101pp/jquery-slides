@@ -128,7 +128,7 @@ $.extend($.gS, {
 		}
 ////	/Sets css and classes
 ////	Keyboard events.		
-		if(opts.keyEvents) {
+		if(opts.keyEvents)
 			opts.vertical?
 				$(document).bind("keydown", function(e) {
 					if(e.which == 40) context.greenishSlides("next");
@@ -138,7 +138,6 @@ $.extend($.gS, {
 					if(e.which == 39) context.greenishSlides("next");
 					else if(e.which == 37) context.greenishSlides("prev");
 				});
-		}
 ////	/Keyboard events.
 ////	Activate and Deactivate events
 		if(!opts.handle || !opts.events) {
@@ -372,7 +371,7 @@ $.extend($.gS, {
 		}
 	},
 /*///////////////////////////////////////////////////////////////////////////////
-	Changes the origin/positioning of a slide to "active" or "left/top" or "right/bottom".
+	Changes the origin/positioning of a slide to "active", "left/top" or "right/bottom".
 	This has no visual effect on the slide.
 */
 	_positioning : function (data, i, bind, active) {
