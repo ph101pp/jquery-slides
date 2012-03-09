@@ -94,7 +94,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	###Option Details
 	
 	``` javascript
-	vertical						Boolean									Default: false
+	vertical:						Boolean									Default: false
 	```
 	
 	> Defines the orientation of the greenishSlides element.
@@ -102,7 +102,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------
 
 	``` javascript
-	resizable						Boolean									Default: false
+	resizable:						Boolean									Default: false
 	```
 	
 	> Defines if the greenishSlides element can be resized on runtime. 
@@ -116,7 +116,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------
 		
 	``` javascript
-	active							Boolean									Default: false
+	active:							Boolean									Default: false
 									Object	(jQuery Object)				
 									String	(jQuery Selector)				
 									Integer	(Slide Index)				
@@ -124,7 +124,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	
 	> Defines the active Slide after initialisation.
 	> 
-	> __false__: No Slide or the first Slide (stayOpen) are active.
+	> __false__: No Slide (or the first Slide if stayOpen:true) is active.
 	>
 	> __true__: The first Slide is active.
 	>
@@ -135,7 +135,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------
 	
 	``` javascript
-	transitionSpeed					Integer									Default: 400
+	transitionSpeed:				Integer	(ms)								Default: 400
 	```
 	
 	> Defines the duration of the animations in milliseconds.
@@ -143,7 +143,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------
 	
 	``` javascript
-	easing							String									Default: "swing"
+	easing:							String									Default: "swing"
 	```
 	
 	> Defines what kind of easing algorythem should be used in the animations. Works with the jQuery easing plugin.
@@ -152,8 +152,8 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	
 	``` javascript
 	events: {												
-		activate					String									Default: "click"
-		deactivate					String									Default: "click"
+		activate:					String									Default: "click"
+		deactivate:					String									Default: "click"
 	}
 	```
 	
@@ -162,7 +162,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------
 	
 	``` javascript
-	handle	 						String	(jQuery Selector)				Default: ".gSSlide"
+	handle:	 						String	(jQuery Selector)				Default: ".gSSlide"
 									Object	(jQuery Object)				
 	```
 	
@@ -171,7 +171,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------
 	
 	``` javascript
-	stayOpen						Boolean									Default: false
+	stayOpen:						Boolean									Default: false
 	```
 	
 	> If __true__ the there is always one active slide. No deactivation is possible so none will be triggered.
@@ -179,7 +179,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------
 	
 	``` javascript
-	keyEvents						Boolean									Default: false
+	keyEvents:						Boolean									Default: false
 	```
 	
 	> If __true__ the arrow keys can be used to move from one slide to the next. 
@@ -187,7 +187,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------
 	
 	``` javascript
-	circle							Boolean									Default: false
+	circle:							Boolean									Default: false
 	```
 	
 	> Defines if after the last slide follows the first when the "next" event is triggered.
@@ -196,12 +196,12 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	
 	``` javascript
 	classes: {												
-		active						String									Default: "gsActive"
-		vertical					String									Default: "gsVertical"
-		horizontal					String									Default: "gsHorizontal"
-		slide						String									Default: "gsSlide"
-		deactivating				String									Default: "gsDeactivating"
-		positionActive				String									Default: "gsPositionActive"
+		active:						String									Default: "gsActive"
+		vertical:					String									Default: "gsVertical"
+		horizontal:					String									Default: "gsHorizontal"
+		slide:						String									Default: "gsSlide"
+		deactivating:				String									Default: "gsDeactivating"
+		positionActive:				String									Default: "gsPositionActive"
 	}
 	```
 	
@@ -210,17 +210,28 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------
 	
 	``` javascript
-	cache							Boolean									Default: false
+	cache:							Boolean									Default: false
 	```
 	
-	> Enables the caching functionality. Chaches certain valus and calucaltion. Use this if there are no on runtime changes at all (no resizing, adding of slides etc.)
+	> Enables the caching functionality. Caches certain valus and calucalation. Use this if there are no runtime changes at all (no resizing, adding of slides etc.)
 	>
-	> To be honest I kind of expected more of a speed improvement from this than it actually is.. so its usefulness is questionable.. but it does definitely no harm so why not use it.
+	> To be honest I kind of expected more of a speed improvement from this than it actually does.. so its usefulness is questionable.. but it does definitely no harm so why not use it.
 	
 	-------------------------
 	
 	``` javascript
-	limits							Object									Default: {}
+	limits:	{																Default: {}
+		min:						Integer	(px)
+		max:						Integer (px)
+		1: {
+			min:					Integer	(px)
+			max:					Integer	(px)
+		}							
+		"-1": {
+			min:					Integer	(px)
+			max:					Integer	(px)
+		}	
+	}
 	```
 	
 	> Have a look at the Limits Chapter below.
@@ -228,10 +239,16 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------	
 	
 	``` javascript
-	hooks							Object									Default: {}
+	hooks: {																	Default: {}
+		"hookName":					Function(callback function)
+									Object	(multiple callback functions)
+									Array	(multiple callback functions)	
+	}	
 	```
 	
-	> Have a look at the Hooks/Events/Callback Chapter below.
+	> Lets you register hooks during initialisation. 
+	>
+	> To learn more about the available hooks look at the Hooks/Events/Callbacks chapter below.
 	
 	-------------------------
 	
