@@ -2,7 +2,7 @@
  * greenishSlides: jQuery Slideshow plugin - v0.2 - beta (5/13/2011)
  * http://www.philippadrian.com
  * 
- * Copyright (c) 2011 Philipp C. Adrian
+ * Copyright (c) 2011-2012 Philipp C. Adrian
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses. 
  */
@@ -27,7 +27,7 @@ $.gS=$.fn.greenishSlides = function (method){
 	for(i=0; i<context.length; i++) {
 		data=$(context[i]).data("greenishSlidesData") || $(context[i]).parent().data("greenishSlidesData");
 		if(data && call=="_init") {
-			$.gS.opts(data, method, true);
+			$.gS._opts(data, method, true);
 			continue;
 		}
 		data = data || {
@@ -35,7 +35,7 @@ $.gS=$.fn.greenishSlides = function (method){
 				css:{},
 				dcss:{},
 				limits:{},
-				hooks:[],
+				callbacks:[],
 				slides:[],
 				ai:-1,
 				active:$()
@@ -47,13 +47,13 @@ $.gS=$.fn.greenishSlides = function (method){
 		else args=[data].concat(args);
 		$(context[i]).data("greenishSlidesData",data);
 
-//		Call method and catch "hookReturnedFalse" error from Hook. 
-		if(call=="_triggerHook") return $.gS[call].apply(context[i], args);
+//		Call method and catch "callbackReturnedFalse" error from Callback. 
+		if(call=="_triggerCallback") return $.gS[call].apply(context[i], args);
 		else try { 
 				$.gS[call].apply(context[i], args);
 			}
 			catch(err){
-				if(err!="hookReturnedFalse") throw err;
+				if(err!="callbackReturnedFalse") throw err;
 			}
 	}
 	return this;
@@ -77,7 +77,7 @@ $.extend($.gS, {
 			deactivate:"click"
 		},
 		keyEvents:false,
-		hooks : {},
+		callbacks : {},
 		limits : {},
 		active:false,
 		classes:{
@@ -107,12 +107,12 @@ $.extend($.gS, {
 		var gS=$.gS,
 			context=data.context,
 ////	Extends defaults into opts.
-			opts=gS.opts(data, data.opts, true),
-			hooks, slides, event;
+			opts=gS._opts(data, data.opts, true),
+			callbacks, slides, event;
 
-//		binding hooks to make them available.
-		for(hooks in opts.hooks) gS.bindHook(data,hooks,opts.hooks[hooks]);
-		context.greenishSlides("_triggerHook","preInit"); // hook
+//		binding callbacks to make them available.
+		for(callbacks in opts.callbacks) gS.bindCallback(data,callbacks,opts.callbacks[callbacks]);
+		context.greenishSlides("_triggerCallback","preInit"); // HOOK
 				
 		slides = context.css(gS.css.context).addClass("greenishSlides")
 			.children().addClass(opts.classes.slide).css(gS.css.gSSlide);
@@ -160,7 +160,7 @@ $.extend($.gS, {
 		context.bind(event, function(e) {context.greenishSlides("_event",e);}); // focusin/focusout for Keyboard accessability;
 ////	/Activate and Deactivate events
 
-		context.greenishSlides("_triggerHook","init"); // hook
+		context.greenishSlides("_triggerCallback","init"); // callback
 
 ////	First Initialisation
 		if(opts.classes.active === true) opts.classes.active=0;
@@ -172,7 +172,7 @@ $.extend($.gS, {
 				$(opts.active, context).eq(0).removeClass(opts.classes.active).trigger(opts.events.activate, true);
 		}
 		else gS.update(data);
-		context.greenishSlides("_triggerHook","postInit"); // hook
+		context.greenishSlides("_triggerCallback","postInit"); // callback
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
@@ -188,11 +188,11 @@ $.extend($.gS, {
 			target= slide.length ? [slide, handle] : false;
 		}
 		if((e.type == "focusin" || e.type==opts.events.activate) && target && !target[0].hasClass(opts.classes.active)) {
-			target[0].greenishSlides("_triggerHook","preActivateEvent"); // hook
+			target[0].greenishSlides("_triggerCallback","preActivateEvent"); // callback
 			target[0].greenishSlides("activate");
 		}
 		else if(!opts.stayOpen && (e.type == "focusout" || e.type==opts.events.deactivate) && target && target[0].hasClass(opts.classes.active) && target[1].has(e.relatedTarget).length <=0 && target[1] != e.relatedTarget) {
-			target[0].greenishSlides("_triggerHook","preDeactivateEvent");
+			target[0].greenishSlides("_triggerCallback","preDeactivateEvent");
 			target[0].greenishSlides("deactivate");
 		}
 	},
@@ -216,7 +216,7 @@ $.extend($.gS, {
 		data.active=slide;
 		data.ai=slide.index();
 		
-		slide.greenishSlides("_triggerHook","preActivate"); // hook
+		slide.greenishSlides("_triggerCallback","preActivate"); // callback
 		
 		gS.update(data, {}, "activate");
 	},
@@ -233,7 +233,7 @@ $.extend($.gS, {
 
 		if(!slide.hasClass(opts.classes.active)) return;
 		slide.removeClass(opts.classes.active).addClass(opts.classes.deactivating);
-		slide.greenishSlides("_triggerHook","preDeactivate");// hook
+		slide.greenishSlides("_triggerCallback","preDeactivate");// callback
 		data.active=$();
 		data.ai="-1";
 
@@ -248,7 +248,7 @@ $.extend($.gS, {
 			slide,
 			slideId=gS._step(data, -1, fromSlide);
 		if(slideId === undefined) slideId=context.children().length-1;
-		slideId=context.greenishSlides("_triggerHook","prev",slideId); //hook
+		slideId=context.greenishSlides("_triggerCallback","prev",slideId); //callback
 		slide=context.children().eq(slideId);
 		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.greenishSlides("activate");
 	},
@@ -261,7 +261,7 @@ $.extend($.gS, {
 			slide,
 			slideId=gS._step(data, 1, fromSlide);
 		if(slideId === undefined) slideId=0;
-		slideId=context.greenishSlides("_triggerHook","next",slideId);
+		slideId=context.greenishSlides("_triggerCallback","next",slideId);
 		slide=context.children().eq(slideId);
 		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.greenishSlides("activate");
 	},
@@ -287,23 +287,23 @@ $.extend($.gS, {
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
-	bindHook : function (data, hook, func) {
+	bindCallback : function (data, callback, func) {
 		func=typeof(func)=="function"?[func]:func;
-		data.hooks[hook]=data.hooks[hook]||[];
-		for(var key in func) data.hooks[hook].push(func[key]);
+		data.callbacks[callback]=data.callbacks[callback]||[];
+		for(var key in func) data.callbacks[callback].push(func[key]);
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
-	_triggerHook : function (data, hook, param) {
-		if(!data.hooks[hook] || data.hooks[hook].length <= 0) return param;
-		for(var key in data.hooks[hook]) 
-			if((param=data.hooks[hook][key].apply(this, [data,param])) !== false) continue;
-			else throw "hookReturnedFalse";
+	_triggerCallback : function (data, callback, param) {
+		if(!data.callbacks[callback] || data.callbacks[callback].length <= 0) return param;
+		for(var key in data.callbacks[callback]) 
+			if((param=data.callbacks[callback][key].apply(this, [data,param])) !== false) continue;
+			else throw "callbackReturnedFalse";
 		return param;
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
-	opts : function (data, opts, save) {
+	_opts : function (data, opts, save) {
 		opts=$.extend(true,{},this.defaults, data.opts||{}, opts||{});
 		if(save) data.opts=opts;
 		return opts;
@@ -424,24 +424,18 @@ $.extend($.gS, {
 				min=[];
 				max=[];
 				
-				!isNaN(cssMax) && max.push(cssMax); 
-				opts.limits[i] && !isNaN(opts.limits[i].max) && max.push(opts.limits[i].max); 
-				opts.limits[k] && !isNaN(opts.limits[k].max) && max.push(opts.limits[k].max); 
-				!isNaN(opts.limits.max) && max.push(opts.limits.max); 
+				if(!isNaN(cssMax)) data.limits[i].max=cssMax;
+				else if(opts.limits[i] && !isNaN(opts.limits[i].max)) data.limits[i].max=opts.limits[i].max; 
+				else if(opts.limits[k] && !isNaN(opts.limits[k].max)) data.limits[i].max=opts.limits[k].max; 
+				else if(!isNaN(opts.limits.max)) data.limits[i].max=opts.limits.max; 
+				else data.limits[i].max= undefined;
 		
-				data.limits[i].max=max.length ? 
-					max.sort(function(a,b){return (a-b);})[0]:
-					undefined;
-		
-				!isNaN(cssMin) && min.push(cssMin); 
-				opts.limits[i] && !isNaN(opts.limits[i].min) && min.push(opts.limits[i].min); 
-				opts.limits[k] && !isNaN(opts.limits[k].min) && min.push(opts.limits[k].min); 
-				!isNaN(opts.limits.min) && min.push(opts.limits.min); 
-		
-				data.limits[i].min=min.length ? 
-					min.sort(function(a,b){return (b-a);})[0]:
-					undefined;
-		
+				if(!isNaN(cssMin)) data.limits[i].min=cssMin; 
+				else if(opts.limits[i] && !isNaN(opts.limits[i].min)) data.limits[i].min=opts.limits[i].min; 
+				else if(opts.limits[k] && !isNaN(opts.limits[k].min)) data.limits[i].min=opts.limits[k].min; 
+				else if(!isNaN(opts.limits.min)) data.limits[i].min=opts.limits.min; 
+				else data.limits[i].min = undefined;
+
 				if(cssMin && cssMin > data.limits[i].max) data.limits[i].max=cssMin;
 				if(cssMax && cssMax < data.limits[i].min) data.limits[i].min=cssMax;
 				if(data.limits[i].min || data.limits[i].max) data.limited=true;
@@ -568,37 +562,37 @@ $.extend($.gS, {
 			active=data.active,
 			ai=data.ai,
 			postAnimation;
-		active.greenishSlides("_triggerHook","update"); // hook
-		opts=gS.opts(data, opts);	
+		active.greenishSlides("_triggerCallback","update"); // callback
+		opts=gS._opts(data, opts);	
 
 //		Get and store Data for the animation function
 		gS._getData(data);
 		
-//		Set hooks for either Activation or Deactivation.
+//		Set callbacks for either Activation or Deactivation.
 		if(action == "deactivate") {
-			active.greenishSlides("_triggerHook","preDeactivateAnimation"); // hook
-			postAnimation = function () {context.greenishSlides("_postDeactivate");}; // hook
+			active.greenishSlides("_triggerCallback","preDeactivateAnimation"); // callback
+			postAnimation = function () {context.greenishSlides("_postDeactivate");}; // callback
 		}
 		else if(action == "activate") {  
-			active.greenishSlides("_triggerHook","preActivateAnimation"); // hook
-			postAnimation = function () {context.greenishSlides("_postActivate");}; // hook
+			active.greenishSlides("_triggerCallback","preActivateAnimation"); // callback
+			postAnimation = function () {context.greenishSlides("_postActivate");}; // callback
 		}
 		else {
-			active.greenishSlides("_triggerHook","preUpdateAnimation"); // hook
-			postAnimation = function () {active.greenishSlides("_triggerHook","postUpdate");}; // hook		
+			active.greenishSlides("_triggerCallback","preUpdateAnimation"); // callback
+			postAnimation = function () {active.greenishSlides("_triggerCallback","postUpdate");}; // callback		
 		}
 //		Start Animation for Slides	
 		context
-			.dequeue("gSpreAnimation") // hook: custom queue that runs before the animation
+			.dequeue("gSpreAnimation") // callback: custom queue that runs before the animation
 			.css({textIndent:0})
 			.animate({textIndent:100}, {duration:opts.transitionSpeed, easing:opts.easing, complete:postAnimation , step:gS._animationStep})
-			.dequeue("gSpostAnimation"); // hook: custom queue that runs after the animation
+			.dequeue("gSpostAnimation"); // callback: custom queue that runs after the animation
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
 	_postActivate : function (data) {
 		if(data.ai>=0)
-			data.active.greenishSlides("_triggerHook","postActivate"); // hook
+			data.active.greenishSlides("_triggerCallback","postActivate"); // callback
 		$.gS._postDeactivate(data);
 	},
 /*///////////////////////////////////////////////////////////////////////////////
@@ -606,7 +600,7 @@ $.extend($.gS, {
 	_postDeactivate : function (data) {
 		var deactive=data.context.find("."+data.opts.classes.slide+"."+data.opts.classes.deactivating);
 		if(deactive.length>0) {
-			deactive.greenishSlides("_triggerHook","postDeactivate"); // hook
+			deactive.greenishSlides("_triggerCallback","postDeactivate"); // callback
 			deactive.removeClass(data.opts.classes.deactivating);
 		}
 	},
@@ -614,7 +608,7 @@ $.extend($.gS, {
 */
 	_animationStep : function (state, obj) {
 		try{
-			var data = $(obj.elem).dequeue("gSanimationStep").data("greenishSlidesData"); // hook: custom queue that runs once on every step of the animation (MAKE IT FAST!)
+			var data = $(obj.elem).dequeue("gSanimationStep").data("greenishSlidesData"); // callback: custom queue that runs once on every step of the animation (MAKE IT FAST!)
 			if(!data) throw data;
 			var opts=data.opts,
 				dcss=data.dcss[data.ai],
@@ -664,7 +658,7 @@ $.extend($.gS, {
 				}
 			
 			data.actualCSS=newCss;
-			$.gS._triggerHook(data, "step"); // _triggerHook needs try/catch wrapper to run properly.
+			$.gS._triggerCallback(data, "step"); // _triggerCallback needs try/catch wrapper to run properly.
 		}
 		catch(err){
 			$(this).stop();
