@@ -66,7 +66,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------
 		
 	``` javascript
-	$(".myElement").find(".mySlide").greenishSlides("activate");				
+	$(".mySlide",".myElement").greenishSlides("activate");				
 	```
 	
 	> #### Activate Slide
@@ -76,7 +76,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------
 
 	``` javascript
-	$(".myElement").find(".mySlide").greenishSlides("deactivate");				
+	$(".mySlide", ".myElement").greenishSlides("deactivate");				
 	```
 	
 	> #### Deactivate Slide
@@ -119,12 +119,12 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------
 		
 	``` javascript
-	$(".myElement").greenishSlides("bindHook", Function);				
+	$(".myElement").greenishSlides("bindCallback", Function);				
 	```
 	
-	> #### Bind a Hook/Event/Callback
+	> #### Bind a Callback/Event
 	>
-	> Registers or binds a function to a certain hook (see below). 
+	> Registers or binds a callback function to a certain event. (see below). 
 
 	-------------------------
 			
@@ -170,7 +170,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 			},
 			cache:false,
 			limits : {},
-			hooks : {}
+			callbacks : {}
 		});
 	```
 	
@@ -342,18 +342,149 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------	
 	
 	``` javascript
-	hooks: {																	Default: {}
-		"hookName":					Function(callback function)
+	callbacks: {																	Default: {}
+		"callbackName":				Function(callback function)
 									Object	(multiple callback functions)
 									Array	(multiple callback functions)	
 	}	
 	```
 	
-	> Allows register hooks during initialisation. 
+	> Allows to register callback functions during initialisation. 
 	>
-	> To learn more about the available hooks look at the Hooks/Events/Callbacks chapter below.
+	> To learn more about the available callbacks look at the Callbacks/Events chapter below.
 	
 	-------------------------
 
-1.	Hooks/Events/Callbacks
+1.	Callbacks/Events
 ----------------
+
+	During the runtime of the plugin a bunch of callbacks are fired. 
+	
+	Callbacks can be registered by adding the functions to the options object or by calling the "bindCallback" method.
+	
+	Every callback function receives the _data_ object as first parameter while the following parameters can change.
+	
+	By returning __false__ in the callback the pluging cancels the current event and stopps its action. 
+	
+	This is a list of all the callbacks that are available at the moment (to find them in the code search for _#CALLBACK_):
+	
+	``` javascript
+	"preInit"						function(data)					Context: $(".myElement")
+	```
+	
+	> Called on initialisation before anything else is done.
+	
+	-------------------------
+
+	``` javascript
+	"init"							function(data)					Context: $(".myElement")
+	```
+	
+	> Called on initialisation after all the classes and styles are set.
+	
+	-------------------------
+
+	``` javascript
+	"postInit"						function(data)					Context: $(".myElement")
+	```
+	
+	> Called after the initialisation is complete.
+	
+	-------------------------
+
+	``` javascript
+	"preActivateEvent"				function(data)					Context: Slide Handle
+	```
+	
+	> Called every time the activation event is triggered.
+	
+	-------------------------
+
+	``` javascript
+	"preDeactivateEvent"			function(data)					Context: Slide Handle
+	```
+	
+	> Called every time the deactivation event is triggered.
+	
+	-------------------------
+
+	``` javascript	
+	"preActivate"					function(data)					Context: $(".mySlide", ".myElement")
+	```
+	
+	> Called before a slide is activated.
+	
+	-------------------------
+	
+	``` javascript
+	"preDeactivate"					function(data)					Context: $(".mySlide", ".myElement")
+	```
+	
+	> Called before a slide is deactivated.
+	
+	-------------------------
+	
+	``` javascript
+	"preUpdate"						function(data)					Context: $(".active", ".myElement")
+	```
+	
+	> Called before all slides are updated
+	
+	-------------------------
+	
+	``` javascript
+	"preActivateAnimation"			function(data)					Context: $(".myElement")
+	"preDeactivateAnimation"		function(data)					Context: $(".myElement")
+	"preUpdateAnimation"			function(data)					Context: $(".myElement")
+	```
+	
+	> Called after all caculations are done just before the animation starts.
+	
+	-------------------------
+
+	``` javascript	
+	"postActivate"					function(data)					Context: $(".active", ".myElement")
+	```
+	
+	> Called after a slide is activated.
+	
+	-------------------------
+	
+	``` javascript
+	"postDeactivate"				function(data)					Context: $(".myDeactivatedSlide", ".myElement")
+	```
+	
+	> Called after a slide is deactivated.
+	
+	-------------------------
+	
+	``` javascript
+	"postUpdate"						function(data)					Context: $(".active", ".myElement")
+	```
+	
+	> Called after all slides are updated
+	
+	-------------------------
+	
+	``` javascript
+	"step"						function(data)					Context: $(".active", ".myElement")
+	```
+	
+	> Called after all slides are updated
+	
+	-------------------------
+
+	###Add New Callback
+	
+	If you need a new callback that is missing, feel free to add it in the code!
+	Just put the following at the place you need the call:
+	
+	``` javascript
+	[context].greenishSlides("_triggerCallback","myCallbackName" [,parameterOne, parameterTwo, ...]);
+	```
+	
+	Notice that the new callback will come with all the features of the default ones:
+	* The _data_ object will always be passed as the first parameter. (And you can add as many additional parameters as you wish.)
+ 	* return __false__ will stop the further execution of the acutal event.
+	
+	__When you added a new callback, tell me about it! So I can consider adding it to the default callbacks.__
