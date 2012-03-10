@@ -459,7 +459,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------
 	
 	``` javascript
-	"postUpdate"						function(data)					Context: $(".active", ".myElement")
+	"postUpdate"					function(data)					Context: $(".active", ".myElement")
 	```
 	
 	> Called after all slides are updated
@@ -470,7 +470,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	"step"						function(data)					Context: $(".active", ".myElement")
 	```
 	
-	> Called after all slides are updated
+	> Called at every step of the animation function 
 	
 	-------------------------
 
