@@ -128,9 +128,9 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	>
 	> __true__: The first Slide is active.
 	>
-	> 0 : The first Slide is active.
+	> __0__ : The first Slide is active.
 	>
-	> -1 : The last Slide is active.
+	> __-1__ : The last Slide is active.
 	
 	-------------------------
 	
@@ -222,19 +222,37 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	``` javascript
 	limits:	{																Default: {}
 		min:						Integer	(px)
+									String
 		max:						Integer (px)
-		1: {
+									String
+		0: {
 			min:					Integer	(px)
+									String
 			max:					Integer	(px)
+									String
 		}							
 		"-1": {
 			min:					Integer	(px)
+									String
 			max:					Integer	(px)
+									String
 		}	
 	}
 	```
 	
-	> Have a look at the Limits Chapter below.
+	> This allows you to set a minimum height/width and a maximum height/width (in px) for all slides or a single slide.
+	>
+	> __limits.min__: Sets a min width/height for every slide. So no slide can be smaller than i.e. 20px
+	>
+	> __limits[0].min__: Sets a min width/height for the first slide.
+	>
+	> __limits[-1].min__: Sets a min width/height for the last slide.
+	>
+	> All min/max definitions are optional and can be combined in any ways possible.
+	>
+	> Limits can also be set by css with min-width, max-width, min-height, max-height.
+	>
+	> If there are multiple limits defined for the same slide, the smallest maximum and the larges minimum will be used.
 	
 	-------------------------	
 	
@@ -246,7 +264,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	}	
 	```
 	
-	> Lets you register hooks during initialisation. 
+	> Allows register hooks during initialisation. 
 	>
 	> To learn more about the available hooks look at the Hooks/Events/Callbacks chapter below.
 	
