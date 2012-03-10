@@ -48,13 +48,102 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	</ul>
 	```
 	
+1.	Methods
+----------------
+	
+	``` javascript
+	$(".myElement").greenishSlides([Object options]);				
+	```
+	
+	> ####Initialize / Update Options
+	>
+	> Initialize the greenishSlides plugin on a set of HTML Elements.
+	>
+	> Optional you cann pass an object with options (see below) to the function.
+	>
+	> Also you can change options with this at any time after initialisation.
+	
+	-------------------------
+		
+	``` javascript
+	$(".myElement").find(".mySlide").greenishSlides("activate");				
+	```
+	
+	> #### Activate Slide
+	>
+	> Activates the slide this method is called on.
+	
+	-------------------------
+
+	``` javascript
+	$(".myElement").find(".mySlide").greenishSlides("deactivate");				
+	```
+	
+	> #### Deactivate Slide
+	>
+	> Deactivates the slide this method is called on.
+	
+	-------------------------
+				
+	``` javascript
+	$(".myElement").greenishSlides("update");				
+	```
+	
+	> #### Update Slide Positions.
+	>
+	> Updates the position of all slides. 
+	>
+	> Needs to be called adding a new slide or after a resize happened without the resize option enabled.	
+	
+	-------------------------
+	
+	``` javascript
+	$(".myElement").greenishSlides("next", [Integer goFromSlideId]);				
+	```	
+	> #### Activates Next Slide.
+	>
+	> Activates the next slide to the left/bottom of the active slide.
+	> Optionaly you can pass the index of a slide to take its next. 	
+	
+	-------------------------
+		
+	``` javascript
+	$(".myElement").greenishSlides("prev", [Integer goFromSlideId]);				
+	```
+	
+	> #### Activates Previous Slide.
+	>
+	> Activates the next slide to the right/top of the active slide.
+	> Optionaly you can pass the index of a slide to take its previous.
+	
+	-------------------------
+		
+	``` javascript
+	$(".myElement").greenishSlides("bindHook", Function);				
+	```
+	
+	> #### Bind a Hook/Event/Callback
+	>
+	> Registers or binds a function to a certain hook (see below). 
+
+	-------------------------
+			
+	``` javascript
+	$(".myElement").greenishSlides("clearCache");				
+	```
+	
+	> #### Clear Cache
+	>
+	> Removes all cached informations. (Caching can be enabled by option).
+	
+	-------------------------	
 	
 1.	Options
 ----------------
 	
-	Options can be set or changed by passing an object to the greenishSlides function. This can be done on initialisation but also afterwards to change for example limits.
+	Options can be set or changed by passing an object to the greenishSlides function. This can be done on initialisation or afterwards to change any value (for example limits).
 	
-	Here are all the possibile options (set to their default value):
+	Here are all the possibile options (set to their __default values__):
 	
 	``` javascript
 	$(".myElement").greenishSlides({
@@ -84,12 +173,6 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 			hooks : {}
 		});
 	```
-	So and because these are the default values this equals:
-	
-	``` javascript
-	$(".myElement").greenishSlides();
-	```
-	
 	
 	###Option Details
 	
@@ -135,7 +218,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------
 	
 	``` javascript
-	transitionSpeed:				Integer	(ms)								Default: 400
+	transitionSpeed:				Integer	(ms)							Default: 400
 	```
 	
 	> Defines the duration of the animations in milliseconds.
@@ -250,9 +333,11 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	>
 	> All min/max definitions are optional and can be combined in any ways possible.
 	>
-	> Limits can also be set by css with min-width, max-width, min-height, max-height.
+	> Limits can also be set by css with min-width, max-width, min-height, max-height. Css limits always override limits that where set in the options. Also, limits for one single slide override the limits set for all slides.
 	>
-	> If there are multiple limits defined for the same slide, the smallest maximum and the larges minimum will be used.
+	> __min-width > limits[0].min > limits.min__
+	>
+	> Because min-width doesn't have a default like _none_, __0px is handled as undefined__ and limits[0].min will be used instead. To define __"min-width:0px" use 0%__ which will then override limits[0].min.
 	
 	-------------------------	
 	
@@ -269,6 +354,6 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	> To learn more about the available hooks look at the Hooks/Events/Callbacks chapter below.
 	
 	-------------------------
-	
-1.	Methods
+
+1.	Hooks/Events/Callbacks
 ----------------
