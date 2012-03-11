@@ -21,9 +21,11 @@ So as said above, this plugin has been developed for [The Book in Motion](http:/
 
 Also it's used on the frontpage of the [City University of New York - Graduate Center](http://www.gc.cuny.edu) as well as image gallery on some subpages.
 
-What follows here is FINALLY the documentation of the plugin. So I hope you can use it (and if so will be able to from the docs below ;)).
+What follows here is FINALLY the documentation of the plugin. It's been a lot of work that went into it and I'm very happy to finally make available for everybody.
 
-__And when you use it: SHOW ME! I would love to see what you're doing with it!__
+I'm happy for any feedback, suggestions and bug reports (well not happy, but grateful in the last case :) )
+
+__And when you come to use the plugin: SHOW ME! I would love to see what you're doing with it!__
 
 
 #Documentation
