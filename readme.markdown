@@ -1,23 +1,49 @@
-#jQuery Plugin: greenishSlides
-This is a pretty flexible and customizable slideshow/accordion plugin for jQuery.
+#greenishSlides jQuery slideshow plugin - v0.2 - beta (5/13/2011)
 
-It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
-	
+This is a pretty flexible and highly customizable slideshow/accordion plugin for jQuery.
+
+This plugin is inspired by the [jQuery UI Accordion](http://jqueryui.com/demos/accordion/) and [Kwicks for Mootools](http://davidwalsh.name/mootools-kwicks) / [Kwicks for jQuery](http://www.jeremymartin.name/projects.php?project=kwicks).
+
+The main reason to start to develop this plugin where a certain set of specifications and customizaitions I needed for [The Book in Motion](http://thebookinmotion.greenish.ch) website i've been developing, that none of the above where quite offering. 
+
+So here are these specifications and features that this plugin provides - plus some others (I kinda got into it):
+
+* The Slideshow is resizable without javascript -> so no jittering even when using a fullscreen slideshow.
+* There are NO gaps and spaces between the slides during the animation.
+* Limits (max-/min-width) can be set for all slides but also for one single slide (or two).
+* The plugin doesn't require a predefined markup like an unordered list or h3 headers and divs.. it just takes what it gets.
+* You can mess around with the css on runtime and the plugin still finds the proper position for each slide when its next event is triggered.
+* Lots of options to turn things on and off..
+* And a lots of callbacks and events that allow to customize, extend and manipulate the plugins behaviour to make it really flexible. Also its easy to add new callbacks where they're needed.
+* Fully browser compatible: IE 7.0+ (haven't tested on IE6 - screw it!), Firefox 3+, Safari 3.1+, Opera 9.6+ and Google Chrome.
+
+So as said above, this plugin has been developed for [The Book in Motion](http://thebookinmotion.greenish.ch) website and this website is probably the best way to see what this plugin is capable of.
+
+Also it's used on the frontpage of the [City University of New York - Graduate Center](http://www.gc.cuny.edu) as well as image gallery on some subpages.
+
+What follows here is FINALLY the documentation of the plugin. So I hope you can use it (and if so will be able to from the docs below ;)).
+
+__And when you use it: SHOW ME! I would love to see what you're doing with it!__
+
+
+#Documentation
+
 1.	General
 ----------------
+	
+	To start off, get the newest version of the greenishSlides plugin from Github and move it into your project folder.
 
-	All child elements of the greenishSlides element will be turned into slides.
-	
-	So the following:
-	
+	Include the file into your HTML and you're ready to go:
 	
 	``` javascript
 	jQuery(document).ready(function(){
 		$(".myElement").greenishSlides();
 	});
 	```
+
+	All child elements of _.myElement_ element will be turned into slides.
 	
-	Will turn each one of these:
+	So the code above will turn each one of these:
 	
 	``` html
 	<ul class="myElement">
@@ -39,7 +65,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	</div>
 	```
 	
-	Into a slider that will look (in the first case: `<ul>`) like this:
+	Into a slideshow that's markup will look (in the first case: `<ul>`) like this:
 	
 	``` html
 	<ul class="myElement greenishSlides">
