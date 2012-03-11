@@ -6,6 +6,8 @@ This plugin is inspired by the [jQuery UI Accordion](http://jqueryui.com/demos/a
 
 The main reason to start to develop this plugin where a certain set of specifications and customizaitions I needed for [The Book in Motion](http://thebookinmotion.greenish.ch) website i've been developing, that none of the above where quite offering. 
 
+----------------
+
 So here are these specifications and features that this plugin provides - plus some others (I kinda got into it):
 
 * The Slideshow is resizable without javascript -> so no jittering even when using a fullscreen slideshow.
@@ -17,6 +19,8 @@ So here are these specifications and features that this plugin provides - plus s
 * And a lots of callbacks and events that allow to customize, extend and manipulate the plugins behaviour to make it really flexible. Also its easy to add new callbacks where they're needed.
 * Fully browser compatible: IE 7.0+ (haven't tested on IE6 - screw it!), Firefox 3+, Safari 3.1+, Opera 9.6+ and Google Chrome.
 
+----------------
+
 So as said above, this plugin has been developed for [The Book in Motion](http://thebookinmotion.greenish.ch) website and this website is probably the best way to see what this plugin is capable of.
 
 Also it's used on the frontpage of the [City University of New York - Graduate Center](http://www.gc.cuny.edu) as well as image gallery on some subpages.
@@ -26,7 +30,6 @@ What follows here is FINALLY the documentation of the plugin. It's been a lot of
 I'm happy for any feedback, suggestions and bug reports (well not happy, but grateful in the last case :) )
 
 __And when you come to use the plugin: SHOW ME! I would love to see what you're doing with it!__
-
 
 #Documentation
 
