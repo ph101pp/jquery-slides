@@ -342,7 +342,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------	
 	
 	``` javascript
-	callbacks: {																	Default: {}
+	callbacks: {																Default: {}
 		"callbackName":				Function(callback function)
 									Object	(multiple callback functions)
 									Array	(multiple callback functions)	
@@ -393,7 +393,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------
 
 	``` javascript
-	"preActivateEvent"				function(data)					Context: Slide Handle
+	"activateEvent"					function(data)					Context: Slide Handle
 	```
 	
 	> Called every time the activation event is triggered.
@@ -401,7 +401,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------
 
 	``` javascript
-	"preDeactivateEvent"			function(data)					Context: Slide Handle
+	"deactivateEvent"				function(data)					Context: Slide Handle
 	```
 	
 	> Called every time the deactivation event is triggered.
@@ -451,7 +451,7 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------
 	
 	``` javascript
-	"postDeactivate"				function(data)					Context: $(".myDeactivatedSlide", ".myElement")
+	"postDeactivate"				function(data)					Context: Deactivated Slide
 	```
 	
 	> Called after a slide is deactivated.
@@ -467,10 +467,14 @@ It is inspired by the jQuery UI Accordion and Kwicks for jQuery.
 	-------------------------
 	
 	``` javascript
-	"step"						function(data)					Context: $(".active", ".myElement")
+	"step"							function(data)					Context: $(".active", ".myElement")
 	```
 	
-	> Called at every step of the animation function 
+	> Called at every step of the animation function. 
+	>
+	>The _data_ object contains the current position of everyslide at that moment of the animation. 
+	>
+	>Also have a look at the _step_ callback of the jQuery animation function.
 	
 	-------------------------
 
