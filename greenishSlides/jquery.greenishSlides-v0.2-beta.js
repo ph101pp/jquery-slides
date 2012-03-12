@@ -1,5 +1,5 @@
 /*! 
- * greenishSlides: jQuery Slideshow plugin - v0.2 - beta (5/13/2011)
+ * greenishSlides: jQuery slideshow plugin - v0.2 - beta (5/13/2011)
  * http://www.philippadrian.com
  * 
  * Copyright (c) 2011-2012 Philipp C. Adrian
@@ -112,7 +112,7 @@ $.extend($.gS, {
 
 //		binding callbacks to make them available.
 		for(callbacks in opts.callbacks) gS.bindCallback(data,callbacks,opts.callbacks[callbacks]);
-		context.greenishSlides("_triggerCallback","preInit"); // HOOK
+		context.greenishSlides("_triggerCallback","preInit"); // #CALLBACK
 				
 		slides = context.css(gS.css.context).addClass("greenishSlides")
 			.children().addClass(opts.classes.slide).css(gS.css.gSSlide);
@@ -160,7 +160,7 @@ $.extend($.gS, {
 		context.bind(event, function(e) {context.greenishSlides("_event",e);}); // focusin/focusout for Keyboard accessability;
 ////	/Activate and Deactivate events
 
-		context.greenishSlides("_triggerCallback","init"); // callback
+		context.greenishSlides("_triggerCallback","init"); // #CALLBACK
 
 ////	First Initialisation
 		if(opts.classes.active === true) opts.classes.active=0;
@@ -172,7 +172,7 @@ $.extend($.gS, {
 				$(opts.active, context).eq(0).removeClass(opts.classes.active).trigger(opts.events.activate, true);
 		}
 		else gS.update(data);
-		context.greenishSlides("_triggerCallback","postInit"); // callback
+		context.greenishSlides("_triggerCallback","postInit"); // #CALLBACK
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
@@ -188,11 +188,11 @@ $.extend($.gS, {
 			target= slide.length ? [slide, handle] : false;
 		}
 		if((e.type == "focusin" || e.type==opts.events.activate) && target && !target[0].hasClass(opts.classes.active)) {
-			target[0].greenishSlides("_triggerCallback","preActivateEvent"); // callback
+			target[0].greenishSlides("_triggerCallback","activateEvent"); // #CALLBACK
 			target[0].greenishSlides("activate");
 		}
 		else if(!opts.stayOpen && (e.type == "focusout" || e.type==opts.events.deactivate) && target && target[0].hasClass(opts.classes.active) && target[1].has(e.relatedTarget).length <=0 && target[1] != e.relatedTarget) {
-			target[0].greenishSlides("_triggerCallback","preDeactivateEvent");
+			target[0].greenishSlides("_triggerCallback","deactivateEvent"); // #CALLBACK
 			target[0].greenishSlides("deactivate");
 		}
 	},
@@ -216,7 +216,7 @@ $.extend($.gS, {
 		data.active=slide;
 		data.ai=slide.index();
 		
-		slide.greenishSlides("_triggerCallback","preActivate"); // callback
+		slide.greenishSlides("_triggerCallback","preActivate"); // #CALLBACK
 		
 		gS.update(data, {}, "activate");
 	},
@@ -233,7 +233,7 @@ $.extend($.gS, {
 
 		if(!slide.hasClass(opts.classes.active)) return;
 		slide.removeClass(opts.classes.active).addClass(opts.classes.deactivating);
-		slide.greenishSlides("_triggerCallback","preDeactivate");// callback
+		slide.greenishSlides("_triggerCallback","preDeactivate");// #CALLBACK
 		data.active=$();
 		data.ai="-1";
 
@@ -562,7 +562,7 @@ $.extend($.gS, {
 			active=data.active,
 			ai=data.ai,
 			postAnimation;
-		active.greenishSlides("_triggerCallback","update"); // callback
+		active.greenishSlides("_triggerCallback","preUpdate"); // #CALLBACK
 		opts=gS._opts(data, opts);	
 
 //		Get and store Data for the animation function
@@ -570,29 +570,27 @@ $.extend($.gS, {
 		
 //		Set callbacks for either Activation or Deactivation.
 		if(action == "deactivate") {
-			active.greenishSlides("_triggerCallback","preDeactivateAnimation"); // callback
-			postAnimation = function () {context.greenishSlides("_postDeactivate");}; // callback
+			active.greenishSlides("_triggerCallback","preDeactivateAnimation"); // #CALLBACK
+			postAnimation = function () {context.greenishSlides("_postDeactivate");}; // #CALLBACK
 		}
 		else if(action == "activate") {  
-			active.greenishSlides("_triggerCallback","preActivateAnimation"); // callback
-			postAnimation = function () {context.greenishSlides("_postActivate");}; // callback
+			active.greenishSlides("_triggerCallback","preActivateAnimation"); // #CALLBACK
+			postAnimation = function () {context.greenishSlides("_postActivate");}; // #CALLBACK
 		}
 		else {
-			active.greenishSlides("_triggerCallback","preUpdateAnimation"); // callback
-			postAnimation = function () {active.greenishSlides("_triggerCallback","postUpdate");}; // callback		
+			active.greenishSlides("_triggerCallback","preUpdateAnimation"); // #CALLBACK
+			postAnimation = function () {active.greenishSlides("_triggerCallback","postUpdate");}; // #CALLBACK		
 		}
 //		Start Animation for Slides	
 		context
-			.dequeue("gSpreAnimation") // callback: custom queue that runs before the animation
 			.css({textIndent:0})
 			.animate({textIndent:100}, {duration:opts.transitionSpeed, easing:opts.easing, complete:postAnimation , step:gS._animationStep})
-			.dequeue("gSpostAnimation"); // callback: custom queue that runs after the animation
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
 	_postActivate : function (data) {
 		if(data.ai>=0)
-			data.active.greenishSlides("_triggerCallback","postActivate"); // callback
+			data.active.greenishSlides("_triggerCallback","postActivate"); // #CALLBACK
 		$.gS._postDeactivate(data);
 	},
 /*///////////////////////////////////////////////////////////////////////////////
@@ -600,7 +598,7 @@ $.extend($.gS, {
 	_postDeactivate : function (data) {
 		var deactive=data.context.find("."+data.opts.classes.slide+"."+data.opts.classes.deactivating);
 		if(deactive.length>0) {
-			deactive.greenishSlides("_triggerCallback","postDeactivate"); // callback
+			deactive.greenishSlides("_triggerCallback","postDeactivate"); // #CALLBACK
 			deactive.removeClass(data.opts.classes.deactivating);
 		}
 	},
@@ -608,7 +606,7 @@ $.extend($.gS, {
 */
 	_animationStep : function (state, obj) {
 		try{
-			var data = $(obj.elem).dequeue("gSanimationStep").data("greenishSlidesData"); // callback: custom queue that runs once on every step of the animation (MAKE IT FAST!)
+			var data = $(obj.elem).data("greenishSlidesData"); 
 			if(!data) throw data;
 			var opts=data.opts,
 				dcss=data.dcss[data.ai],
@@ -658,7 +656,7 @@ $.extend($.gS, {
 				}
 			
 			data.actualCSS=newCss;
-			$.gS._triggerCallback(data, "step"); // _triggerCallback needs try/catch wrapper to run properly.
+			$.gS._triggerCallback(data, "step"); // #CALLBACK _triggerCallback needs try/catch wrapper to run properly.
 		}
 		catch(err){
 			$(this).stop();

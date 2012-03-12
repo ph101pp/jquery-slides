@@ -10,37 +10,25 @@
 		<script type="text/javascript">
 			(function($) {
 				$(document).ready(function() {
-					$(".anything").greenishSlides({
-						vertical:false,
-						stayOpen:false,
-						resizable:true,
-						circle:false,
-						keyEvents:true,
-						active:-2,
-						events:false,
-						bla:{
-							activate:"mouseover",
-							deactivate:"mouseout"
-						},
-						limits:{
-								0:{
-									min:30,
-									max:30
-								}
-						}
-						
-						
-						
-					});
+					$(".anything").greenishSlides();
 				});
 			})(jQuery);
 		</script>		
+		
+		<style>
+		
+			.bla {
+				max-width:500px;
+				min-width:0%;
+				
+			}
+		</style>
 	</head>
 	<body>
 		<ul class="anything">
-			<li><div><img src="//placekitten.com/300/300" alt=""></div></li>
+			<li class="bla"><div><img src="http://placekitten.com/300/300" alt=""></div></li>
 			<li></li>
-			<li></li>
+			<li class="bla"></li>
 			<li></li>
 			<li></li>
 			<li></li>
