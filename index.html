@@ -1,83 +1,702 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset='utf-8'>
-
-  <title>greenish/greenishSlides @ GitHub</title>
-
-  <style type="text/css">
-    body {
-      margin-top: 1.0em;
-      background-color: #f0f0f0;
-      font-family: Helvetica, Arial, FreeSans, san-serif;
-      color: #000000;
-    }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-    h1 { font-size: 3.8em; color: #0f0f0f; margin-bottom: 3px; }
-    h1 .small { font-size: 0.4em; }
-    h1 a { text-decoration: none }
-    h2 { font-size: 1.5em; color: #0f0f0f; }
-    h3 { text-align: center; color: #0f0f0f; }
-    a { color: #0f0f0f; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-    pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-  </style>
+<head>	
+	<meta charset='utf-8'>
+	<title>greenishSlides - jQuery slideshow plugin - v0.2</title>
+	
+	<link rel="stylesheet" type="text/css" href="all.css">
+	
 </head>
 
 <body>
   <a href="https://github.com/greenish/greenishSlides"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
 
   <div id="container">
-
     <div class="download">
       <a href="https://github.com/greenish/greenishSlides/zipball/master">
-        <img border="0" width="90" src="https://github.com/images/modules/download/zip.png"></a>
+        <img border="0" width="80" src="https://github.com/images/modules/download/zip.png"></a>
       <a href="https://github.com/greenish/greenishSlides/tarball/master">
-        <img border="0" width="90" src="https://github.com/images/modules/download/tar.png"></a>
+        <img border="0" width="80" src="https://github.com/images/modules/download/tar.png"></a>
     </div>
 
-    <h1><a href="https://github.com/greenish/greenishSlides">greenishSlides</a><br>
-      <span class="small">by <a href="https://github.com/greenish">greenish</a></span></h1>
+	<h1>greenishSlides</h1>
+	
+	<ul>
+		<li><a href="#about" class="anchor">About</a></li>
+		<li><a href="#general" class="anchor">General</a></li>
+		<li><a href="#methods" class="anchor">Methods</a></li>
+		<li><a href="#options" class="anchor">Options</a></li>
+		<li><a href="#callbacks" class="anchor">Callbacks</a></li>
+		<li><a href="#license" class="anchor">License</a></li>
+		<li><a href="#download" class="anchor">Download</a></li>
+		<li><a href="#author" class="anchor">Author</a></li>
+		<li class="box">
+		<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+			<input type="hidden" name="cmd" value="_s-xclick">
+			<input type="hidden" name="hosted_button_id" value="5Z8YN4V7GFCB4">
+			A lot of time and work went into this plugin! So when using it you might want consider to: <br>
+			<input class="donateButton" type="submit" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" value="BUY ME A BEER" name="submit" alt="PayPal - The safer, easier way to pay online!">
+			Cheers! ;)
+		</form>
+		</li>
+	</ul>
+	
+	<h2><a name="about">jQuery slideshow plugin - v0.2 - beta</a></h2>
 
-    <div class="description">
-      This is a pretty flexible and highly customizable slideshow/accordion plugin for jQuery. 
-    </div>
-    
+	<p>This is a pretty flexible and highly customizable slideshow/accordion plugin for jQuery.</p>
+	
+	<p>This plugin is inspired by the <a href="http://jqueryui.com/demos/accordion/">jQuery UI Accordion</a> and <a href="http://davidwalsh.name/mootools-kwicks" target="_blank">Kwicks for Mootools</a> / <a href="http://www.jeremymartin.name/projects.php?project=kwicks" target="_blank">Kwicks for jQuery</a>.</p>
+	
+	<p>The main reason to start to develop this plugin where a certain set of specifications and customizaitions I needed for <a href="http://thebookinmotion.greenish.ch" target="_blank">The Book in Motion</a> website i've been developing, that none of the above where quite offering. </p>
+	
+	<hr>
+	<p>So here are these specifications and features that this plugin provides - plus some others (I kinda got into it):</p>
+	
+	<ul>
+		<li>The Slideshow is resizable without javascript -&gt; so no jittering even when using a fullscreen slideshow.</li>
+		<li>There are NO gaps and spaces between the slides during the animation.</li>
+		<li>Limits (max-/min-width) can be set for all slides but also for one single slide (or two).</li>
+		<li>The plugin doesn't require a predefined markup like an unordered list or h3 headers and divs.. it just takes what it gets.</li>
+		<li>You can mess around with the css on runtime and the plugin still finds the proper position for each slide when its next event is triggered.</li>
+		<li>Lots of options to turn things on and off..</li>
+		<li>And a lots of callbacks and events that allow to customize, extend and manipulate the plugins behaviour to make it really flexible. Also its easy to add new callbacks where they're needed.</li>
+		<li>Fully browser compatible: IE 7.0+ (haven't tested on IE6 - screw it!), Firefox 3+, Safari 3.1+, Opera 9.6+ and Google Chrome.</li>
+	</ul>
+	
+	<hr>
+	<p>So as said above, this plugin has been developed for <a href="http://thebookinmotion.greenish.ch" target="_blank">The Book in Motion</a> website and this website is probably the best way to see what this plugin is capable of.</p>
+	
+	<p>Also it's used on the frontpage of the <a href="http://www.gc.cuny.edu" target="_blank">City University of New York - Graduate Center</a> as well as image gallery on some subpages.</p>
+	
+	<p>What follows here is FINALLY the documentation of the plugin. It's been a lot of work that went into it and I'm very happy to finally make available for everybody.</p>
+	
+	<p>I'm happy for any feedback, suggestions and bug reports (well not happy, but grateful in the last case :) )</p>
+	
+	<p><strong>And when you come to use the plugin: SHOW ME! I would love to see what you're doing with it!</strong></p>
+	
+	<h2><a name="general">General</a></h2>
+	
+	<p>To start off, get the newest version of the greenishSlides plugin from Github and move it into your project folder.</p>
+	
+	<p>Include the file into your HTML and you're ready to go:</p>
+	
+	<div class="highlight fit">
+<pre>
+<span class="nx">jQuery</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+	<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">();</span>
+<span class="p">});</span>
+</pre>
+	</div>
+	
+	
+	<p>All child elements of <em>.myElement</em> element will be turned into slides.</p>
+	
+	<p>So the code above will turn each one of these:</p>
+	
+	<div class="highlight fit">
+<pre>
+<span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"myElement"</span><span class="nt">&gt;</span>
+	<span class="nt">&lt;li&gt;&lt;/li&gt;</span>
+	<span class="nt">&lt;li&gt;&lt;/li&gt;</span>
+<span class="nt">&lt;/ul&gt;</span>
+</pre>
+	</div>
+	
+	
+	<div class="highlight fit">
+<pre>
+<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"myElement"</span><span class="nt">&gt;</span>
+	<span class="nt">&lt;div&gt;&lt;/div&gt;</span>
+	<span class="nt">&lt;div&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre>
+	</div>
+	
+	
+	<div class="highlight fit">
+<pre>
+<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"myElement"</span><span class="nt">&gt;</span>
+	<span class="nt">&lt;a&gt;&lt;/a&gt;</span>
+	<span class="nt">&lt;div&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre>
+	</div>
+		
+	<p>Into a slideshow that's markup will look (in the first case: <code>&lt;ul&gt;</code>) like this:</p>
+	
+	<div class="highlight fit">
+<pre>
+<span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"myElement greenishSlides"</span><span class="nt">&gt;</span>
+	<span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"gsSlide gsHorizontal/gsVertical [gsActive] [gsPositionActive] [top/left] [bottom/right] [gsDeactivating]"</span><span class="nt">&gt;&lt;/li&gt;</span>
+	<span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"gsSlide gsHorizontal/gsVertical [gsActive] [gsPositionActive] [top/left] [bottom/right] [gsDeactivating]"</span><span class="nt">&gt;&lt;/li&gt;</span>
+<span class="nt">&lt;/ul&gt;</span>
+</pre>
+	</div>
 
-    
-      <h2>Authors</h2>
-      <p>Philipp C. Adrian (philippcadrian@greenish.ch)
-<br/>      </p>
-    
 
-    
-      <h2>Contact</h2>
-      <p>Philipp C. Adrian (philippcadrian@greenish.ch)
-<br/>      </p>
-    
 
-    <h2>Download</h2>
+	<h2><a name="methods">Methods</a></h2>
+	
+	<div class="highlight">
+<pre>
+<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">([</span><span class="nb">Object</span> <span class="nx">options</span><span class="p">]);</span>               
+</pre>
+	</div>
+	
+	
+	<h4>Initialize / Update Options</h4>
+	
+	<p>Initialize the greenishSlides plugin on a set of HTML Elements.</p>
+	
+	<p>Optional you cann pass an object with options (see below) to the function.</p>
+	
+	<p>Also you can change options with this at any time after initialisation.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+</span><span class="s2">"activate"</span><span class="p">			<span class="nx">$</span><span class="p">(</span><span class="s2">".mySlide"</span><span class="p">,</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">(</span><span class="s2">"activate"</span><span class="p">);</span>           
+</pre>
+	</div>
+	
+	
+	<h4>Activate Slide</h4>
+	
+	<p>Activates the slide this method is called on.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+</span><span class="s2">"deactivate"</span><span class="p">			<span class="nx">$</span><span class="p">(</span><span class="s2">".mySlide"</span><span class="p">,</span> <span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">(</span><span class="s2">"deactivate"</span><span class="p">);</span>            
+</pre>
+	</div>
+	
+	
+	<h4>Deactivate Slide</h4>
+	
+	<p>Deactivates the slide this method is called on.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+</span><span class="s2">"update"</span><span class="p">			<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">(</span><span class="s2">"update"</span><span class="p">);</span>            
+</pre>
+	</div>
+	
+	
+	<h4>Update Slide Positions.</h4>
+	
+	<p>Updates the position of all slides. </p>
+	
+	<p>Needs to be called adding a new slide or after a resize happened without the resize option enabled.   </p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+</span><span class="s2">"next"</span><span class="p">				<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">(</span><span class="s2">"next"</span><span class="p">,</span> <span class="p">[</span><span class="nx">Integer</span> <span class="nx">goFromSlideId</span><span class="p">]);</span>       
+</pre>
+	</div>
+	
+	
+	<h4>Activates Next Slide.</h4>
+	
+	<p>Activates the next slide to the left/bottom of the active slide.
+	Optionaly you can pass the index of a slide to take its next.     </p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+</span><span class="s2">"prev"</span><span class="p">				<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">(</span><span class="s2">"prev"</span><span class="p">,</span> <span class="p">[</span><span class="nx">Integer</span> <span class="nx">goFromSlideId</span><span class="p">]);</span>
+</pre>
+	</div>
+	
+	
+	<h4>Activates Previous Slide.</h4>
+	
+	<p>Activates the next slide to the right/top of the active slide.
+	Optionaly you can pass the index of a slide to take its previous.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+</span><span class="s2">"bindCallback"</span><span class="p">			<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">(</span><span class="s2">"bindCallback"</span><span class="p">,</span> <span class="nb">Function</span><span class="p">);</span>         
+</pre>
+	</div>
+	
+	
+	<h4>Bind a Callback/Event</h4>
+	
+	<p>Registers or binds a callback function to a certain event. (see below). </p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+</span><span class="s2">"clearCache"</span><span class="p">			<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">(</span><span class="s2">"clearCache"</span><span class="p">);</span>            
+</pre>
+	</div>
+	
+	
+	<h4>Clear Cache</h4>
+	
+	<p>Removes all cached informations. (Caching can be enabled by option).</p>
+	
+	<hr>
+
+	<h2><a name="options">Options</a></h2>
+	
+	<p>Options can be set or changed by passing an object to the greenishSlides function. This can be done on initialisation or afterwards to change any value (for example limits).</p>
+	
+	<p>Here are all the possibile options (set to their <strong>default values</strong>):</p>
+	
+	<div class="highlight fit">
+<pre>
+<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">({</span>
+	<span class="nx">vertical</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+	<span class="nx">resizable</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+	<span class="nx">active</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+	<span class="nx">transitionSpeed</span><span class="o">:</span> <span class="mi">400</span><span class="p">,</span>
+	<span class="nx">easing</span><span class="o">:</span><span class="s2">"swing"</span><span class="p">,</span>
+	<span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
+		<span class="nx">activate</span><span class="o">:</span><span class="s2">"click"</span><span class="p">,</span>
+		<span class="nx">deactivate</span><span class="o">:</span><span class="s2">"click"</span>
+	<span class="p">},</span>
+	<span class="nx">handle</span><span class="o">:</span><span class="s2">".gsSlide"</span><span class="p">,</span>
+	<span class="nx">stayOpen</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+	<span class="nx">keyEvents</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+	<span class="nx">circle</span> <span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+	<span class="nx">classes</span><span class="o">:</span><span class="p">{</span>
+		<span class="nx">active</span><span class="o">:</span><span class="s2">"gsAactive"</span><span class="p">,</span>
+		<span class="nx">vertical</span><span class="o">:</span><span class="s2">"gsVertical"</span><span class="p">,</span>
+		<span class="nx">horizontal</span><span class="o">:</span><span class="s2">"gsHorizontal"</span><span class="p">,</span>
+		<span class="nx">slide</span><span class="o">:</span><span class="s2">"gsSlide"</span><span class="p">,</span>
+		<span class="nx">deactivating</span><span class="o">:</span><span class="s2">"gsDeactivating"</span><span class="p">,</span>
+		<span class="nx">positionActive</span><span class="o">:</span><span class="s2">"gsPositionActive"</span>
+	<span class="p">},</span>
+	<span class="nx">cache</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+	<span class="nx">limits</span> <span class="o">:</span> <span class="p">{},</span>
+	<span class="nx">callbacks</span> <span class="o">:</span> <span class="p">{}</span>
+<span class="p">});</span>
+</pre>
+	</div>
+	
+	
+	<h3>Option Details</h3>
+	
+	<div class="highlight">
+<pre>
+<span class="nx">vertical</span><span class="o">:</span>                       <span class="nb">Boolean</span>                                 <span class="nx">Default</span><span class="o">:</span> <span class="kc">false</span>
+</pre>
+	</div>
+	
+	
+	<p>Defines the orientation of the greenishSlides element.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="nx">resizable</span><span class="o">:</span>                      <span class="nb">Boolean</span>                                 <span class="nx">Default</span><span class="o">:</span> <span class="kc">false</span>
+</pre>
+	</div>
+	
+	
+	<p>Defines if the greenishSlides element can be resized on runtime. </p>
+	
+	<p>If <strong>true</strong> slides on the left side of the active slide will be positioned differently from the ones on the right, to allow resizing without javascript.</p>
+	
+	<p>Still if there are limits set to any slide, resizing may need an event handler that will also be set if necessary.</p>
+	
+	<p>Be aware that this needs some extra calculations and (more important) some DOM changes which will influence the performance so only switch this on if you really need it.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="nx">active</span><span class="o">:</span>				<span class="nb">Boolean</span>                                 <span class="nx">Default</span><span class="o">:</span> <span class="kc">false</span>
+				<span class="nb">Object</span>  <span class="p">(</span><span class="nx">jQuery</span> <span class="nb">Object</span><span class="p">)</span>             
+				<span class="nb">String</span>  <span class="p">(</span><span class="nx">jQuery</span> <span class="nx">Selector</span><span class="p">)</span>               
+				<span class="nx">Integer</span> <span class="p">(</span><span class="nx">Slide</span> <span class="nx">Index</span><span class="p">)</span>               
+</pre>
+	</div>
+	
+	
+	<p>Defines the active Slide after initialisation.</p>
+	
+	<ul>
+		<li><strong>false</strong>: No Slide (or the first Slide if stayOpen:true) is active.</li>
+	
+		<li><strong>true</strong>: The first Slide is active.</li>
+		
+		<li><strong>0</strong> : The first Slide is active.</li>
+	
+		<li><strong>-1</strong> : The last Slide is active.</li>
+	</ul>
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="nx">transitionSpeed</span><span class="o">:</span>                <span class="nx">Integer</span> <span class="p">(</span><span class="nx">ms</span><span class="p">)</span>                            <span class="nx">Default</span><span class="o">:</span> <span class="mi">400</span>
+</pre>
+	</div>
+	
+	
+	<p>Defines the duration of the animations in milliseconds.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="nx">easing</span><span class="o">:</span>                         <span class="nb">String</span>                                  <span class="nx">Default</span><span class="o">:</span> <span class="s2">"swing"</span>
+</pre>
+	</div>
+	
+	
+	<p>Defines what kind of easing algorythem should be used in the animations. Works with the jQuery easing plugin.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="nx">events</span><span class="o">:</span> <span class="p">{</span>                                               
+	<span class="nx">activate</span><span class="o">:</span>		<span class="nb">String</span>                                  <span class="nx">Default</span><span class="o">:</span> <span class="s2">"click"</span>
+	<span class="nx">deactivate</span><span class="o">:</span>		<span class="nb">String</span>                                  <span class="nx">Default</span><span class="o">:</span> <span class="s2">"click"</span>
+<span class="p">}</span>
+</pre>
+	</div>
+	
+	
+	<p>Lets you define what browser events will trigger the activation/deactivation events of a slide.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="nx">handle</span><span class="o">:</span>                         <span class="nb">String</span>  <span class="p">(</span><span class="nx">jQuery</span> <span class="nx">Selector</span><span class="p">)</span>               <span class="nx">Default</span><span class="o">:</span> <span class="s2">".gSSlide"</span>
+				<span class="nb">Object</span>  <span class="p">(</span><span class="nx">jQuery</span> <span class="nb">Object</span><span class="p">)</span>             
+</pre>
+	</div>
+	
+	
+	<p>Defines on which element the activation/deactivation events are bound.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="nx">stayOpen</span><span class="o">:</span>                       <span class="nb">Boolean</span>                                 <span class="nx">Default</span><span class="o">:</span> <span class="kc">false</span>
+</pre>
+	</div>
+	
+	
+	<p>If <strong>true</strong> the there is always one active slide. No deactivation is possible so none will be triggered.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="nx">keyEvents</span><span class="o">:</span>                      <span class="nb">Boolean</span>                                 <span class="nx">Default</span><span class="o">:</span> <span class="kc">false</span>
+</pre>
+	</div>
+	
+	
+	<p>If <strong>true</strong> the arrow keys can be used to move from one slide to the next. </p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="nx">circle</span><span class="o">:</span>                         <span class="nb">Boolean</span>                                 <span class="nx">Default</span><span class="o">:</span> <span class="kc">false</span>
+</pre>
+	</div>
+	
+	
+	<p>Defines if after the last slide follows the first when the "next" event is triggered.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="nx">classes</span><span class="o">:</span> <span class="p">{</span>                                              
+	<span class="nx">active</span><span class="o">:</span>			<span class="nb">String</span>                                  <span class="nx">Default</span><span class="o">:</span> <span class="s2">"gsActive"</span>
+	<span class="nx">vertical</span><span class="o">:</span>		<span class="nb">String</span>                                  <span class="nx">Default</span><span class="o">:</span> <span class="s2">"gsVertical"</span>
+	<span class="nx">horizontal</span><span class="o">:</span>		<span class="nb">String</span>                                  <span class="nx">Default</span><span class="o">:</span> <span class="s2">"gsHorizontal"</span>
+	<span class="nx">slide</span><span class="o">:</span>			<span class="nb">String</span>                                  <span class="nx">Default</span><span class="o">:</span> <span class="s2">"gsSlide"</span>
+	<span class="nx">deactivating</span><span class="o">:</span>		<span class="nb">String</span>                                  <span class="nx">Default</span><span class="o">:</span> <span class="s2">"gsDeactivating"</span>
+	<span class="nx">positionActive</span><span class="o">:</span>		<span class="nb">String</span>                                  <span class="nx">Default</span><span class="o">:</span> <span class="s2">"gsPositionActive"</span>
+<span class="p">}</span>
+</pre>
+	</div>
+	
+	
+	<p>Lets you customize the css classes that are set by the plugin.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="nx">cache</span><span class="o">:</span>                          <span class="nb">Boolean</span>                                 <span class="nx">Default</span><span class="o">:</span> <span class="kc">false</span>
+</pre>
+	</div>
+	
+	
+	<p>Enables the caching functionality. Caches certain valus and calucalation. Use this if there are no runtime changes at all (no resizing, adding of slides etc.)</p>
+	
+	<p>To be honest I kind of expected more of a speed improvement from this than it actually does.. so its usefulness is questionable.. but it does definitely no harm so why not use it.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="nx">limits</span><span class="o">:</span> <span class="p">{</span>                                                               <span class="nx">Default</span><span class="o">:</span> <span class="p">{}</span>
+	<span class="nx">min</span><span class="o">:</span>			<span class="nx">Integer</span> <span class="p">(</span><span class="nx">px</span><span class="p">)</span>
+				<span class="nb">String</span>
+	<span class="nx">max</span><span class="o">:</span>			<span class="nx">Integer</span> <span class="p">(</span><span class="nx">px</span><span class="p">)</span>
+				<span class="nb">String</span>
+	<span class="mi">0</span><span class="o">:</span> <span class="p">{</span>
+		<span class="nx">min</span><span class="o">:</span>		<span class="nx">Integer</span> <span class="p">(</span><span class="nx">px</span><span class="p">)</span>
+				<span class="nb">String</span>
+		<span class="nx">max</span><span class="o">:</span>		<span class="nx">Integer</span> <span class="p">(</span><span class="nx">px</span><span class="p">)</span>
+				<span class="nb">String</span>
+	<span class="p">}</span>                           
+	<span class="s2">"-1"</span><span class="o">:</span> <span class="p">{</span>
+		<span class="nx">min</span><span class="o">:</span>		<span class="nx">Integer</span> <span class="p">(</span><span class="nx">px</span><span class="p">)</span>
+				<span class="nb">String</span>
+		<span class="nx">max</span><span class="o">:</span>		<span class="nx">Integer</span> <span class="p">(</span><span class="nx">px</span><span class="p">)</span>
+				<span class="nb">String</span>
+	<span class="p">}</span>   
+<span class="p">}</span>
+</pre>
+	</div>
+	
+	
+	<p>This allows you to set a minimum height/width and a maximum height/width (in px) for all slides or a single slide.</p>
+	<ul>
+	<li><strong>limits.min</strong>: Sets a min width/height for every slide. No slide can be smaller than i.e. 20px</li>
+	
+	<li><strong>limits[0].min</strong>: Sets a min width/height for the first slide.</li>
+	
+	<li><strong>limits[-1].min</strong>: Sets a min width/height for the last slide.</li>
+	</ul>
+	<p>All min/max definitions are optional and can be combined in any ways possible.</p>
+	
+	<p>Limits can also be set by css with min-width, max-width, min-height, max-height. Css limits always override limits that where set in the options. Also, limits for one single slide override the limits set for all slides.</p>
+	
+	<p><strong>min-width &gt; limits[0].min &gt; limits.min</strong></p>
+	
+	<p>Because min-width doesn't have a default like <em>none</em>, <strong>0px is handled as undefined</strong> and limits[0].min will be used instead. To define <strong>"min-width:0px" use 0%</strong> which will then override limits[0].min.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="nx">callbacks</span><span class="o">:</span> <span class="p">{</span>								<span class="nx">Default</span><span class="o">:</span> <span class="p">{}</span>
+	<span class="s2">"callbackName"</span><span class="o">:</span>		<span class="nb">Function</span><span class="p">(</span><span class="nx">callback</span> <span class="kd">function</span><span class="p">)</span>
+				<span class="nb">Object</span>  <span class="p">(</span><span class="nx">multiple</span> <span class="nx">callback</span> <span class="nx">functions</span><span class="p">)</span>
+				<span class="nb">Array</span>   <span class="p">(</span><span class="nx">multiple</span> <span class="nx">callback</span> <span class="nx">functions</span><span class="p">)</span>   
+<span class="p">}</span>   
+</pre>
+	</div>
+	
+	
+	<p>Allows to register callback functions during initialisation. </p>
+	
+	<p>To learn more about the available callbacks look at the Callbacks/Events chapter below.</p>
+	
+	<hr>
+
+
+
+
+	<h2><a name="callbacks">Callbacks/Events</a></h2>
+	
+	<p>During the runtime of the plugin a bunch of callbacks are fired. </p>
+	
+	<p>Callbacks can be registered by adding the functions to the options object or by calling the "bindCallback" method.</p>
+	
+	<p>Every callback function receives the <em>data</em> object as first parameter while the following parameters can change.</p>
+	
+	<p>By returning <strong>false</strong> in the callback the pluging cancels the current event and stopps its action. </p>
+	
+	<p>This is a list of all the callbacks that are available at the moment (to find them in the code search for <em>#CALLBACK</em>):</p>
+	
+	<div class="highlight">
+<pre>
+<span class="s2">"preInit"</span>                       <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>                  <span class="nx">Context</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">)</span>
+</pre>
+	</div>
+	
+	
+	<p>Called on initialisation before anything else is done.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="s2">"init"</span>                          <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>                  <span class="nx">Context</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">)</span>
+</pre>
+	</div>
+	
+	
+	<p>Called on initialisation after all the classes and styles are set.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="s2">"postInit"</span>                      <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>                  <span class="nx">Context</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">)</span>
+</pre>
+	</div>
+	
+	
+	<p>Called after the initialisation is complete.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="s2">"activateEvent"</span>                 <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>                  <span class="nx">Context</span><span class="o">:</span> <span class="nx">Slide</span> <span class="nx">Handle</span>
+</pre>
+	</div>
+	
+	
+	<p>Called every time the activation event is triggered.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="s2">"deactivateEvent"</span>               <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>                  <span class="nx">Context</span><span class="o">:</span> <span class="nx">Slide</span> <span class="nx">Handle</span>
+</pre>
+	</div>
+	
+	
+	<p>Called every time the deactivation event is triggered.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="s2">"preActivate"</span>                   <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>                  <span class="nx">Context</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s2">".mySlide"</span><span class="p">,</span> <span class="s2">".myElement"</span><span class="p">)</span>
+</pre>
+	</div>
+	
+	
+	<p>Called before a slide is activated.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="s2">"preDeactivate"</span>                 <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>                  <span class="nx">Context</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s2">".mySlide"</span><span class="p">,</span> <span class="s2">".myElement"</span><span class="p">)</span>
+</pre>
+	</div>
+	
+	
+	<p>Called before a slide is deactivated.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="s2">"preUpdate"</span>                     <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>                  <span class="nx">Context</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s2">".active"</span><span class="p">,</span> <span class="s2">".myElement"</span><span class="p">)</span>
+</pre>
+	</div>
+	
+	
+	<p>Called before all slides are updated</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="s2">"preActivateAnimation"</span>          <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>                  <span class="nx">Context</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">)</span>
+<span class="s2">"preDeactivateAnimation"</span>        <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>                  <span class="nx">Context</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">)</span>
+<span class="s2">"preUpdateAnimation"</span>            <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>                  <span class="nx">Context</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">)</span>
+</pre>
+	</div>
+	
+	
+	<p>Called after all caculations are done just before the animation starts.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="s2">"postActivate"</span>                  <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>                  <span class="nx">Context</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s2">".active"</span><span class="p">,</span> <span class="s2">".myElement"</span><span class="p">)</span>
+</pre>
+	</div>
+	
+	
+	<p>Called after a slide is activated.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="s2">"postDeactivate"</span>                <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>                  <span class="nx">Context</span><span class="o">:</span> <span class="nx">Deactivated</span> <span class="nx">Slide</span>
+</pre>
+	</div>
+	
+	
+	<p>Called after a slide is deactivated.</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="s2">"postUpdate"</span>                    <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>                  <span class="nx">Context</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s2">".active"</span><span class="p">,</span> <span class="s2">".myElement"</span><span class="p">)</span>
+</pre>
+	</div>
+	
+	
+	<p>Called after all slides are updated</p>
+	
+	<hr>
+	<div class="highlight">
+<pre>
+<span class="s2">"step"</span>                          <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>                  <span class="nx">Context</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s2">".active"</span><span class="p">,</span> <span class="s2">".myElement"</span><span class="p">)</span>
+</pre>
+	</div>
+	
+	
+	<p>Called at every step of the animation function. </p>
+	
+	<p>The <em>data</em> object contains the current position of everyslide at that moment of the animation. </p>
+	
+	<p>Also have a look at the <em>step</em> callback of the jQuery animation function.</p>
+	
+	<hr>
+	
+	<h3>Add New Callback</h3>
+	
+	<p>If you need a new callback that is missing, feel free to add it in the code!
+	Just put the following at the place you need the call:</p>
+	
+	<div class="highlight fit">
+<pre>
+<span class="p">[</span><span class="nx">context</span><span class="p">].</span><span class="nx">greenishSlides</span><span class="p">(</span><span class="s2">"_triggerCallback"</span><span class="p">,</span><span class="s2">"myCallbackName"</span> <span class="p">[,</span><span class="nx">parameterOne</span><span class="p">,</span> <span class="nx">parameterTwo</span><span class="p">,</span> <span class="p">...]);</span>
+</pre>
+	</div>
+	
+	
+	<p>Notice that the new callback will come with all the features of the default ones:</p>
+	
+	<ul>
+		<li>The <em>data</em> object will always be passed as the first parameter. (And you can add as many additional parameters as you wish.)</li>
+		<li>return <strong>false</strong> will stop the further execution of the acutal event.</li>
+	</ul>
+	<p><strong>When you added a new callback, tell me about it! So I can consider adding it to the default callbacks.</strong></p>
+
+	<h2><a name="license">License</a></h2>
+	<p>Copyright &copy; 2011-2012 Philipp C. Adrian</p>
+ 	<p>Dual licensed under the <a href="http://www.opensource.org/licenses/mit-license.php">MIT</a> and <a href="http://www.opensource.org/licenses/gpl-license.php">GPL</a> licenses.<p>
+	
+	<h2><a name="download">Download</a></h2>
     <p>
       You can download this project in either
       <a href="https://github.com/greenish/greenishSlides/zipball/master">zip</a> or
       <a href="https://github.com/greenish/greenishSlides/tarball/master">tar formats.
     </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/greenish/greenishSlides</pre>
-    </p>
+    <p>You can also clone the project with <a href="http://git-scm.com">Git</a> by running:</p>
+	<div class="highlight fit">
+<pre>$ git clone git://github.com/greenish/greenishSlides</pre>
+	</div>
+	<p> Or get the source code on GitHub : <a href="https://github.com/greenish/greenishSlides">greenish/greenishSlides</a></p>
 
-    <div class="footer">
-      get the source code on GitHub : <a href="https://github.com/greenish/greenishSlides">greenish/greenishSlides</a>
-    </div>
+	
+	<h2><a name="author">Author</a></h2>
+	<p>Philipp C. Adrian (<a href="https://github.com/greenish">greenish</a>), graphic designer form Basel, Switzerland.</p>
+	<p>
+		<a href="http://philippadrian.com">www.philippadrian.com</a>
+	</p>
+	
+	<div class="box">
+		<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+			<input type="hidden" name="cmd" value="_s-xclick">
+			<input type="hidden" name="hosted_button_id" value="5Z8YN4V7GFCB4">
+			A lot of time and work went into this plugin! So when using it you might want consider to: <br>
+			<input class="donateButton" type="submit" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" value="BUY ME A BEER" name="submit" alt="PayPal - The safer, easier way to pay online!">
+			Cheers! ;)
+		</form>
+	</div>
 
-  </div>
+</div>
 
 </body>
 </html>
