@@ -6,14 +6,15 @@ body {
   font-size:13px;
 }
 #container {
+	position:relative;
   margin: 100px auto;
   width: 550px;
-  padding-left:235px;
+  padding-left:370px;
 }
 h1 { 
-	font-size: 3.8em; 
+	font-size: 2.5em; 
 	color: #0f0f0f;
-	margin:0px 0px 50px 10px; 
+	margin:0px 0px 20px 10px; 
 }
 h1 .small { font-size: 0.4em; }
 h1 a, 
@@ -54,6 +55,66 @@ p {
 	font-style:normal;
 	
 }
+
+.myElement {
+	position:relative;
+	height:250px;
+	margin:20px -0px 40px -370px;
+	border:5px solid #000000;
+	background-color:#ff3333;
+}
+
+.myElement.gsHorizontal {	
+	border-width:5px 2px;
+}
+.gsVertical {
+	border-width:2px 5px;
+}
+.gsSlide {
+	outline:2px solid #000000;
+	background-color:#fefefe;
+}
+
+.gsSlide.even {
+}
+
+
+
+.examples {
+	position:absolute;
+	left:0px;
+	width:306px;
+	padding:0px;
+	margin:0px;
+	margin-top:-40px;
+}
+.examples li {
+	background-color:transparent;
+	margin:5px 0px;
+	padding:0px;
+}
+
+.examples .box {
+	display:block;
+	margin:0px;
+	padding:5px 10px;
+	background-color:#000000;
+	color:#ffffff;
+	font-style:normal;
+	text-decoration:none;
+	font-weight:bold;
+	cursor:pointer;
+	margin-bottom:2px;
+	outline:none;
+}
+
+.examples pre {
+	margin:4px 0px;
+}
+
+
+
+
 
 .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
 .download { float: right; margin-top:-10px;}
