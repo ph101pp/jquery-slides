@@ -11,19 +11,58 @@
 			(function($) {
 				$(document).ready(function() {
 					$(".myElement").greenishSlides({
-
-/*/////////////////////// Example 7: resizable
+/**//*///////////////// Example 2: Vertical Click
+						vertical:true,
+						events: {
+							activate:"click",
+							deactivate:"click"
+						}
+/**//*///////////////// Example 3: Limits
+						limits: {
+							min:30,
+						}
+/**//*///////////////// Example 4: Limits advanced
+						limits: {
+							min:10,
+							0: {
+								min:180
+							},
+							2: {
+								min:180
+							},
+							4: {
+								min:180
+							},
+							"-1": {
+								min:180
+							}
+						}
+/**//*///////////////// Example 5: Limits, stayOpen, keyEvents
+						active:0,	
+						stayOpen:true,
+						keyEvents:true,
+						limits: {
+							max:400,
+						}
+/**//*///////////////// Example 6: Navigation Left (click)
+						stayOpen:true,
+						events: {
+							activate:"click",
+							deactivate:"click"
+						},
+						limits: {
+							0: {
+								min:30,
+								max:30
+							}
+						}
+/**//////////////////// Example 7: resizable
 						resizable:true,
 						events:{
 							activate:"click",
 							deactivate:"click"
 						}
-/*/////////////////////// Example 7: resizable
-						resizable:true,
-						events:{
-							activate:"click",
-							deactivate:"click"
-						}
+/**////////////////////
 					});
 				});
 			})(jQuery);
