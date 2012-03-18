@@ -2,11 +2,11 @@
 <html>
  	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-		<title>greenishSlides</title>
+		<title>greenishSlides - pictureGrid</title>
 		<link rel="stylesheet" type="text/css" href="design.css">
 		<script type="text/javascript" src="../libs/jquery-1.6.min.js"></script>
 		<script type="text/javascript" src="../greenishSlides/jquery.greenishSlides-v0.2-beta.js"></script>
-		<script type="text/javascript" src="jquery.greenishSlides.pictureGrid-v0.1-beta.js"></script>
+		<script type="text/javascript" src="jquery.greenishSlides.pictureGrid-v0.1-alpha.js"></script>
 		<script type="text/javascript">
 			(function($) {
 				$(document).ready(function() {
