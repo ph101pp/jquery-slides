@@ -13,7 +13,7 @@
 */
 $.gS=$.fn.greenishSlides = function (method){
 	var context=$(this),
-		data, call, args, i;
+		data, call, args, i, opts;
 	if(typeof(method) === 'object' || !method) {
 		args=arguments;
 		call="_init";
@@ -27,7 +27,7 @@ $.gS=$.fn.greenishSlides = function (method){
 	for(i=0; i<context.length; i++) {
 		data=$(context[i]).data("greenishSlidesData") || $(context[i]).parent().data("greenishSlidesData");
 		if(data && call=="_init") {
-			$.gS._opts(data, method, true);
+			$.gS._init(data, method=="_init"?Array.prototype.slice.call(arguments,1):method, true);
 			continue;
 		}
 		data = data || {
@@ -41,8 +41,8 @@ $.gS=$.fn.greenishSlides = function (method){
 				active:$()
 			};
 		if(call=="_init") {
-			data.opts=method=="_init"?Array.prototype.slice.call(arguments,1):method;
-			args=[data];
+			opts = $.gS._extendOpts(data, method=="_init"?Array.prototype.slice.call(arguments,1):method);
+			args=[data, opts];
 		}
 		else args=[data].concat(args);
 		$(context[i]).data("greenishSlidesData",data);
@@ -73,8 +73,8 @@ $.extend($.gS, {
 		transitionSpeed: 400,
 		easing:"swing",
 		events: {
-			activate:"click",
-			deactivate:"click"
+			activate:"mouseover",
+			deactivate:"mouseout"
 		},
 		keyEvents:false,
 		callbacks : {},
@@ -100,79 +100,126 @@ $.extend($.gS, {
 //		queue:false
 	},
 /*///////////////////////////////////////////////////////////////////////////////
-
-
 */
-	_init : function (data) {	
+	_init : function (data, opts, update) {	
 		var gS=$.gS,
 			context=data.context,
-////	Extends defaults into opts.
-			opts=gS._opts(data, data.opts, true),
-			callbacks, slides, event;
-
+			slides = context.children(),
+			callbacks, event, newActive, cssClass;
+		
 //		binding callbacks to make them available.
 		for(callbacks in opts.callbacks) gS.bindCallback(data,callbacks,opts.callbacks[callbacks]);
-		context.greenishSlides("_triggerCallback","preInit"); // #CALLBACK
-				
-		slides = context.css(gS.css.context).addClass("greenishSlides")
-			.children().addClass(opts.classes.slide).css(gS.css.gSSlide);
 
 ////	Sets css and classes
-		if(opts.vertical) {
-			slides.addClass(opts.classes.vertical).css(gS.css.gSVertical);
-			$.extend(opts, gS.orientation.vertical);
+		if(!update) {
+			context.greenishSlides("_triggerCallback","preInit", opts); // #CALLBACK
+			context.css(gS.css.context).addClass("greenishSlides");
+			slides.css(gS.css.gSSlide).addClass(opts.classes.slide);
 		}
-		else {
-			slides.addClass(opts.classes.horizontal).css(gS.css.gSHorizontal);
-			$.extend(opts, gS.orientation.horizontal);
-		}
+		else 
+			if(opts.classes) {
+				for(cssClass in opts.classes)
+					if(cssClass=="gSHorizontal" || cssClass=="gSVertical") 
+						context.removeClass(data.opts.classes[cssClass]).addClass(opts.classes[cssClass]);
+					else 
+						$(data.opts.classes[cssClass], slides).removeClass(data.opts.classes[cssClass]).addClass(opts.classes[cssClass]);
+			}
+
+		data.opts= $.gS._extendOpts(data, {classes:opts.classes}, true);
 ////	/Sets css and classes
+////	Orientation
+		if(opts.vertical !== undefined && opts.vertical !== data.opts.vertical) {
+			if(data.opts.LoT !== undefined || data.opts.RoB !== undefined) slides.removeClass(data.opts.LoT+" "+data.opts.RoB);
+			if(opts.vertical) {
+				slides.css(gS.css.gSVertical);
+				context.removeClass(data.opts.classes.horizontal).addClass(data.opts.classes.vertical);
+				$.extend(opts, gS.orientation.vertical);
+			}
+			else {
+				slides.css(gS.css.gSHorizontal);
+				context.removeClass(data.opts.classes.vertical).addClass(data.opts.classes.horizontal);
+				$.extend(opts, gS.orientation.horizontal);
+			}
+			data.opts.vertical= opts.vertical;
+		}
+
+////	/Orientation
 ////	Keyboard events.		
-		if(opts.keyEvents)
-			opts.vertical?
-				$(document).bind("keydown", function(e) {
-					if(e.which == 40) context.greenishSlides("next");
-					else if(e.which == 38) context.greenishSlides("prev");
-				}):
-				$(document).bind("keydown", function(e) {
-					if(e.which == 39) context.greenishSlides("next");
-					else if(e.which == 37) context.greenishSlides("prev");
-				});
+		if(opts.keyEvents !== undefined && opts.keyEvents !== data.opts.keyEvents) {
+			if(opts.keyEvents)
+				data.opts.vertical?
+					$(document).bind("keydown.gS", function(e) {
+						if(e.which == 40) context.greenishSlides("next");
+						else if(e.which == 38) context.greenishSlides("prev");
+					}):
+					$(document).bind("keydown.gS", function(e) {
+						if(e.which == 39) context.greenishSlides("next");
+						else if(e.which == 37) context.greenishSlides("prev");
+					});
+			else $(document).unbind("keydown.gS");
+		}
 ////	/Keyboard events.
 ////	Activate and Deactivate events
-		if(!opts.handle || !opts.events) {
-			opts.events={
-				activate:"gSactivate",
-				deactivate:false
-			}
-			event=opts.events.activate;
-		}
-		else {
+		if(opts.events !== undefined || opts.handle !== undefined) {
+			if(opts.handle !== undefined) data.opts.handle=opts.handle;
+			if(data.opts.events === undefined) data.opts.events={};
+				
+			opts.events= !data.opts.handle || !opts.events ?
+				{
+					activate:"gsActivate",
+					deactivate:false
+				}:
+				{
+					activate:opts.events.activate || data.opts.events.activate || false,
+					deactivate:opts.events.deactivate || data.opts.events.deactivate || false
+				};
+			
 			event=!opts.events.activate ? 
 				"":
-				opts.events.activate+".gS focusin.gS ";
+				opts.events.activate+".gsActivate focusin.gsActivate ";
 			event+=!opts.events.deactivate ? 
 				"":
 				opts.events.deactivate==opts.events.activate? 
-					"focusout.gS ":
-					opts.events.deactivate+".gS focusout.gS ";
+					"focusout.gsActivate ":
+					opts.events.deactivate+".gsActivate focusout.gsActivate ";
+			context.unbind(".gsActivate").bind(event, function(e) {context.greenishSlides("_event",e);}); // focusin/focusout for Keyboard accessability;
 		}
-		context.bind(event, function(e) {context.greenishSlides("_event",e);}); // focusin/focusout for Keyboard accessability;
 ////	/Activate and Deactivate events
+////	Resize event
+		if(opts.resizable !== undefined && !opts.resizable) {
+			$(window).unbind("resize.gS");
+		};
+////	/Resize event
+////	First Initialisation / update
+		if(!opts.active && opts.stayOpen) opts.active=0;
+		newActive=opts.active !== undefined;
 
-		context.greenishSlides("_triggerCallback","init"); // #CALLBACK
+		//Extends defaults into opts.
+		opts=data.opts = $.gS._extendOpts(data, opts);		
 
-////	First Initialisation
-		if(opts.classes.active === true) opts.classes.active=0;
-		if($("."+opts.classes.active, context).length)
-			$("."+opts.classes.active, context).eq(0).removeClass(opts.classes.active).trigger(opts.events.activate, true);
-		else if(opts.active !== false) {
-			!isNaN(opts.active) ? 
-				slides.eq(opts.active).removeClass(opts.classes.active).trigger(opts.events.activate, true):
-				$(opts.active, context).eq(0).removeClass(opts.classes.active).trigger(opts.events.activate, true);
+		if(!update) context.greenishSlides("_triggerCallback","init"); // #CALLBACK
+
+		if(newActive && opts.active !== false){
+			if(opts.active === true) opts.active=0;
+			if($("."+opts.classes.active, context).length)
+				$("."+opts.classes.active, context).eq(0).removeClass(opts.classes.active).trigger(opts.events.activate, true);
+			else if(opts.active !== false) {
+				!isNaN(opts.active) ? 
+					slides.eq(opts.active).removeClass(opts.classes.active).trigger(opts.events.activate, true):
+					$(opts.active, context).eq(0).removeClass(opts.classes.active).trigger(opts.events.activate, true);
+			}
 		}
+		else if(opts.active === false && data.ai >= 0) $("."+opts.classes.active, context).eq(0).trigger(opts.events.deactivate, true);
 		else gS.update(data);
-		context.greenishSlides("_triggerCallback","postInit"); // #CALLBACK
+////	/First Initialisation / update
+		if(!update) context.greenishSlides("_triggerCallback","postInit"); // #CALLBACK
+	},
+/*///////////////////////////////////////////////////////////////////////////////
+*/
+	_extendOpts : function (data, opts, noDefaults) {
+		return noDefaults ? 
+			$.extend(true,{}, data.opts||{}, opts||{}):
+			$.extend(true,{}, this.defaults, data.opts||{}, opts||{});
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
@@ -218,7 +265,7 @@ $.extend($.gS, {
 		
 		slide.greenishSlides("_triggerCallback","preActivate"); // #CALLBACK
 		
-		gS.update(data, {}, "activate");
+		gS.update(data,"activate");
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
@@ -237,7 +284,7 @@ $.extend($.gS, {
 		data.active=$();
 		data.ai="-1";
 
-		gS.update(data, {}, "deactivate");
+		gS.update(data, "deactivate");
 	}, 
 /*///////////////////////////////////////////////////////////////////////////////
 */
@@ -300,13 +347,6 @@ $.extend($.gS, {
 			if((param=data.callbacks[callback][key].apply(this, [data,param])) !== false) continue;
 			else throw "callbackReturnedFalse";
 		return param;
-	},
-/*///////////////////////////////////////////////////////////////////////////////
-*/
-	_opts : function (data, opts, save) {
-		opts=$.extend(true,{},this.defaults, data.opts||{}, opts||{});
-		if(save) data.opts=opts;
-		return opts;
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
@@ -425,15 +465,15 @@ $.extend($.gS, {
 				max=[];
 				
 				if(!isNaN(cssMax)) data.limits[i].max=cssMax;
-				else if(opts.limits[i] && !isNaN(opts.limits[i].max)) data.limits[i].max=opts.limits[i].max; 
-				else if(opts.limits[k] && !isNaN(opts.limits[k].max)) data.limits[i].max=opts.limits[k].max; 
-				else if(!isNaN(opts.limits.max)) data.limits[i].max=opts.limits.max; 
+				else if(opts.limits[i] && !isNaN(opts.limits[i].max) && opts.limits[i].max !== false) data.limits[i].max=opts.limits[i].max; 
+				else if(opts.limits[k] && !isNaN(opts.limits[k].max) && opts.limits[k].max !== false) data.limits[i].max=opts.limits[k].max; 
+				else if(!isNaN(opts.limits.max) && opts.limits.max !== false) data.limits[i].max=opts.limits.max; 
 				else data.limits[i].max= undefined;
 		
 				if(!isNaN(cssMin)) data.limits[i].min=cssMin; 
-				else if(opts.limits[i] && !isNaN(opts.limits[i].min)) data.limits[i].min=opts.limits[i].min; 
-				else if(opts.limits[k] && !isNaN(opts.limits[k].min)) data.limits[i].min=opts.limits[k].min; 
-				else if(!isNaN(opts.limits.min)) data.limits[i].min=opts.limits.min; 
+				else if(opts.limits[i] && !isNaN(opts.limits[i].min) && opts.limits[i].min !== false) data.limits[i].min=opts.limits[i].min; 
+				else if(opts.limits[k] && !isNaN(opts.limits[k].min) && opts.limits[k].min !== false) data.limits[i].min=opts.limits[k].min; 
+				else if(!isNaN(opts.limits.min) && opts.limits.min !== false) data.limits[i].min=opts.limits.min; 
 				else data.limits[i].min = undefined;
 
 				if(cssMin && cssMin > data.limits[i].max) data.limits[i].max=cssMin;
@@ -444,14 +484,14 @@ $.extend($.gS, {
 		if(opts.resizable) 
 			if(data.limited) { 
 				if(!data.resizeEventSet) {
-					$(window).bind("resize.greenishSlides", function(){
+					$(window).bind("resize.gS", function(){
 						context.greenishSlides("update");
 					});
 					data.resizeEventSet=true;	
 				}
 			}
 			else if(data.resizeEventSet) {
-				$(window).unbind("resize.greenishSlides");
+				$(window).unbind("resize.gS");
 				data.resizeEventSet=false;	
 			}
 ////	/Resize event
@@ -555,15 +595,15 @@ $.extend($.gS, {
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
-	update : function (data, opts, action) {
+	update : function (data, action) {
 		var gS=$.gS,
 			context=data.context.stop(),
 			slides=context.children(),
 			active=data.active,
 			ai=data.ai,
+			opts=data.opts,
 			postAnimation;
 		active.greenishSlides("_triggerCallback","preUpdate"); // #CALLBACK
-		opts=gS._opts(data, opts);	
 
 //		Get and store Data for the animation function
 		gS._getData(data);
@@ -694,11 +734,15 @@ $.extend($.gS, {
 			textIndent:0
 		},
 		gSHorizontal:{
+			width:"auto",
 			height:"100%",
-			top:0
+			top:0,
+			left:"auto"
 		},
 		gSVertical:{
 			width:"100%",
+			height:"auto",
+			top:"auto",
 			left:0
 		}
 	}
