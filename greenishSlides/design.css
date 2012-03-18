@@ -1,28 +1,33 @@
-
 body {
-	margin:0;
-	padding:0;
-	background-color:black;
-	overflow:hidden;
+	padding:0px;
+	margin:0px;
+	background-color: #f0f0f0;
+	font-family: Helvetica, Arial, FreeSans, san-serif;
+	color: #333333;
+	font-size:13px;
+}
+/*///////////////////////////////////////////////*/
+.myElement {
+	border:5px solid #000000;
+	background-color:#ff3333;
+	padding:0px;
+	margin:0px;
+}
+.myElement.fullscreen {
 	position:absolute;
-	height:100%;
-	width:100%;
+	top:20px;
+	left:20px;
+	bottom:20px;
+	right:20px;
 }
-
-ul{
-	position:relative;
-	height:60%;
-	margin:10px;
-	padding:10px;
-	border:10px solid #ffffff;
+.myElement.gsHorizontal {	
+	border-width:5px 2px;
 }
-li {
-	outline:1px solid white;
-	background-color:#440000;
-	text-align:center;
+.gsVertical {
+	border-width:2px 5px;
 }
-
-.gSSlide .active {
-
+.gsSlide {
+	outline:2px solid #000000;
+	background-color:#fefefe;
 }
-
+/*///////////////////////////////////////////////*/

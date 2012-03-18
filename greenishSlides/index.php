@@ -3,23 +3,35 @@
  	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 		<title>greenishSlides</title>
-		<link rel="stylesheet" type="text/css" href="design.css">
+		<link rel="stylesheet" type="text/css" href="all.css">
 		<script type="text/javascript" src="../libs/jquery-1.6.min.js"></script>
 		<script type="text/javascript" src="jquery.greenishSlides-v0.2-beta.js"></script>
 
 		<script type="text/javascript">
 			(function($) {
 				$(document).ready(function() {
-					$(".anything").greenishSlides();
+					$(".myElement").greenishSlides({
+
+/*/////////////////////// Example 7: resizable
+						resizable:true,
+						events:{
+							activate:"click",
+							deactivate:"click"
+						}
+/*/////////////////////// Example 7: resizable
+						resizable:true,
+						events:{
+							activate:"click",
+							deactivate:"click"
+						}
+					});
 				});
 			})(jQuery);
 		</script>		
 	</head>
 	<body>
-		<ul class="anything">
-			<li class="bla"><div><img src="http://placekitten.com/300/300" alt=""></div></li>
+		<ul class="myElement fullscreen">
 			<li></li>
-			<li class="bla"></li>
 			<li></li>
 			<li></li>
 			<li></li>
