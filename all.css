@@ -14,7 +14,9 @@ body {
 h1 { 
 	font-size: 2.5em; 
 	color: #0f0f0f;
-	margin:0px 0px 20px 10px; 
+	margin:0px 0px 20px 0px; 
+	background-color:#fff;
+	padding:5px 10px;	
 }
 h1 .small { font-size: 0.4em; }
 h1 a, 
@@ -32,7 +34,7 @@ h2 {
 }
 
 h2 a {
-	padding:10px 0px 10px 10px; 
+	padding:5px 0px 5px 10px; 
 	display:block;
 	font-style:normal;
 }
@@ -94,6 +96,9 @@ p {
 	padding:0px;
 }
 
+.examples li.divider {
+	margin-top:20px;
+}
 .examples .box {
 	display:block;
 	margin:0px;
@@ -108,16 +113,24 @@ p {
 	outline:none;
 }
 
+.examples a.box {
+	background-image:url("img/openInNewWindow.png");
+	background-repeat:no-repeat;
+	background-position:right top;
+	padding-right:25px;
+}
 .examples pre {
 	margin:4px 0px;
 }
 
-
-
-
+.forkMe {
+	position:fixed;
+	top:0px;
+	right:0px;
+}
 
 .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-.download { float: right; margin-top:-10px;}
+.download { float: right; margin-top:-17px;}
 pre { background: #000; color: #fff; padding: 15px;}
 hr { border: 0; border-bottom: 1px solid #0f0f0f}
 .footer { text-align:center; padding-top:30px; font-style: italic; }
@@ -132,6 +145,15 @@ hr { border: 0; border-bottom: 1px solid #0f0f0f}
 	margin-top:10px;
 	margin-right:10px;
 }
+
+.addthis_toolbox {
+	position:absolute;
+	top:340px;
+	right:0px;
+	width:110px;
+	margin-right:-10px;
+}
+
 
 ul {
 	list-style:none;
@@ -156,7 +178,6 @@ li.box {
 
 
 .highlight {
-background:#fff;
 margin-left:-225px;
 }
 
