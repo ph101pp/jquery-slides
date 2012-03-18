@@ -114,7 +114,7 @@ p {
 }
 
 .examples a.box {
-	background-image:url("img/openInNewWindow.png");
+	background-image:url("../img/openInNewWindow.png");
 	background-repeat:no-repeat;
 	background-position:right top;
 	padding-right:25px;
