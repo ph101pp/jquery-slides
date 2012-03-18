@@ -1,15 +1,8 @@
-body {
-  margin-top: 1.0em;
-  background-color: #f0f0f0;
-  font-family: Helvetica, Arial, FreeSans, san-serif;
-  color: #333333;
-  font-size:13px;
-}
 #container {
 	position:relative;
-  margin: 100px auto;
-  width: 550px;
-  padding-left:370px;
+	margin: 100px auto;
+	width: 550px;
+	padding-left:370px;
 }
 h1 { 
 	font-size: 2.5em; 
@@ -19,12 +12,6 @@ h1 {
 	padding:5px 10px;	
 }
 h1 .small { font-size: 0.4em; }
-h1 a, 
-h2 a, 
-h3 a { 
-	text-decoration: none ;
-	color:#ffffff;
-}
 h2 { 
 	font-size: 2em; 
 	color: #ffffff; 
@@ -32,7 +19,6 @@ h2 {
 	margin:20px 0px;
 	font-weight:normal;
 }
-
 h2 a {
 	padding:5px 0px 5px 10px; 
 	display:block;
@@ -50,6 +36,27 @@ p {
 	padding:2px 10px;
 }
 
+ul {
+	list-style:none;
+	padding-left:0px;
+}
+
+ul li, .box {
+	background-color:#ffffff;
+	padding:5px 10px;
+	margin:5px 0px;
+	
+}
+
+li.box {
+	margin-top:20px;
+}
+
+.box {
+	padding:10px;
+}
+
+
 .anchor {
 	font-weight:bold;
 	display:block;
@@ -58,29 +65,12 @@ p {
 	
 }
 
-.myElement {
-	position:relative;
-	height:250px;
-	margin:20px -0px 40px -370px;
-	border:5px solid #000000;
-	background-color:#ff3333;
+.exampleWrapper {
+  	position:relative;
+    height:250px;
+    margin:20px 0px 10px -370px;
+    padding-right:4px;
 }
-
-.myElement.gsHorizontal {	
-	border-width:5px 2px;
-}
-.gsVertical {
-	border-width:2px 5px;
-}
-.gsSlide {
-	outline:2px solid #000000;
-	background-color:#fefefe;
-}
-
-.gsSlide.even {
-}
-
-
 
 .examples {
 	position:absolute;
@@ -88,7 +78,7 @@ p {
 	width:306px;
 	padding:0px;
 	margin:0px;
-	margin-top:-40px;
+	margin-top:0px;
 }
 .examples li {
 	background-color:transparent;
@@ -128,13 +118,10 @@ p {
 	top:0px;
 	right:0px;
 }
-
-.description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-.download { float: right; margin-top:-17px;}
-pre { background: #000; color: #fff; padding: 15px;}
-hr { border: 0; border-bottom: 1px solid #0f0f0f}
-.footer { text-align:center; padding-top:30px; font-style: italic; }
-
+.download {
+	float:right; 
+	margin-top:-17px;
+}
 .donateButton {
 	font-size: 1em; 
 	color: #ffffff; background-color:#0f0f0f; 
@@ -154,28 +141,9 @@ hr { border: 0; border-bottom: 1px solid #0f0f0f}
 	margin-right:-10px;
 }
 
-
-ul {
-	list-style:none;
-	padding-left:0px;
+.navigation {
+	margin-top:50px;
 }
-
-ul li, .box {
-	background-color:#ffffff;
-	padding:5px 10px;
-	margin:5px 0px;
-	
-}
-
-li.box {
-	margin-top:20px;
-}
-
-.box {
-	padding:10px;
-}
-
-
 
 .highlight {
 margin-left:-225px;
@@ -194,294 +162,4 @@ overflow:auto;
 padding:6px 10px;
 border-radius:3px;
 color:#333333;
-}
-/* GITHUB MARKDOWN HIGHLIGHTING*/
-.highlight .c {
-color:#998;
-font-style:italic;
-}
-
-.highlight .err {
-color:#a61717;
-background-color:#e3d2d2;
-}
-
-.highlight .k {
-font-weight:700;
-}
-
-.highlight .o {
-font-weight:700;
-}
-
-.highlight .cm {
-color:#998;
-font-style:italic;
-}
-
-.highlight .cp {
-color:#999;
-font-weight:700;
-}
-
-.highlight .c1 {
-color:#998;
-font-style:italic;
-}
-
-.highlight .cs {
-color:#999;
-font-weight:700;
-font-style:italic;
-}
-
-.highlight .gd {
-color:#000;
-background-color:#fdd;
-}
-
-.highlight .gd .x {
-color:#000;
-background-color:#faa;
-}
-
-.highlight .ge {
-font-style:italic;
-}
-
-.highlight .gr {
-color:#a00;
-}
-
-.highlight .gh {
-color:#999;
-}
-
-.highlight .gi {
-color:#000;
-background-color:#dfd;
-}
-
-.highlight .gi .x {
-color:#000;
-background-color:#afa;
-}
-
-.highlight .go {
-color:#888;
-}
-
-.highlight .gp {
-color:#555;
-}
-
-.highlight .gs {
-font-weight:700;
-}
-
-.highlight .gu {
-color:purple;
-font-weight:700;
-}
-
-.highlight .gt {
-color:#a00;
-}
-
-.highlight .kc {
-font-weight:700;
-}
-
-.highlight .kd {
-font-weight:700;
-}
-
-.highlight .kn {
-font-weight:700;
-}
-
-.highlight .kp {
-font-weight:700;
-}
-
-.highlight .kr {
-font-weight:700;
-}
-
-.highlight .kt {
-color:#458;
-font-weight:700;
-}
-
-.highlight .m {
-color:#099;
-}
-
-.highlight .s {
-color:#d14;
-}
-
-.highlight .na {
-color:teal;
-}
-
-.highlight .nb {
-color:#0086B3;
-}
-
-.highlight .nc {
-color:#458;
-font-weight:700;
-}
-
-.highlight .no {
-color:teal;
-}
-
-.highlight .ni {
-color:purple;
-}
-
-.highlight .ne {
-color:#900;
-font-weight:700;
-}
-
-.highlight .nf {
-color:#900;
-font-weight:700;
-}
-
-.highlight .nn {
-color:#555;
-}
-
-.highlight .nt {
-color:navy;
-}
-
-.highlight .nv {
-color:teal;
-}
-
-.highlight .ow {
-font-weight:700;
-}
-
-.highlight .w {
-color:#bbb;
-}
-
-.highlight .mf {
-color:#099;
-}
-
-.highlight .mh {
-color:#099;
-}
-
-.highlight .mi {
-color:#099;
-}
-
-.highlight .mo {
-color:#099;
-}
-
-.highlight .sb {
-color:#d14;
-}
-
-.highlight .sc {
-color:#d14;
-}
-
-.highlight .sd {
-color:#d14;
-}
-
-.highlight .s2 {
-color:#d14;
-}
-
-.highlight .se {
-color:#d14;
-}
-
-.highlight .sh {
-color:#d14;
-}
-
-.highlight .si {
-color:#d14;
-}
-
-.highlight .sx {
-color:#d14;
-}
-
-.highlight .sr {
-color:#009926;
-}
-
-.highlight .s1 {
-color:#d14;
-}
-
-.highlight .ss {
-color:#990073;
-}
-
-.highlight .bp {
-color:#999;
-}
-
-.highlight .vc {
-color:teal;
-}
-
-.highlight .vg {
-color:teal;
-}
-
-.highlight .vi {
-color:teal;
-}
-
-.highlight .il {
-color:#099;
-}
-
-.highlight .gc {
-color:#999;
-background-color:#EAF2F5;
-}
-
-.type-csharp .highlight .k {
-color:#00F;
-}
-
-.type-csharp .highlight .kt {
-color:#00F;
-}
-
-.type-csharp .highlight .nf {
-color:#000;
-font-weight:400;
-}
-
-.type-csharp .highlight .nc {
-color:#2B91AF;
-}
-
-.type-csharp .highlight .nn {
-color:#000;
-}
-
-.type-csharp .highlight .s {
-color:#A31515;
-}
-
-.type-csharp .highlight .sc {
-color:#A31515;
 }
