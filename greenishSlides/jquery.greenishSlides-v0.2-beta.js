@@ -13,18 +13,19 @@
 */
 $.gS=$.fn.greenishSlides = function (method){
 	var context=$(this),
-		data, call, args, i, opts;
+		data, call, args, givenArgs, i, opts;
 	if(typeof(method) === 'object' || !method) {
-		args=arguments;
+		givenArgs=arguments;
 		call="_init";
 	}
 	else if($.gS[method]) {
-		args=Array.prototype.slice.call(arguments,1);
+		givenArgs=Array.prototype.slice.call(arguments,1);
 		call=method;
 	}
 	else throw "Error: The method \""+method+"\" doesn't exist in greenishSlides";
 	
 	for(i=0; i<context.length; i++) {
+		args=givenArgs;
 		data=$(context[i]).data("greenishSlidesData") || $(context[i]).parent().data("greenishSlidesData");
 		if(data && call=="_init") {
 			$.gS._init(data, method=="_init"?Array.prototype.slice.call(arguments,1):method, true);
@@ -310,6 +311,7 @@ $.extend($.gS, {
 		if(slideId === undefined) slideId=0;
 		slideId=context.greenishSlides("_triggerCallback","next",slideId);
 		slide=context.children().eq(slideId);
+
 		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.greenishSlides("activate");
 	},
 /*///////////////////////////////////////////////////////////////////////////////
