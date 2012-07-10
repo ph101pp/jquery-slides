@@ -36,7 +36,7 @@ __And when you come to use the plugin: SHOW ME! I would love to see what you're 
 1.	General
 ----------------
 	
-	To start off, get the newest version of the greenishSlides plugin from Github and move it into your project folder.
+To start off, get the newest version of the greenishSlides plugin from Github and move it into your project folder.
 
 	Include the file into your HTML and you're ready to go:
 	
