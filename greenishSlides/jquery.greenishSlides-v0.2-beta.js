@@ -132,12 +132,12 @@ $.extend($.gS, {
 		if(opts.vertical !== undefined && opts.vertical !== data.opts.vertical) {
 			if(data.opts.LoT !== undefined || data.opts.RoB !== undefined) slides.removeClass(data.opts.LoT+" "+data.opts.RoB);
 			if(opts.vertical) {
-				slides.css(gS.css.gSVertical);
+				slides.css(gS.css.gSVertical).filter("."+opts.classes.active).css(gS.css.gSVerticalActive);
 				context.removeClass(data.opts.classes.horizontal).addClass(data.opts.classes.vertical);
 				$.extend(opts, gS.orientation.vertical);
 			}
 			else {
-				slides.css(gS.css.gSHorizontal);
+				slides.css(gS.css.gSHorizontal).filter("."+opts.classes.active).css(gS.css.gSHorizontalActive);
 				context.removeClass(data.opts.classes.vertical).addClass(data.opts.classes.horizontal);
 				$.extend(opts, gS.orientation.horizontal);
 			}
@@ -746,6 +746,14 @@ $.extend($.gS, {
 			height:"auto",
 			top:"auto",
 			left:0
+		},
+		gSHorizontalActive:{
+			right:0,
+			left:0
+		},
+		gSVerticalActive:{
+			top:0,
+			bottom:0
 		}
 	}
 ////////////////////////////////////////////////////////////////////////////////
