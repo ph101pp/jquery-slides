@@ -92,9 +92,9 @@
 	$(document).ready(function() { 
 		$(".examples").accordion({
 			header:".handle",
-			autoHeight:false,
+			heightStyle:"content",
 			create: event,
-			change: event
+			activate: event
 		});
 	});
 ////////////////////////////////////////////////////////////////////////////////
