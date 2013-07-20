@@ -1,6 +1,6 @@
-#jQuery greenishSlides plugin
+#jQuery Slides plugin
 
-This is a pretty flexible and highly customizable slideshow/accordion plugin for jQuery.
+A pretty flexible and highly customizable slideshow/accordion plugin for jQuery.
 
 This plugin is inspired by the [jQuery UI Accordion](http://jqueryui.com/demos/accordion/) and [Kwicks for Mootools](http://davidwalsh.name/mootools-kwicks) / [Kwicks for jQuery](http://www.jeremymartin.name/projects.php?project=kwicks).
 
@@ -36,13 +36,13 @@ __And when you come to use the plugin: SHOW ME! I would love to see what you're 
 1.	General
 ----------------
 	
-To start off, get the newest version of the greenishSlides plugin from Github and move it into your project folder.
+To start off, get the newest version of the jQuery Slides plugin from Github and move it into your project folder.
 
 Include the file into your HTML and you're ready to go:
 
 ``` javascript
 jQuery(document).ready(function(){
-	$(".myElement").greenishSlides();
+	$(".myElement").slides();
 });
 ```
 
@@ -83,12 +83,12 @@ Into a slideshow that's markup will look (in the first case: `<ul>`) like this:
 ----------------
 	
 ``` javascript
-$(".myElement").greenishSlides([Object options]);				
+$(".myElement").slides([Object options]);				
 ```
 
 > ####Initialize / Update Options
 >
-> Initialize the greenishSlides plugin on a set of HTML Elements.
+> Initialize the jQuery Slides plugin on a set of HTML Elements.
 >
 > Optional you cann pass an object with options (see below) to the function.
 >
@@ -97,7 +97,7 @@ $(".myElement").greenishSlides([Object options]);
 -------------------------
 	
 ``` javascript
-$(".mySlide",".myElement").greenishSlides("activate");				
+$(".mySlide",".myElement").slides("activate");				
 ```
 
 > #### Activate Slide
@@ -107,7 +107,7 @@ $(".mySlide",".myElement").greenishSlides("activate");
 -------------------------
 
 ``` javascript
-$(".mySlide", ".myElement").greenishSlides("deactivate");				
+$(".mySlide", ".myElement").slides("deactivate");				
 ```
 
 > #### Deactivate Slide
@@ -117,7 +117,7 @@ $(".mySlide", ".myElement").greenishSlides("deactivate");
 -------------------------
 			
 ``` javascript
-$(".myElement").greenishSlides("update");				
+$(".myElement").slides("update");				
 ```
 
 > #### Update Slide Positions.
@@ -129,7 +129,7 @@ $(".myElement").greenishSlides("update");
 -------------------------
 
 ``` javascript
-$(".myElement").greenishSlides("next", [Integer goFromSlideId]);				
+$(".myElement").slides("next", [Integer goFromSlideId]);				
 ```	
 > #### Activates Next Slide.
 >
@@ -139,7 +139,7 @@ $(".myElement").greenishSlides("next", [Integer goFromSlideId]);
 -------------------------
 	
 ``` javascript
-$(".myElement").greenishSlides("prev", [Integer goFromSlideId]);				
+$(".myElement").slides("prev", [Integer goFromSlideId]);				
 ```
 
 > #### Activates Previous Slide.
@@ -150,7 +150,7 @@ $(".myElement").greenishSlides("prev", [Integer goFromSlideId]);
 -------------------------
 	
 ``` javascript
-$(".myElement").greenishSlides("bindCallback", Function);				
+$(".myElement").slides("bindCallback", Function);				
 ```
 
 > #### Bind a Callback/Event
@@ -160,7 +160,7 @@ $(".myElement").greenishSlides("bindCallback", Function);
 -------------------------
 		
 ``` javascript
-$(".myElement").greenishSlides("clearCache");				
+$(".myElement").slides("clearCache");				
 ```
 
 > #### Clear Cache
@@ -172,12 +172,12 @@ $(".myElement").greenishSlides("clearCache");
 1.	Options
 ----------------
 
-Options can be set or changed by passing an object to the greenishSlides function. This can be done on initialisation or afterwards to change any value (for example limits).
+Options can be set or changed by passing an object to the slides() function. This can be done on initialisation or afterwards to change any value (for example limits).
 
 Here are all the possibile options (set to their __default values__):
 
 ``` javascript
-$(".myElement").greenishSlides({
+$(".myElement").slides({
 		vertical:false,
 		resizable:false,
 		active:false,
@@ -211,7 +211,7 @@ $(".myElement").greenishSlides({
 vertical:						Boolean									Default: false
 ```
 
-> Defines the orientation of the greenishSlides element.
+> Defines the orientation of the Slides element.
 
 -------------------------
 
@@ -219,7 +219,7 @@ vertical:						Boolean									Default: false
 resizable:						Boolean									Default: false
 ```
 
-> Defines if the greenishSlides element can be resized on runtime. 
+> Defines if the Slides element can be resized on runtime. 
 > 
 > If __true__ slides on the left side of the active slide will be positioned differently from the ones on the right, to allow resizing without javascript.
 > 
@@ -515,7 +515,7 @@ If you need a new callback that is missing, feel free to add it in the code!
 Just put the following at the place you need the call:
 
 ``` javascript
-[context].greenishSlides("_triggerCallback","myCallbackName" [,parameterOne, parameterTwo, ...]);
+[context].slides("_triggerCallback","myCallbackName" [,parameterOne, parameterTwo, ...]);
 ```
 
 Notice that the new callback will come with all the features of the default ones:

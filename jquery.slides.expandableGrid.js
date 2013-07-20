@@ -1,10 +1,9 @@
 /*! 
- * pictureGrid: Extension for the greenishSlides jQuery plugin - v0.2 - beta (5/13/2011)
+ * expandableGrid: Extension for the jQuery Slides plugin
  * http://www.philippadrian.com
  * 
  * Copyright (c) 2011 Philipp C. Adrian
- * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
- * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses. 
+ * MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
  
 (function($) {
@@ -23,7 +22,7 @@ var pG = $.fn.expandableGrid = function (opts){
 	for(i=0; i<context.length; i++) {
 		thisContext=$(context[i]).addClass("expandableGrid");
 		
-		thisContext.greenishSlides($.extend({},opts,{	
+		thisContext.slides($.extend({},opts,{	
 			vertical:false,
 			handle:"."+opts.classes.pGInner
 		}));
@@ -31,7 +30,7 @@ var pG = $.fn.expandableGrid = function (opts){
 		slides=thisContext.data("greenishSlidesData").slides;
 		
 		for(k=0; slide=slides[k]; k++) {
-			slide.obj.children().eq(0).addClass(opts.classes.pGInner).css(that.css.pGInner).greenishSlides($.extend({},opts,{
+			slide.obj.children().eq(0).addClass(opts.classes.pGInner).css(that.css.pGInner).slides($.extend({},opts,{
 				vertical:true,
 				callbacks:{
 					activateEvent:that.preActivate,
@@ -63,7 +62,7 @@ $.extend(pG, {
 		slide.addClass(data.opts.classes.pGActive);
 		$("."+data.opts.classes.pGInner).each(function(){
 			var slide = $(this).children().eq(ai);
-			if(!slide.hasClass("active")) slide.greenishSlides("activate");
+			if(!slide.hasClass("active")) slide.slides("activate");
 		});
 	},
 ////////////////////////////////////////////////////////////////////////////////
@@ -71,7 +70,7 @@ $.extend(pG, {
 		$("."+data.opts.classes.pGActive).removeClass(data.opts.classes.pGActive);
 		$("."+data.opts.classes.pGInner).each(function(){
 			console.log(this);
-			$(".gsActive",this).greenishSlides("deactivate");
+			$(".gsActive",this).slides("deactivate");
 		});
 	},
 ////////////////////////////////////////////////////////////////////////////////
