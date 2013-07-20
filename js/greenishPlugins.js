@@ -66,7 +66,7 @@
 				};
 			break;
 		}
-		$(".myElement").greenishSlides($.extend(true, {}, $.gS.defaults, {
+		$(".myElement").greenishSlides($.extend(true, {}, $.fn.greenishSlides.defaults, {
 			limits : {
 				min:false,
 				max:false,
