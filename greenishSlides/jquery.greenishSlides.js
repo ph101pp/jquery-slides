@@ -1,24 +1,38 @@
 /*! 
- * greenishSlides: jQuery slideshow plugin - v0.2 - beta (5/13/2011)
- * http://www.philippadrian.com
- * 
- * Copyright (c) 2011-2012 Philipp C. Adrian
- * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
- * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses. 
+ * greenishSlides: jQuery slideshow plugin - v1.0
+ * Copyright (c) 2011 Philipp Adrian (www.philippadrian.com)
+
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions: 
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 (function($) {
 /*///////////////////////////////////////////////////////////////////////////////
 	Creates the data object that holds all data about the greenishSlide and calls 
 	the passed method or the _init method.
 */
-$.gS=$.fn.greenishSlides = function (method){
+var greenishSlides =$.fn.greenishSlides = function (method){
 	var context=$(this),
 		data, call, args, givenArgs, i, opts;
 	if(typeof(method) === 'object' || !method) {
 		givenArgs=arguments;
 		call="_init";
 	}
-	else if($.gS[method]) {
+	else if(greenishSlides[method]) {
 		givenArgs=Array.prototype.slice.call(arguments,1);
 		call=method;
 	}
@@ -28,7 +42,7 @@ $.gS=$.fn.greenishSlides = function (method){
 		args=givenArgs;
 		data=$(context[i]).data("greenishSlidesData") || $(context[i]).parent().data("greenishSlidesData");
 		if(data && call=="_init") {
-			$.gS._init(data, method=="_init"?Array.prototype.slice.call(arguments,1):method, true);
+			greenishSlides._init(data, method=="_init"?Array.prototype.slice.call(arguments,1):method, true);
 			continue;
 		}
 		data = data || {
@@ -42,16 +56,16 @@ $.gS=$.fn.greenishSlides = function (method){
 				active:$()
 			};
 		if(call=="_init") {
-			opts = $.gS._extendOpts(data, method=="_init"?Array.prototype.slice.call(arguments,1):method);
+			opts = greenishSlides._extendOpts(data, method=="_init"?Array.prototype.slice.call(arguments,1):method);
 			args=[data, opts];
 		}
 		else args=[data].concat(args);
 		$(context[i]).data("greenishSlidesData",data);
 
 //		Call method and catch "callbackReturnedFalse" error from Callback. 
-		if(call=="_triggerCallback") return $.gS[call].apply(context[i], args);
+		if(call=="_triggerCallback") return greenishSlides[call].apply(context[i], args);
 		else try { 
-				$.gS[call].apply(context[i], args);
+				greenishSlides[call].apply(context[i], args);
 			}
 			catch(err){
 				if(err!="callbackReturnedFalse") throw err;
@@ -60,7 +74,7 @@ $.gS=$.fn.greenishSlides = function (method){
 	return this;
 };
 ////////////////////////////////////////////////////////////////////////////////
-$.extend($.gS, {
+$.extend(greenishSlides, {
 /*///////////////////////////////////////////////////////////////////////////////
 	object		defaults 
 	Contains all the default settings that will be used if nothing else is defined.
@@ -103,7 +117,7 @@ $.extend($.gS, {
 /*///////////////////////////////////////////////////////////////////////////////
 */
 	_init : function (data, opts, update) {	
-		var gS=$.gS,
+		var gS=greenishSlides,
 			context=data.context,
 			slides = context.children(),
 			callbacks, event, newActive, cssClass;
@@ -126,7 +140,7 @@ $.extend($.gS, {
 						$(data.opts.classes[cssClass], slides).removeClass(data.opts.classes[cssClass]).addClass(opts.classes[cssClass]);
 			}
 
-		data.opts= $.gS._extendOpts(data, {classes:opts.classes}, true);
+		data.opts= greenishSlides._extendOpts(data, {classes:opts.classes}, true);
 ////	/Sets css and classes
 ////	Orientation
 		if(opts.vertical !== undefined && opts.vertical !== data.opts.vertical) {
@@ -196,7 +210,7 @@ $.extend($.gS, {
 		newActive=opts.active !== undefined;
 
 		//Extends defaults into opts.
-		opts=data.opts = $.gS._extendOpts(data, opts);		
+		opts=data.opts = greenishSlides._extendOpts(data, opts);		
 
 		if(!update) context.greenishSlides("_triggerCallback","init"); // #CALLBACK
 
@@ -247,7 +261,7 @@ $.extend($.gS, {
 /*///////////////////////////////////////////////////////////////////////////////
 */
 	activate : function (data) {
-		var gS=$.gS,
+		var gS=greenishSlides,
 			slide=$(this),
 			context=data.context,
 			opts=data.opts,
@@ -271,7 +285,7 @@ $.extend($.gS, {
 /*///////////////////////////////////////////////////////////////////////////////
 */
 	deactivate : function (data) {
-		var gS=$.gS,
+		var gS=greenishSlides,
 			slide=$(this),
 			context=data.context,
 			opts=data.opts;
@@ -290,7 +304,7 @@ $.extend($.gS, {
 /*///////////////////////////////////////////////////////////////////////////////
 */
 	prev : function (data, fromSlide) {
-		var gS=$.gS,
+		var gS=greenishSlides,
 			context=data.context,
 			opts=data.opts,
 			slide,
@@ -303,7 +317,7 @@ $.extend($.gS, {
 /*///////////////////////////////////////////////////////////////////////////////
 */
 	next : function (data, fromSlide) {
-		var gS=$.gS,
+		var gS=greenishSlides,
 			context=data.context,
 			opts=data.opts,
 			slide,
@@ -317,7 +331,7 @@ $.extend($.gS, {
 /*///////////////////////////////////////////////////////////////////////////////
 */
 	_step : function (data, number, fromSlide) {
-		var gS=$.gS,
+		var gS=greenishSlides,
 			context=data.context,
 			opts=data.opts,
 			slides=context.children(),
@@ -375,7 +389,7 @@ $.extend($.gS, {
 	Sets the new _positioning for each slide and gets the css values of the current state
 */
 	_getCSS : function (data, i) {
-		var gS = $.gS,
+		var gS = greenishSlides,
 			opts=data.opts,
 			context=data.context,
 			ai=data.ai,
@@ -418,7 +432,7 @@ $.extend($.gS, {
 	This has no visual effect on the slide.
 */
 	_positioning : function (data, i, bind, active) {
-		var gS=$.gS,
+		var gS=greenishSlides,
 			opts=data.opts,
 			context=data.context,
 			slide=data.slides[i],
@@ -452,7 +466,7 @@ $.extend($.gS, {
 	Calculates the minWidth/minHeight and maxWidth/maxHeight for each slide.
 */
 	_getLimits : function (data, i) {
-		var gS = $.gS,
+		var gS = greenishSlides,
 			opts=data.opts,
 			context=data.context,
 			slide, k, min, max, limits;
@@ -503,7 +517,7 @@ $.extend($.gS, {
 	Calculates the NEW css values for each Slide.
 */
 	_getDCss : function (data) {
-		var gS = $.gS,
+		var gS = greenishSlides,
 			opts=data.opts,
 			context=data.context,
 			ai=data.ai,
@@ -568,7 +582,7 @@ $.extend($.gS, {
 	Checks chache and calls other "getter" funcitons
 */
 	_getData : function (data) {
-		var gS=$.gS,
+		var gS=greenishSlides,
 			context=data.context,
 			opts=data.opts,
 			slides=context.children(),
@@ -598,7 +612,7 @@ $.extend($.gS, {
 /*///////////////////////////////////////////////////////////////////////////////
 */
 	update : function (data, action) {
-		var gS=$.gS,
+		var gS=greenishSlides,
 			context=data.context.stop(),
 			slides=context.children(),
 			active=data.active,
@@ -633,7 +647,7 @@ $.extend($.gS, {
 	_postActivate : function (data) {
 		if(data.ai>=0)
 			data.active.greenishSlides("_triggerCallback","postActivate"); // #CALLBACK
-		$.gS._postDeactivate(data);
+		greenishSlides._postDeactivate(data);
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
@@ -698,7 +712,7 @@ $.extend($.gS, {
 				}
 			
 			data.actualCSS=newCss;
-			$.gS._triggerCallback(data, "step"); // #CALLBACK _triggerCallback needs try/catch wrapper to run properly.
+			greenishSlides._triggerCallback(data, "step"); // #CALLBACK _triggerCallback needs try/catch wrapper to run properly.
 		}
 		catch(err){
 			$(this).stop();
