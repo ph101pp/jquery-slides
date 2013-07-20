@@ -1,4 +1,4 @@
-#greenishSlides jQuery slideshow plugin - v0.2 - beta (5/13/2011)
+#jQuery greenishSlides plugin
 
 This is a pretty flexible and highly customizable slideshow/accordion plugin for jQuery.
 
