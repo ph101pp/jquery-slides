@@ -1,7 +1,10 @@
 /*! 
- * greenishSlides: jQuery slideshow plugin - v1.0
+ * jQuery Slides plugin - v1.0.0
+ * 
  * Copyright (c) 2011 Philipp Adrian (www.philippadrian.com)
-
+ *
+ * The MIT Licence (http://opensource.org/licenses/MIT)
+ *   
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -20,12 +23,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 (function($) {
 /*///////////////////////////////////////////////////////////////////////////////
 	Creates the data object that holds all data about the greenishSlide and calls 
 	the passed method or the _init method.
 */
-var greenishSlides =$.fn.greenishSlides = function (method){
+var greenishSlides =$.fn.slides = function (method){
 	var context=$(this),
 		data, call, args, givenArgs, i, opts;
 	if(typeof(method) === 'object' || !method) {
@@ -36,7 +40,7 @@ var greenishSlides =$.fn.greenishSlides = function (method){
 		givenArgs=Array.prototype.slice.call(arguments,1);
 		call=method;
 	}
-	else throw "Error: The method \""+method+"\" doesn't exist in greenishSlides";
+	else throw "Error: The method \""+method+"\" doesn't exist in jQuery Slides";
 	
 	for(i=0; i<context.length; i++) {
 		args=givenArgs;
@@ -127,7 +131,7 @@ $.extend(greenishSlides, {
 
 ////	Sets css and classes
 		if(!update) {
-			context.greenishSlides("_triggerCallback","preInit", opts); // #CALLBACK
+			context.slides("_triggerCallback","preInit", opts); // #CALLBACK
 			context.css(gS.css.context).addClass("greenishSlides");
 			slides.css(gS.css.gSSlide).addClass(opts.classes.slide);
 		}
@@ -164,12 +168,12 @@ $.extend(greenishSlides, {
 			if(opts.keyEvents)
 				data.opts.vertical?
 					$(document).bind("keydown.gS", function(e) {
-						if(e.which == 40) context.greenishSlides("next");
-						else if(e.which == 38) context.greenishSlides("prev");
+						if(e.which == 40) context.slides("next");
+						else if(e.which == 38) context.slides("prev");
 					}):
 					$(document).bind("keydown.gS", function(e) {
-						if(e.which == 39) context.greenishSlides("next");
-						else if(e.which == 37) context.greenishSlides("prev");
+						if(e.which == 39) context.slides("next");
+						else if(e.which == 37) context.slides("prev");
 					});
 			else $(document).unbind("keydown.gS");
 		}
@@ -197,7 +201,7 @@ $.extend(greenishSlides, {
 				opts.events.deactivate==opts.events.activate? 
 					"focusout.gsActivate ":
 					opts.events.deactivate+".gsActivate focusout.gsActivate ";
-			context.unbind(".gsActivate").bind(event, function(e) {context.greenishSlides("_event",e);}); // focusin/focusout for Keyboard accessability;
+			context.unbind(".gsActivate").bind(event, function(e) {context.slides("_event",e);}); // focusin/focusout for Keyboard accessability;
 		}
 ////	/Activate and Deactivate events
 ////	Resize event
@@ -212,7 +216,7 @@ $.extend(greenishSlides, {
 		//Extends defaults into opts.
 		opts=data.opts = greenishSlides._extendOpts(data, opts);		
 
-		if(!update) context.greenishSlides("_triggerCallback","init"); // #CALLBACK
+		if(!update) context.slides("_triggerCallback","init"); // #CALLBACK
 
 		if(newActive && opts.active !== false){
 			if(opts.active === true) opts.active=0;
@@ -227,7 +231,7 @@ $.extend(greenishSlides, {
 		else if(opts.active === false && data.ai >= 0) $("."+opts.classes.active, context).eq(0).trigger(opts.events.deactivate, true);
 		else gS.update(data);
 ////	/First Initialisation / update
-		if(!update) context.greenishSlides("_triggerCallback","postInit"); // #CALLBACK
+		if(!update) context.slides("_triggerCallback","postInit"); // #CALLBACK
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
@@ -250,12 +254,12 @@ $.extend(greenishSlides, {
 			target= slide.length ? [slide, handle] : false;
 		}
 		if((e.type == "focusin" || e.type==opts.events.activate) && target && !target[0].hasClass(opts.classes.active)) {
-			target[0].greenishSlides("_triggerCallback","activateEvent"); // #CALLBACK
-			target[0].greenishSlides("activate");
+			target[0].slides("_triggerCallback","activateEvent"); // #CALLBACK
+			target[0].slides("activate");
 		}
 		else if(!opts.stayOpen && (e.type == "focusout" || e.type==opts.events.deactivate) && target && target[0].hasClass(opts.classes.active) && target[1].has(e.relatedTarget).length <=0 && target[1] != e.relatedTarget) {
-			target[0].greenishSlides("_triggerCallback","deactivateEvent"); // #CALLBACK
-			target[0].greenishSlides("deactivate");
+			target[0].slides("_triggerCallback","deactivateEvent"); // #CALLBACK
+			target[0].slides("deactivate");
 		}
 	},
 /*///////////////////////////////////////////////////////////////////////////////
@@ -278,7 +282,7 @@ $.extend(greenishSlides, {
 		data.active=slide;
 		data.ai=slide.index();
 		
-		slide.greenishSlides("_triggerCallback","preActivate"); // #CALLBACK
+		slide.slides("_triggerCallback","preActivate"); // #CALLBACK
 		
 		gS.update(data,"activate");
 	},
@@ -295,7 +299,7 @@ $.extend(greenishSlides, {
 
 		if(!slide.hasClass(opts.classes.active)) return;
 		slide.removeClass(opts.classes.active).addClass(opts.classes.deactivating);
-		slide.greenishSlides("_triggerCallback","preDeactivate");// #CALLBACK
+		slide.slides("_triggerCallback","preDeactivate");// #CALLBACK
 		data.active=$();
 		data.ai="-1";
 
@@ -310,9 +314,9 @@ $.extend(greenishSlides, {
 			slide,
 			slideId=gS._step(data, -1, fromSlide);
 		if(slideId === undefined) slideId=context.children().length-1;
-		slideId=context.greenishSlides("_triggerCallback","prev",slideId); //callback
+		slideId=context.slides("_triggerCallback","prev",slideId); //callback
 		slide=context.children().eq(slideId);
-		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.greenishSlides("activate");
+		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.slides("activate");
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
@@ -323,10 +327,10 @@ $.extend(greenishSlides, {
 			slide,
 			slideId=gS._step(data, 1, fromSlide);
 		if(slideId === undefined) slideId=0;
-		slideId=context.greenishSlides("_triggerCallback","next",slideId);
+		slideId=context.slides("_triggerCallback","next",slideId);
 		slide=context.children().eq(slideId);
 
-		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.greenishSlides("activate");
+		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.slides("activate");
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
@@ -501,7 +505,7 @@ $.extend(greenishSlides, {
 			if(data.limited) { 
 				if(!data.resizeEventSet) {
 					$(window).bind("resize.gS", function(){
-						context.greenishSlides("update");
+						context.slides("update");
 					});
 					data.resizeEventSet=true;	
 				}
@@ -619,23 +623,23 @@ $.extend(greenishSlides, {
 			ai=data.ai,
 			opts=data.opts,
 			postAnimation;
-		active.greenishSlides("_triggerCallback","preUpdate"); // #CALLBACK
+		active.slides("_triggerCallback","preUpdate"); // #CALLBACK
 
 //		Get and store Data for the animation function
 		gS._getData(data);
 		
 //		Set callbacks for either Activation or Deactivation.
 		if(action == "deactivate") {
-			active.greenishSlides("_triggerCallback","preDeactivateAnimation"); // #CALLBACK
-			postAnimation = function () {context.greenishSlides("_postDeactivate");}; // #CALLBACK
+			active.slides("_triggerCallback","preDeactivateAnimation"); // #CALLBACK
+			postAnimation = function () {context.slides("_postDeactivate");}; // #CALLBACK
 		}
 		else if(action == "activate") {  
-			active.greenishSlides("_triggerCallback","preActivateAnimation"); // #CALLBACK
-			postAnimation = function () {context.greenishSlides("_postActivate");}; // #CALLBACK
+			active.slides("_triggerCallback","preActivateAnimation"); // #CALLBACK
+			postAnimation = function () {context.slides("_postActivate");}; // #CALLBACK
 		}
 		else {
-			active.greenishSlides("_triggerCallback","preUpdateAnimation"); // #CALLBACK
-			postAnimation = function () {active.greenishSlides("_triggerCallback","postUpdate");}; // #CALLBACK		
+			active.slides("_triggerCallback","preUpdateAnimation"); // #CALLBACK
+			postAnimation = function () {active.slides("_triggerCallback","postUpdate");}; // #CALLBACK		
 		}
 //		Start Animation for Slides	
 		context
@@ -646,7 +650,7 @@ $.extend(greenishSlides, {
 */
 	_postActivate : function (data) {
 		if(data.ai>=0)
-			data.active.greenishSlides("_triggerCallback","postActivate"); // #CALLBACK
+			data.active.slides("_triggerCallback","postActivate"); // #CALLBACK
 		greenishSlides._postDeactivate(data);
 	},
 /*///////////////////////////////////////////////////////////////////////////////
@@ -654,7 +658,7 @@ $.extend(greenishSlides, {
 	_postDeactivate : function (data) {
 		var deactive=data.context.find("."+data.opts.classes.slide+"."+data.opts.classes.deactivating);
 		if(deactive.length>0) {
-			deactive.greenishSlides("_triggerCallback","postDeactivate"); // #CALLBACK
+			deactive.slides("_triggerCallback","postDeactivate"); // #CALLBACK
 			deactive.removeClass(data.opts.classes.deactivating);
 		}
 	},
