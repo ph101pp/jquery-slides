@@ -3,9 +3,40 @@
  	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 		<title>jQuery plugin - greenishSlides</title>
-		<link rel="stylesheet" type="text/css" href="css/example.css">
-		<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
-		<script type="text/javascript" src="js/jquery.greenishSlides-v0.2-beta.js"></script>
+		<style>
+			body {
+				padding:0px;
+				margin:0px;
+				background-color: #f0f0f0;
+				overflow:hidden;
+			}
+			ul {
+				border:5px solid #000000;
+				background-color:#ff3333;
+				padding:0px;
+				margin:0px;
+			}
+			ul.fullscreen {
+				position:absolute;
+				top:20px;
+				left:20px;
+				bottom:20px;
+				right:20px;
+			}
+			.gsHorizontal {	
+				border-width:5px 2px;
+			}
+			.gsVertical {
+				border-width:2px 5px;
+			}
+			.gsSlide {
+				outline:2px solid #000000;
+				background-color:#fefefe;
+			}
+		</style>
+
+		<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery.greenishSlides.js"></script>
 
 		<script type="text/javascript">
 			(function($) {
