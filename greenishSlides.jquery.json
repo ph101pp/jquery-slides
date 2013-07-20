@@ -1,0 +1,32 @@
+{
+    "name": "greenishSlides",
+    "title": "jQuery greenishSlides",
+    "description": "A pretty flexible and highly customizable slideshow/accordion plugin for jQuery.",
+    "keywords": [
+        "slideshow",
+        "slides",
+        "kwicks",
+        "accordion",
+        "customizable",
+        "content"
+    ],
+    "version": "1.0.0",
+    "author": {
+        "name": "Philipp Adrian",
+        "url": "http://www.philippadrian.com"
+    },
+
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "https://github.com/jquery/jquery-color/blob/2.1.2/MIT-LICENSE.txt"
+        }
+    ],
+    "bugs": "https://github.com/greenish/greenishSlides/issues",
+    "homepage": "http://greenish.github.io/greenishSlides/",
+    "docs": "http://greenish.github.io/greenishSlides/",
+    "download": "http://greenish.github.io/greenishSlides/",
+    "dependencies": {
+        "jquery": ">=1.6"
+    }
+}

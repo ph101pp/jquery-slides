@@ -1,7 +1,10 @@
 /*! 
- * greenishSlides: jQuery slideshow plugin - v1.0
+ * jQuery Slides plugin - v1.0.0
+ * 
  * Copyright (c) 2011 Philipp Adrian (www.philippadrian.com)
-
+ *
+ * The MIT Licence (http://opensource.org/licenses/MIT)
+ *   
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -20,6 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 (function($) {
 /*///////////////////////////////////////////////////////////////////////////////
 	Creates the data object that holds all data about the greenishSlide and calls 
