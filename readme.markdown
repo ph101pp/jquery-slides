@@ -21,7 +21,7 @@ So here are these specifications and features that this plugin provides - plus s
 
 ----------------
 
-So as said above, this plugin has been developed for [The Book in Motion](http://thebookinmotion.greenish.ch) website and this website is probably the best way to see what this plugin is capable of.
+So as said above, this plugin has been developed for [The Book in Motion](http://thebookinmotion.com) website and this website is probably the best way to see what this plugin is capable of.
 
 Also it's used on the frontpage of the [City University of New York - Graduate Center](http://www.gc.cuny.edu) as well as image gallery on some subpages.
 
