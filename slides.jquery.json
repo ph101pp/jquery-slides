@@ -10,7 +10,7 @@
         "customizable",
         "content"
     ],
-    "version": "1.0.1",
+    "version": "1.0.2",
     "author": {
         "name": "Philipp Adrian",
         "url": "http://www.philippadrian.com"
@@ -19,13 +19,13 @@
     "licenses": [
         {
             "type": "MIT",
-            "url": "https://github.com/jquery/jquery-color/blob/2.1.2/MIT-LICENSE.txt"
+            "url": "http://opensource.org/licenses/MIT"
         }
     ],
-    "bugs": "https://github.com/greenish/slides/issues",
-    "homepage": "http://greenish.github.io/slides/",
-    "docs": "http://greenish.github.io/slides/",
-    "download": "http://greenish.github.io/slides/",
+    "bugs": "https://github.com/greenish/jquery-slides/issues",
+    "homepage": "http://greenish.github.io/jquery-slides/",
+    "docs": "http://greenish.github.io/jquery-slides/",
+    "download": "http://greenish.github.io/jquery-slides/",
     "dependencies": {
         "jquery": ">=1.6"
     }
