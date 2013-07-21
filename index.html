@@ -2,23 +2,23 @@
 <html>
 <head>	
 	<meta charset='utf-8'>
-	<meta name="author" content="Philipp C. Adrian">
-	<title>jQuery plugin - greenishSlides</title>
+	<meta name="author" content="Philipp Adrian">
+	<title>jQuery Slides plugin</title>
 	<link rel="stylesheet" type="text/css" href="css/all.css">	
 </head>
 
 <body>
-  <a href="https://github.com/greenish/greenishSlides" target="_blank"><img class="forkMe" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+  <a href="https://github.com/greenish/slides" target="_blank"><img class="forkMe" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
 
   <div id="container">
     <div class="download">
-      <a href="https://github.com/greenish/greenishSlides/zipball/master">
+      <a href="https://github.com/greenish/slides/zipball/master">
         <img border="0" width="60" src="https://github.com/images/modules/download/zip.png"></a>
-      <a href="https://github.com/greenish/greenishSlides/tarball/master">
+      <a href="https://github.com/greenish/slides/tarball/master">
         <img border="0" width="60" src="https://github.com/images/modules/download/tar.png"></a>
     </div>
 
-	<h1>greenishSlides</h1>
+	<h1>jQuery Slides</h1>
 	
 	<div class="exampleWrapper">
 		<div class="myElement">
@@ -38,7 +38,7 @@
 			</div>
 			<div class="highlight fit">
 <pre>
-<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">();</span>
+<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">slides</span><span class="p">();</span>
 </pre>
 			</div>
 		</li>
@@ -48,7 +48,7 @@
 			</div>
 			<div class="highlight fit">
 <pre>
-<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">({</span>
+<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">slides</span><span class="p">({</span>
 	<span class="nx">vertical</span><span class="o">:</span><span class="kc">true</span><span class="p">,</span>
 	<span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
 		<span class="nx">activate</span><span class="o">:</span><span class="s2">"click"</span><span class="p">,</span>
@@ -64,7 +64,7 @@
 			</div>
 			<div class="highlight fit">
 <pre>
-<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">({</span>
+<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">slides</span><span class="p">({</span>
 	<span class="nx">limits</span><span class="o">:</span> <span class="p">{</span>
 		<span class="nx">min</span><span class="o">:</span><span class="mi">30</span>
 	<span class="p">}</span>
@@ -78,7 +78,7 @@
 			</div>
 			<div class="highlight fit">
 <pre>
-<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">({</span>
+<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">slides</span><span class="p">({</span>
 	<span class="nx">limits</span><span class="o">:</span> <span class="p">{</span>
 		<span class="nx">min</span><span class="o">:</span><span class="mi">10</span></span><span class="p">,</span>
 		<span class="mi">0</span><span class="o">:</span> <span class="p">{</span>
@@ -104,7 +104,7 @@
 			</div>
 			<div class="highlight fit">
 <pre>
-<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">({</span>
+<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">slides</span><span class="p">({</span>
 	<span class="nx">active</span><span class="o">:</span><span class="mi">0</span><span class="p">,</span>
 	<span class="nx">stayOpen</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
 	<span class="nx">keyEvents</span><span class="o">:</span><span class="kc">true</span><span class="p">,</span>
@@ -121,7 +121,7 @@
 			</div>
 			<div class="highlight fit">
 <pre>
-<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">({</span>
+<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">slides</span><span class="p">({</span>
 	<span class="nx">stayOpen</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
 	<span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
 		<span class="nx">activate</span><span class="o">:</span><span class="s2">"click"</span><span class="p">,</span>
@@ -142,6 +142,11 @@
 					Example 7: Resizable
 			</a>
 		</li>
+		<li>
+			<a href="exampleGrid.html" class="box" target="_blank">
+					Example 8: Expandable Grid
+			</a>
+		</li>
 <!-- 
 		<li>
 			<a href="#" class="box" target="_blank">
@@ -159,7 +164,11 @@
 					City University New York - Graduate Center
 			</a>
 		</li>
-	</ul>
+		<li>
+			<a href="http://www.thebookinmotion.com" class="box" target="_blank">
+					The Book in Motion - Cooper Union
+			</a>
+		</li>	</ul>
 	<!-- AddThis Button BEGIN -->
 	<div class="addthis_toolbox addthis_default_style ">
 		<a class="addthis_button_preferred_1"></a>
@@ -191,13 +200,13 @@
 	
 	<h2><a name="about">About</a></h2>
 	
-	<p>jQuery slideshow plugin - v0.2 - beta</p>
+	<p>jQuery Slides plugin</p>
 
-	<p>This is a pretty flexible and highly customizable slideshow/accordion plugin for jQuery.</p>
+	<p>A pretty flexible and highly customizable slideshow/accordion plugin for jQuery.</p>
 	
 	<p>This plugin is inspired by the <a href="http://jqueryui.com/demos/accordion/" target="_blank">jQuery UI Accordion</a> and <a href="http://davidwalsh.name/mootools-kwicks" target="_blank">Kwicks for Mootools</a> / <a href="http://www.jeremymartin.name/projects.php?project=kwicks" target="_blank">Kwicks for jQuery</a>.</p>
 	
-	<p>The main reason to start to develop this plugin where a certain set of specifications and customizaitions I needed for <a href="http://thebookinmotion.greenish.ch" target="_blank">The Book in Motion</a> website i've been developing, that none of the above where quite offering. </p>
+	<p>The main reason to start to develop this plugin where a certain set of specifications and customizaitions I needed for <a href="http://thebookinmotion.com" target="_blank">The Book in Motion</a> website i've been developing, that none of the above where quite offering. </p>
 	
 	<hr>
 	<p>So here are these specifications and features that this plugin provides - plus some others (I kinda got into it):</p>
@@ -218,7 +227,7 @@
 	
 	<p>Also it's used on the frontpage of the <a href="http://www.gc.cuny.edu" target="_blank">City University of New York - Graduate Center</a> as well as image gallery on some subpages.</p>
 	
-	<p>What follows here is FINALLY the documentation of the plugin. It's been a lot of work that went into it and I'm very happy to finally make available for everybody.</p>
+	<p>What follows here is FINALLY the documentation of the plugin. It's been a lot of work that went into it and I'm very happy to finally make it available for everybody.</p>
 	
 	<p>I'm happy for any feedback, suggestions and bug reports (well not happy, but grateful in the last case :) )</p>
 	
@@ -226,14 +235,14 @@
 	
 	<h2><a name="general">General</a></h2>
 	
-	<p>To start off, get the newest version of the greenishSlides plugin (<a href="#download">downloads</a>) move it into your project folder.</p>
+	<p>To start off, get the newest version of the jQuery Slides plugin (<a href="#download">downloads</a>) move it into your project folder.</p>
 	
 	<p>Include the file into your HTML and you're ready to go:</p>
 	
 	<div class="highlight fit">
 <pre>
 <span class="nx">jQuery</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
-	<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">();</span>
+	<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">slides</span><span class="p">();</span>
 <span class="p">});</span>
 </pre>
 	</div>
@@ -289,23 +298,23 @@
 	
 	<div class="highlight">
 <pre>
-<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">([</span><span class="nb">Object</span> <span class="nx">options</span><span class="p">]);</span>               
+<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">slides</span><span class="p">([</span><span class="nb">Object</span> <span class="nx">options</span><span class="p">]);</span>               
 </pre>
 	</div>
 	
 	
 	<h4>Initialize / Update Options</h4>
 	
-	<p>Initialize the greenishSlides plugin on a set of HTML Elements.</p>
+	<p>Initialize the plugin on a set of HTML Elements.</p>
 	
-	<p>Optional you cann pass an object with options (see below) to the function.</p>
+	<p>Optional you can pass an object with options (see below) to the function.</p>
 	
 	<p>Also you can change options with this at any time after initialisation.</p>
 	
 	<hr>
 	<div class="highlight">
 <pre>
-</span><span class="s2">"activate"</span><span class="p">			<span class="nx">$</span><span class="p">(</span><span class="s2">".mySlide"</span><span class="p">,</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">(</span><span class="s2">"activate"</span><span class="p">);</span>           
+</span><span class="s2">"activate"</span><span class="p">			<span class="nx">$</span><span class="p">(</span><span class="s2">".mySlide"</span><span class="p">,</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">slides</span><span class="p">(</span><span class="s2">"activate"</span><span class="p">);</span>           
 </pre>
 	</div>
 	
@@ -317,7 +326,7 @@
 	<hr>
 	<div class="highlight">
 <pre>
-</span><span class="s2">"deactivate"</span><span class="p">			<span class="nx">$</span><span class="p">(</span><span class="s2">".mySlide"</span><span class="p">,</span> <span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">(</span><span class="s2">"deactivate"</span><span class="p">);</span>            
+</span><span class="s2">"deactivate"</span><span class="p">			<span class="nx">$</span><span class="p">(</span><span class="s2">".mySlide"</span><span class="p">,</span> <span class="s2">".myElement"</span><span class="p">).</span><span class="nx">slides</span><span class="p">(</span><span class="s2">"deactivate"</span><span class="p">);</span>            
 </pre>
 	</div>
 	
@@ -329,7 +338,7 @@
 	<hr>
 	<div class="highlight">
 <pre>
-</span><span class="s2">"update"</span><span class="p">			<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">(</span><span class="s2">"update"</span><span class="p">);</span>            
+</span><span class="s2">"update"</span><span class="p">			<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">slides</span><span class="p">(</span><span class="s2">"update"</span><span class="p">);</span>            
 </pre>
 	</div>
 	
@@ -343,7 +352,7 @@
 	<hr>
 	<div class="highlight">
 <pre>
-</span><span class="s2">"next"</span><span class="p">				<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">(</span><span class="s2">"next"</span><span class="p">,</span> <span class="p">[</span><span class="nx">Integer</span> <span class="nx">goFromSlideId</span><span class="p">]);</span>       
+</span><span class="s2">"next"</span><span class="p">				<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">slides</span><span class="p">(</span><span class="s2">"next"</span><span class="p">,</span> <span class="p">[</span><span class="nx">Integer</span> <span class="nx">goFromSlideId</span><span class="p">]);</span>       
 </pre>
 	</div>
 	
@@ -356,7 +365,7 @@
 	<hr>
 	<div class="highlight">
 <pre>
-</span><span class="s2">"prev"</span><span class="p">				<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">(</span><span class="s2">"prev"</span><span class="p">,</span> <span class="p">[</span><span class="nx">Integer</span> <span class="nx">goFromSlideId</span><span class="p">]);</span>
+</span><span class="s2">"prev"</span><span class="p">				<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">slides</span><span class="p">(</span><span class="s2">"prev"</span><span class="p">,</span> <span class="p">[</span><span class="nx">Integer</span> <span class="nx">goFromSlideId</span><span class="p">]);</span>
 </pre>
 	</div>
 	
@@ -369,7 +378,7 @@
 	<hr>
 	<div class="highlight">
 <pre>
-</span><span class="s2">"bindCallback"</span><span class="p">			<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">(</span><span class="s2">"bindCallback"</span><span class="p">,</span> <span class="nb">Function</span><span class="p">);</span>         
+</span><span class="s2">"bindCallback"</span><span class="p">			<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">slides</span><span class="p">(</span><span class="s2">"bindCallback"</span><span class="p">,</span> <span class="nb">Function</span><span class="p">);</span>         
 </pre>
 	</div>
 	
@@ -381,7 +390,7 @@
 	<hr>
 	<div class="highlight">
 <pre>
-</span><span class="s2">"clearCache"</span><span class="p">			<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">(</span><span class="s2">"clearCache"</span><span class="p">);</span>            
+</span><span class="s2">"clearCache"</span><span class="p">			<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">slides</span><span class="p">(</span><span class="s2">"clearCache"</span><span class="p">);</span>            
 </pre>
 	</div>
 	
@@ -394,13 +403,13 @@
 
 	<h2><a name="options">Options</a></h2>
 	
-	<p>Options can be set or changed by passing an object to the greenishSlides function. This can be done on initialisation or afterwards to change any value (for example limits).</p>
+	<p>Options can be set or changed by passing an object to the slides() function. This can be done on initialisation or afterwards to change any value (for example limits).</p>
 	
 	<p>Here are all the possibile options (set to their <strong>default values</strong>):</p>
 	
 	<div class="highlight fit">
 <pre>
-<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">greenishSlides</span><span class="p">({</span>
+<span class="nx">$</span><span class="p">(</span><span class="s2">".myElement"</span><span class="p">).</span><span class="nx">slides</span><span class="p">({</span>
 	<span class="nx">vertical</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
 	<span class="nx">resizable</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
 	<span class="nx">active</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
@@ -439,7 +448,7 @@
 	</div>
 	
 	
-	<p>Defines the orientation of the greenishSlides element.</p>
+	<p>Defines the orientation of the Slides element.</p>
 	
 	<hr>
 	<div class="highlight">
@@ -449,7 +458,7 @@
 	</div>
 	
 	
-	<p>Defines if the greenishSlides element can be resized on runtime. </p>
+	<p>Defines if the Slides element can be resized on runtime. </p>
 	
 	<p>If <strong>true</strong> slides on the left side of the active slide will be positioned differently from the ones on the right, to allow resizing without javascript.</p>
 	
@@ -801,7 +810,7 @@
 	
 	<div class="highlight fit">
 <pre>
-<span class="p">[</span><span class="nx">context</span><span class="p">].</span><span class="nx">greenishSlides</span><span class="p">(</span><span class="s2">"_triggerCallback"</span><span class="p">,</span><span class="s2">"myCallbackName"</span> <span class="p">[,</span><span class="nx">parameterOne</span><span class="p">,</span> <span class="nx">parameterTwo</span><span class="p">,</span> <span class="p">...]);</span>
+<span class="p">[</span><span class="nx">context</span><span class="p">].</span><span class="nx">slides</span><span class="p">(</span><span class="s2">"_triggerCallback"</span><span class="p">,</span><span class="s2">"myCallbackName"</span> <span class="p">[,</span><span class="nx">parameterOne</span><span class="p">,</span> <span class="nx">parameterTwo</span><span class="p">,</span> <span class="p">...]);</span>
 </pre>
 	</div>
 	
@@ -815,20 +824,36 @@
 	<p><strong>When you added a new callback, tell me about it! So I can consider adding it to the default callbacks.</strong></p>
 
 	<h2><a name="license">License</a></h2>
+ 	<p>The <a href="http://www.opensource.org/licenses/mit-license.php" target="_blank">MIT</a> license.</p>
 	<p>Copyright &copy; 2011-2012 Philipp C. Adrian</p>
- 	<p>Dual licensed under the <a href="http://www.opensource.org/licenses/mit-license.php" target="_blank">MIT</a> and <a href="http://www.opensource.org/licenses/gpl-license.php" target="_blank">GPL</a> licenses.</p>
-	
+	<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:</p>
+
+	<p>The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.</p>
+
+	<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.</p>
 	<h2><a name="download">Download</a></h2>
     <p>
       You can download this project in either
-      <a href="https://github.com/greenish/greenishSlides/zipball/master">zip</a> or
-      <a href="https://github.com/greenish/greenishSlides/tarball/master">tar formats.
+      <a href="https://github.com/greenish/slides/zipball/master">zip</a> or
+      <a href="https://github.com/greenish/slides/tarball/master">tar</a> formats.
     </p>
     <p>You can also clone the project with <a href="http://git-scm.com" target="_blank">Git</a> by running:</p>
 	<div class="highlight fit">
-<pre>$ git clone git://github.com/greenish/greenishSlides</pre>
+<pre>$ git clone git://github.com/greenish/slides</pre>
 	</div>
-	<p> Or get the source code on GitHub : <a href="https://github.com/greenish/greenishSlides" target="_blank">greenish/greenishSlides</a></p>
+	<p> Or get the source code on GitHub : <a href="https://github.com/greenish/slides" target="_blank">greenish/slides</a></p>
 
 	
 	<h2><a name="author">Author</a></h2>
@@ -850,20 +875,21 @@
 </div>
 
 	<!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if necessary -->
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
-	<script>window.jQuery || document.write("<script src='js/jquery-1.7.1.min.js'>\x3C/script>")</script>
-	<script src="js/jquery.greenishSlides-v0.2-beta.js"></script>
-	<script src="js/jquery-ui-1.8.18.custom.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>
+	<script>window.jQuery || document.write("<script src='js/jquery-1.10.2.min.js'>\x3C/script>")</script>
+	<script src="js/jquery.slides.js"></script>
+	<script src="js/jquery-ui-1.10.3.custom.min.js"></script>
 	<script src="js/greenishPlugins.js"></script>
 	<script src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4f36639e749de677"></script>
 
 	<script>
-	if(false) { // Disabled during development
+	if(true) { // Disabled during development
 		var _gaq=[["_setAccount","UA-11818094-6"],["_trackmod project project1view"],["_trackmod project project1LoadTime"]];
 		(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
 		g.src=("https:"==location.protocol?"//ssl":"//www")+".google-analytics.com/ga.js";
 		s.parentNode.insertBefore(g,s)}(document,"script"));
 	}
+
 	</script>
 
 </body>

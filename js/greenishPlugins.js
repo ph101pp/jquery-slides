@@ -66,7 +66,7 @@
 				};
 			break;
 		}
-		$(".myElement").greenishSlides($.extend(true, {}, $.gS.defaults, {
+		$(".myElement").slides($.extend(true, {}, $.fn.slides.defaults, {
 			limits : {
 				min:false,
 				max:false,
@@ -92,9 +92,9 @@
 	$(document).ready(function() { 
 		$(".examples").accordion({
 			header:".handle",
-			autoHeight:false,
+			heightStyle:"content",
 			create: event,
-			change: event
+			activate: event
 		});
 	});
 ////////////////////////////////////////////////////////////////////////////////

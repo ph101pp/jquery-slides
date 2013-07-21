@@ -1,33 +1,52 @@
 /*! 
- * greenishSlides: jQuery slideshow plugin - v0.2 - beta (5/13/2011)
- * http://www.philippadrian.com
+ * jQuery Slides plugin - v1.0.0
  * 
- * Copyright (c) 2011-2012 Philipp C. Adrian
- * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
- * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses. 
+ * Copyright (c) 2011 Philipp Adrian (www.philippadrian.com)
+ *
+ * The MIT Licence (http://opensource.org/licenses/MIT)
+ *   
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions: 
+
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
+
 (function($) {
 /*///////////////////////////////////////////////////////////////////////////////
 	Creates the data object that holds all data about the greenishSlide and calls 
 	the passed method or the _init method.
 */
-$.gS=$.fn.greenishSlides = function (method){
+var greenishSlides =$.fn.slides = function (method){
 	var context=$(this),
-		data, call, args, i, opts;
+		data, call, args, givenArgs, i, opts;
 	if(typeof(method) === 'object' || !method) {
-		args=arguments;
+		givenArgs=arguments;
 		call="_init";
 	}
-	else if($.gS[method]) {
-		args=Array.prototype.slice.call(arguments,1);
+	else if(greenishSlides[method]) {
+		givenArgs=Array.prototype.slice.call(arguments,1);
 		call=method;
 	}
-	else throw "Error: The method \""+method+"\" doesn't exist in greenishSlides";
+	else throw "Error: The method \""+method+"\" doesn't exist in jQuery Slides";
 	
 	for(i=0; i<context.length; i++) {
+		args=givenArgs;
 		data=$(context[i]).data("greenishSlidesData") || $(context[i]).parent().data("greenishSlidesData");
 		if(data && call=="_init") {
-			$.gS._init(data, method=="_init"?Array.prototype.slice.call(arguments,1):method, true);
+			greenishSlides._init(data, method=="_init"?Array.prototype.slice.call(arguments,1):method, true);
 			continue;
 		}
 		data = data || {
@@ -41,16 +60,16 @@ $.gS=$.fn.greenishSlides = function (method){
 				active:$()
 			};
 		if(call=="_init") {
-			opts = $.gS._extendOpts(data, method=="_init"?Array.prototype.slice.call(arguments,1):method);
+			opts = greenishSlides._extendOpts(data, method=="_init"?Array.prototype.slice.call(arguments,1):method);
 			args=[data, opts];
 		}
 		else args=[data].concat(args);
 		$(context[i]).data("greenishSlidesData",data);
 
 //		Call method and catch "callbackReturnedFalse" error from Callback. 
-		if(call=="_triggerCallback") return $.gS[call].apply(context[i], args);
+		if(call=="_triggerCallback") return greenishSlides[call].apply(context[i], args);
 		else try { 
-				$.gS[call].apply(context[i], args);
+				greenishSlides[call].apply(context[i], args);
 			}
 			catch(err){
 				if(err!="callbackReturnedFalse") throw err;
@@ -59,7 +78,7 @@ $.gS=$.fn.greenishSlides = function (method){
 	return this;
 };
 ////////////////////////////////////////////////////////////////////////////////
-$.extend($.gS, {
+$.extend(greenishSlides, {
 /*///////////////////////////////////////////////////////////////////////////////
 	object		defaults 
 	Contains all the default settings that will be used if nothing else is defined.
@@ -102,7 +121,7 @@ $.extend($.gS, {
 /*///////////////////////////////////////////////////////////////////////////////
 */
 	_init : function (data, opts, update) {	
-		var gS=$.gS,
+		var gS=greenishSlides,
 			context=data.context,
 			slides = context.children(),
 			callbacks, event, newActive, cssClass;
@@ -112,7 +131,7 @@ $.extend($.gS, {
 
 ////	Sets css and classes
 		if(!update) {
-			context.greenishSlides("_triggerCallback","preInit", opts); // #CALLBACK
+			context.slides("_triggerCallback","preInit", opts); // #CALLBACK
 			context.css(gS.css.context).addClass("greenishSlides");
 			slides.css(gS.css.gSSlide).addClass(opts.classes.slide);
 		}
@@ -125,18 +144,18 @@ $.extend($.gS, {
 						$(data.opts.classes[cssClass], slides).removeClass(data.opts.classes[cssClass]).addClass(opts.classes[cssClass]);
 			}
 
-		data.opts= $.gS._extendOpts(data, {classes:opts.classes}, true);
+		data.opts= greenishSlides._extendOpts(data, {classes:opts.classes}, true);
 ////	/Sets css and classes
 ////	Orientation
 		if(opts.vertical !== undefined && opts.vertical !== data.opts.vertical) {
 			if(data.opts.LoT !== undefined || data.opts.RoB !== undefined) slides.removeClass(data.opts.LoT+" "+data.opts.RoB);
 			if(opts.vertical) {
-				slides.css(gS.css.gSVertical);
+				slides.css(gS.css.gSVertical).filter("."+opts.classes.active).css(gS.css.gSVerticalActive);
 				context.removeClass(data.opts.classes.horizontal).addClass(data.opts.classes.vertical);
 				$.extend(opts, gS.orientation.vertical);
 			}
 			else {
-				slides.css(gS.css.gSHorizontal);
+				slides.css(gS.css.gSHorizontal).filter("."+opts.classes.active).css(gS.css.gSHorizontalActive);
 				context.removeClass(data.opts.classes.vertical).addClass(data.opts.classes.horizontal);
 				$.extend(opts, gS.orientation.horizontal);
 			}
@@ -149,12 +168,12 @@ $.extend($.gS, {
 			if(opts.keyEvents)
 				data.opts.vertical?
 					$(document).bind("keydown.gS", function(e) {
-						if(e.which == 40) context.greenishSlides("next");
-						else if(e.which == 38) context.greenishSlides("prev");
+						if(e.which == 40) context.slides("next");
+						else if(e.which == 38) context.slides("prev");
 					}):
 					$(document).bind("keydown.gS", function(e) {
-						if(e.which == 39) context.greenishSlides("next");
-						else if(e.which == 37) context.greenishSlides("prev");
+						if(e.which == 39) context.slides("next");
+						else if(e.which == 37) context.slides("prev");
 					});
 			else $(document).unbind("keydown.gS");
 		}
@@ -182,7 +201,7 @@ $.extend($.gS, {
 				opts.events.deactivate==opts.events.activate? 
 					"focusout.gsActivate ":
 					opts.events.deactivate+".gsActivate focusout.gsActivate ";
-			context.unbind(".gsActivate").bind(event, function(e) {context.greenishSlides("_event",e);}); // focusin/focusout for Keyboard accessability;
+			context.unbind(".gsActivate").bind(event, function(e) {context.slides("_event",e);}); // focusin/focusout for Keyboard accessability;
 		}
 ////	/Activate and Deactivate events
 ////	Resize event
@@ -195,9 +214,9 @@ $.extend($.gS, {
 		newActive=opts.active !== undefined;
 
 		//Extends defaults into opts.
-		opts=data.opts = $.gS._extendOpts(data, opts);		
+		opts=data.opts = greenishSlides._extendOpts(data, opts);		
 
-		if(!update) context.greenishSlides("_triggerCallback","init"); // #CALLBACK
+		if(!update) context.slides("_triggerCallback","init"); // #CALLBACK
 
 		if(newActive && opts.active !== false){
 			if(opts.active === true) opts.active=0;
@@ -212,7 +231,7 @@ $.extend($.gS, {
 		else if(opts.active === false && data.ai >= 0) $("."+opts.classes.active, context).eq(0).trigger(opts.events.deactivate, true);
 		else gS.update(data);
 ////	/First Initialisation / update
-		if(!update) context.greenishSlides("_triggerCallback","postInit"); // #CALLBACK
+		if(!update) context.slides("_triggerCallback","postInit"); // #CALLBACK
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
@@ -235,18 +254,18 @@ $.extend($.gS, {
 			target= slide.length ? [slide, handle] : false;
 		}
 		if((e.type == "focusin" || e.type==opts.events.activate) && target && !target[0].hasClass(opts.classes.active)) {
-			target[0].greenishSlides("_triggerCallback","activateEvent"); // #CALLBACK
-			target[0].greenishSlides("activate");
+			target[0].slides("_triggerCallback","activateEvent"); // #CALLBACK
+			target[0].slides("activate");
 		}
 		else if(!opts.stayOpen && (e.type == "focusout" || e.type==opts.events.deactivate) && target && target[0].hasClass(opts.classes.active) && target[1].has(e.relatedTarget).length <=0 && target[1] != e.relatedTarget) {
-			target[0].greenishSlides("_triggerCallback","deactivateEvent"); // #CALLBACK
-			target[0].greenishSlides("deactivate");
+			target[0].slides("_triggerCallback","deactivateEvent"); // #CALLBACK
+			target[0].slides("deactivate");
 		}
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
 	activate : function (data) {
-		var gS=$.gS,
+		var gS=greenishSlides,
 			slide=$(this),
 			context=data.context,
 			opts=data.opts,
@@ -263,14 +282,14 @@ $.extend($.gS, {
 		data.active=slide;
 		data.ai=slide.index();
 		
-		slide.greenishSlides("_triggerCallback","preActivate"); // #CALLBACK
+		slide.slides("_triggerCallback","preActivate"); // #CALLBACK
 		
 		gS.update(data,"activate");
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
 	deactivate : function (data) {
-		var gS=$.gS,
+		var gS=greenishSlides,
 			slide=$(this),
 			context=data.context,
 			opts=data.opts;
@@ -280,7 +299,7 @@ $.extend($.gS, {
 
 		if(!slide.hasClass(opts.classes.active)) return;
 		slide.removeClass(opts.classes.active).addClass(opts.classes.deactivating);
-		slide.greenishSlides("_triggerCallback","preDeactivate");// #CALLBACK
+		slide.slides("_triggerCallback","preDeactivate");// #CALLBACK
 		data.active=$();
 		data.ai="-1";
 
@@ -289,33 +308,34 @@ $.extend($.gS, {
 /*///////////////////////////////////////////////////////////////////////////////
 */
 	prev : function (data, fromSlide) {
-		var gS=$.gS,
+		var gS=greenishSlides,
 			context=data.context,
 			opts=data.opts,
 			slide,
 			slideId=gS._step(data, -1, fromSlide);
 		if(slideId === undefined) slideId=context.children().length-1;
-		slideId=context.greenishSlides("_triggerCallback","prev",slideId); //callback
+		slideId=context.slides("_triggerCallback","prev",slideId); //callback
 		slide=context.children().eq(slideId);
-		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.greenishSlides("activate");
+		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.slides("activate");
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
 	next : function (data, fromSlide) {
-		var gS=$.gS,
+		var gS=greenishSlides,
 			context=data.context,
 			opts=data.opts,
 			slide,
 			slideId=gS._step(data, 1, fromSlide);
 		if(slideId === undefined) slideId=0;
-		slideId=context.greenishSlides("_triggerCallback","next",slideId);
+		slideId=context.slides("_triggerCallback","next",slideId);
 		slide=context.children().eq(slideId);
-		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.greenishSlides("activate");
+
+		if(slideId!==false && !slide.hasClass(opts.classes.active)) slide.slides("activate");
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
 	_step : function (data, number, fromSlide) {
-		var gS=$.gS,
+		var gS=greenishSlides,
 			context=data.context,
 			opts=data.opts,
 			slides=context.children(),
@@ -373,7 +393,7 @@ $.extend($.gS, {
 	Sets the new _positioning for each slide and gets the css values of the current state
 */
 	_getCSS : function (data, i) {
-		var gS = $.gS,
+		var gS = greenishSlides,
 			opts=data.opts,
 			context=data.context,
 			ai=data.ai,
@@ -416,7 +436,7 @@ $.extend($.gS, {
 	This has no visual effect on the slide.
 */
 	_positioning : function (data, i, bind, active) {
-		var gS=$.gS,
+		var gS=greenishSlides,
 			opts=data.opts,
 			context=data.context,
 			slide=data.slides[i],
@@ -450,7 +470,7 @@ $.extend($.gS, {
 	Calculates the minWidth/minHeight and maxWidth/maxHeight for each slide.
 */
 	_getLimits : function (data, i) {
-		var gS = $.gS,
+		var gS = greenishSlides,
 			opts=data.opts,
 			context=data.context,
 			slide, k, min, max, limits;
@@ -485,7 +505,7 @@ $.extend($.gS, {
 			if(data.limited) { 
 				if(!data.resizeEventSet) {
 					$(window).bind("resize.gS", function(){
-						context.greenishSlides("update");
+						context.slides("update");
 					});
 					data.resizeEventSet=true;	
 				}
@@ -501,7 +521,7 @@ $.extend($.gS, {
 	Calculates the NEW css values for each Slide.
 */
 	_getDCss : function (data) {
-		var gS = $.gS,
+		var gS = greenishSlides,
 			opts=data.opts,
 			context=data.context,
 			ai=data.ai,
@@ -566,7 +586,7 @@ $.extend($.gS, {
 	Checks chache and calls other "getter" funcitons
 */
 	_getData : function (data) {
-		var gS=$.gS,
+		var gS=greenishSlides,
 			context=data.context,
 			opts=data.opts,
 			slides=context.children(),
@@ -596,30 +616,30 @@ $.extend($.gS, {
 /*///////////////////////////////////////////////////////////////////////////////
 */
 	update : function (data, action) {
-		var gS=$.gS,
+		var gS=greenishSlides,
 			context=data.context.stop(),
 			slides=context.children(),
 			active=data.active,
 			ai=data.ai,
 			opts=data.opts,
 			postAnimation;
-		active.greenishSlides("_triggerCallback","preUpdate"); // #CALLBACK
+		active.slides("_triggerCallback","preUpdate"); // #CALLBACK
 
 //		Get and store Data for the animation function
 		gS._getData(data);
 		
 //		Set callbacks for either Activation or Deactivation.
 		if(action == "deactivate") {
-			active.greenishSlides("_triggerCallback","preDeactivateAnimation"); // #CALLBACK
-			postAnimation = function () {context.greenishSlides("_postDeactivate");}; // #CALLBACK
+			active.slides("_triggerCallback","preDeactivateAnimation"); // #CALLBACK
+			postAnimation = function () {context.slides("_postDeactivate");}; // #CALLBACK
 		}
 		else if(action == "activate") {  
-			active.greenishSlides("_triggerCallback","preActivateAnimation"); // #CALLBACK
-			postAnimation = function () {context.greenishSlides("_postActivate");}; // #CALLBACK
+			active.slides("_triggerCallback","preActivateAnimation"); // #CALLBACK
+			postAnimation = function () {context.slides("_postActivate");}; // #CALLBACK
 		}
 		else {
-			active.greenishSlides("_triggerCallback","preUpdateAnimation"); // #CALLBACK
-			postAnimation = function () {active.greenishSlides("_triggerCallback","postUpdate");}; // #CALLBACK		
+			active.slides("_triggerCallback","preUpdateAnimation"); // #CALLBACK
+			postAnimation = function () {active.slides("_triggerCallback","postUpdate");}; // #CALLBACK		
 		}
 //		Start Animation for Slides	
 		context
@@ -630,15 +650,15 @@ $.extend($.gS, {
 */
 	_postActivate : function (data) {
 		if(data.ai>=0)
-			data.active.greenishSlides("_triggerCallback","postActivate"); // #CALLBACK
-		$.gS._postDeactivate(data);
+			data.active.slides("_triggerCallback","postActivate"); // #CALLBACK
+		greenishSlides._postDeactivate(data);
 	},
 /*///////////////////////////////////////////////////////////////////////////////
 */
 	_postDeactivate : function (data) {
 		var deactive=data.context.find("."+data.opts.classes.slide+"."+data.opts.classes.deactivating);
 		if(deactive.length>0) {
-			deactive.greenishSlides("_triggerCallback","postDeactivate"); // #CALLBACK
+			deactive.slides("_triggerCallback","postDeactivate"); // #CALLBACK
 			deactive.removeClass(data.opts.classes.deactivating);
 		}
 	},
@@ -696,7 +716,7 @@ $.extend($.gS, {
 				}
 			
 			data.actualCSS=newCss;
-			$.gS._triggerCallback(data, "step"); // #CALLBACK _triggerCallback needs try/catch wrapper to run properly.
+			greenishSlides._triggerCallback(data, "step"); // #CALLBACK _triggerCallback needs try/catch wrapper to run properly.
 		}
 		catch(err){
 			$(this).stop();
@@ -744,6 +764,14 @@ $.extend($.gS, {
 			height:"auto",
 			top:"auto",
 			left:0
+		},
+		gSHorizontalActive:{
+			right:0,
+			left:0
+		},
+		gSVerticalActive:{
+			top:0,
+			bottom:0
 		}
 	}
 ////////////////////////////////////////////////////////////////////////////////
