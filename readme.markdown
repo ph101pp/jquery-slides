@@ -79,7 +79,7 @@ Into a slideshow that's markup will look (in the first case: `<ul>`) like this:
 </ul>
 ```
 	
-1.	Methods
+2.	Methods
 ----------------
 	
 ``` javascript
@@ -169,7 +169,7 @@ $(".myElement").slides("clearCache");
 
 -------------------------	
 
-1.	Options
+3.	Options
 ----------------
 
 Options can be set or changed by passing an object to the slides() function. This can be done on initialisation or afterwards to change any value (for example limits).
@@ -386,7 +386,7 @@ callbacks: {																Default: {}
 
 -------------------------
 
-1.	Callbacks/Events
+4.	Callbacks/Events
 ----------------
 
 During the runtime of the plugin a bunch of callbacks are fired. 
@@ -469,7 +469,7 @@ This is a list of all the callbacks that are available at the moment (to find th
 "preUpdateAnimation"			function(data)					Context: $(".myElement")
 ```
 
-> Called after all caculations are done just before the animation starts.
+> Called after all calculations are done just before the animation starts.
 
 -------------------------
 

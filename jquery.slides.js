@@ -1,5 +1,5 @@
 /*! 
- * jQuery Slides plugin - v1.0.0
+ * jQuery Slides plugin - v1.0.3 (https://github.com/greenish/jquery-slides)
  * 
  * Copyright (c) 2011 Philipp Adrian (www.philippadrian.com)
  *
