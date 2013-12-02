@@ -60,7 +60,7 @@ var greenishSlides =$.fn.slides = function (method){
 				active:$()
 			};
 		if(call=="_init") {
-			opts = greenishSlides._extendOpts(data, method=="_init"?Array.prototype.slice.call(arguments,1):method);
+			opts = greenishSlides._extendOpts(data, (method=="_init" ? Array.prototype.slice.call(arguments,1):method));
 			args=[data, opts];
 		}
 		else args=[data].concat(args);
@@ -125,7 +125,9 @@ $.extend(greenishSlides, {
 			context=data.context,
 			slides = context.children(),
 			callbacks, event, newActive, cssClass;
-		
+
+		opts = opts || {};
+
 //		binding callbacks to make them available.
 		for(callbacks in opts.callbacks) gS.bindCallback(data,callbacks,opts.callbacks[callbacks]);
 
@@ -583,7 +585,7 @@ $.extend(greenishSlides, {
 /*///////////////////////////////////////////////////////////////////////////////
 	generates all data that is needed to animate the slides. 
 	and stores it in the data object
-	Checks chache and calls other "getter" funcitons
+	Checks chache and calls other "getter" functions
 */
 	_getData : function (data) {
 		var gS=greenishSlides,
@@ -601,11 +603,13 @@ $.extend(greenishSlides, {
 		data.cS = opts.cache && data.cS ? data.cS : context["inner"+gS._capitalize(opts.WoH)]();
 
 //		Get/Update slide objects
-		if(slides.length != data.slides.length)
+		if(slides.length != data.slides.length) {
+			data.slides=[];
 			for(i=slides.length-1; i >=0 ; i--) 
-				data.slides[i] = data.slides[i] || {	
+				data.slides[i] = {	
 						obj:slides.eq(i)
 					};
+		}
 //		Get Limits if defined for each slide
 		gS._getLimits(data);
 //		Get current css values for each slide
