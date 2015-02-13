@@ -48,9 +48,9 @@
 					$(".expandableGrid").expandableGrid({
 						resizable:true,
 						callbacks : {
-							preInit : function(){console.log("preinit",arguments);},
+							preInit : function(){console.log("preInit",arguments);},
 							preActivate : function(){console.log("preActivate",arguments);},
-							preDectivate : function(){console.log("preDectivate",arguments);}
+							preDeactivate : function(){console.log("preDeactivate",arguments);}
 						},
 						events:{
 							activate :false,
@@ -61,7 +61,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 					$(".close").on("click", function(e){
-
 						e.stopPropagation();
 						$(this).closest(".pGActive").expandableGrid("deactivate");
 					});
