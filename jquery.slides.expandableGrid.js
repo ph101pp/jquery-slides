@@ -78,7 +78,7 @@ $.extend(expandableGrid, {
 		if(!update) context.expandableGrid("_triggerCallback","preInit", opts);
 		var thisContext=$(context).addClass("expandableGrid");
 
-		data.opts= expandableGrid._extendOpts(data, {classes:opts.classes}, true);
+		opts=data.opts= expandableGrid._extendOpts(data, opts);
 
 		if(!update) context.expandableGrid("_triggerCallback","init", opts);
 
