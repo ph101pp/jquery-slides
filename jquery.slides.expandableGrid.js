@@ -61,6 +61,7 @@ $.extend(expandableGrid, {
 			activate:"click",
 			deactivate:"click"
 		},
+		callbacks:{},
 		classes: {
 			pGInner:"pGInner",
 			pGActive:"pGActive"
